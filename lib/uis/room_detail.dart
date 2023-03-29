@@ -49,32 +49,46 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
           children: [
             _carouselImage(context),
             SizedBox(
-              height: 16.h,
+              height: 40.h,
             ),
             _generalInfo(context),
             SizedBox(
-              height: 30.h,
+              height: 40.h,
             ),
             _roomDetail(context),
             SizedBox(
-              height: 30.h,
+              height: 40.h,
             ),
             _detailDecribe(context),
             SizedBox(
-              height: 30.h,
+              height: 40.h,
             ),
             _Location(context),
             SizedBox(
-              height: 30.h,
+              height: 40.h,
             ),
             _userInfor(context),
             SizedBox(
-              height: 30.h,
+              height: 40.h,
             ),
             _chatWithSaler(context),
+            SizedBox(
+              height: 40.h,
+            ),
+            _otherPost(context),
+            SizedBox(
+              height: 40.h,
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _titleText(BuildContext context, String title) {
+    return Text(
+      title,
+      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 46.sp),
     );
   }
 
@@ -103,20 +117,6 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                   fit: BoxFit.cover,
                 ),
               ),
-              // child: Column(
-              //   mainAxisAlignment: MainAxisAlignment.end,
-              //   children: [
-              //     Container(
-              //         width: 100.w,
-              //         height: 50.h,
-              //         decoration: BoxDecoration(
-              //           color: Colors.grey,
-              //           borderRadius: BorderRadius.circular(18),
-              //         ),
-              //         child:
-              //             Text("${_currentPageCount + 1}/${listImage.length}"))
-              //   ],
-              // ),
             );
           },
         ),
@@ -150,85 +150,89 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Cho thue can ho ABC",
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 42.sp),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
+          _titleText(context, "Cho thue can ho ABC"),
           SizedBox(
-            height: 12.h,
+            height: 5.h,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              RichText(
-                text: TextSpan(
-                  text: "3.5 trieu/thang",
-                  style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 42.sp,
-                      fontWeight: FontWeight.w600),
-                  children: [
-                    TextSpan(
-                      text: " - 50 m2",
-                      style: TextStyle(color: Colors.grey, fontSize: 30.sp),
-                    ),
-                  ],
+          Padding(
+            padding: EdgeInsets.only(left: 20.w, right: 20.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    text: "3.5 trieu/thang",
+                    style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 42.sp,
+                        fontWeight: FontWeight.w600),
+                    children: [
+                      TextSpan(
+                        text: " - 50 m2",
+                        style: TextStyle(color: Colors.grey, fontSize: 30.sp),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.favorite_outline,
-                      color: Colors.red,
-                      size: 60.w,
-                    ),
-                    SizedBox(
-                      width: 8.w,
-                    ),
-                    Text(
-                      "Lưu",
-                      style: TextStyle(fontSize: 38.sp),
-                    )
-                  ],
+                SizedBox(
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.favorite_outline,
+                        color: Colors.red,
+                        size: 60.w,
+                      ),
+                      SizedBox(
+                        width: 8.w,
+                      ),
+                      Text(
+                        "Lưu",
+                        style: TextStyle(fontSize: 38.sp),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          Row(
-            children: [
-              Icon(
-                Icons.location_on_outlined,
-                color: Colors.grey,
-                size: 50.w,
-              ),
-              Expanded(
-                child: Text(
-                  "30/137 Dinh Tien Hoang, Phuong Thuan Loc, Thanh Pho Hue ",
-                  style: TextStyle(color: Colors.grey, fontSize: 36.sp),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
+          Padding(
+            padding: EdgeInsets.only(left: 20.w, right: 20.w),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.location_on_outlined,
+                  color: Colors.grey,
+                  size: 50.w,
                 ),
-              )
-            ],
+                Expanded(
+                  child: Text(
+                    "30/137 Dinh Tien Hoang, Phuong Thuan Loc, Thanh Pho Hue ",
+                    style: TextStyle(color: Colors.grey, fontSize: 36.sp),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
+                )
+              ],
+            ),
           ),
           SizedBox(
             height: 8.h,
           ),
-          Row(
-            children: [
-              Icon(
-                Icons.access_time_outlined,
-                size: 50.w,
-                color: Colors.grey,
-              ),
-              Text(
-                "Dang hom qua",
-                style: TextStyle(color: Colors.grey, fontSize: 36.sp),
-              ),
-            ],
+          Padding(
+            padding: EdgeInsets.only(left: 20.w, right: 20.w),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.access_time_outlined,
+                  size: 50.w,
+                  color: Colors.grey,
+                ),
+                Text(
+                  "Dang hom qua",
+                  style: TextStyle(color: Colors.grey, fontSize: 36.sp),
+                ),
+              ],
+            ),
           )
         ],
       ),
@@ -243,58 +247,64 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Đặc điểm bất động sản",
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 46.sp),
-          ),
+          _titleText(context, "Đặc điểm bất động sản"),
           SizedBox(
-            height: 30.h,
+            height: 15.h,
           ),
-          Row(
-            children: [
-              Icon(
-                Icons.zoom_out_map,
-                color: Colors.grey,
-                size: 50.w,
-              ),
-              SizedBox(
-                width: 10.w,
-              ),
-              RichText(
-                text: TextSpan(
-                    text: "Dien tich : ",
-                    style: TextStyle(fontSize: 36.sp, color: Colors.black),
-                    children: [
-                      TextSpan(
-                          text: "25 m2",
-                          style:
-                              TextStyle(fontSize: 36.sp, color: Colors.black))
-                    ]),
-              )
-            ],
+          Padding(
+            padding: EdgeInsets.only(left: 20.w, right: 20.w),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.zoom_out_map,
+                  color: Colors.grey,
+                  size: 50.w,
+                ),
+                SizedBox(
+                  width: 10.w,
+                ),
+                RichText(
+                  text: TextSpan(
+                      text: "Dien tich : ",
+                      style: TextStyle(fontSize: 36.sp, color: Colors.black),
+                      children: [
+                        TextSpan(
+                            text: "25 m2",
+                            style:
+                                TextStyle(fontSize: 36.sp, color: Colors.black))
+                      ]),
+                )
+              ],
+            ),
           ),
-          Row(
-            children: [
-              Icon(
-                Icons.key_outlined,
-                color: Colors.grey,
-                size: 50.w,
-              ),
-              SizedBox(
-                width: 10.w,
-              ),
-              RichText(
-                text: TextSpan(
-                    text: "So tien coc :",
-                    style: TextStyle(fontSize: 36.sp, color: Colors.black),
-                    children: [
-                      TextSpan(
-                          text: "3.000.000 d",
-                          style:
-                              TextStyle(fontSize: 36.sp, color: Colors.black))
-                    ]),
-              )
-            ],
+          Padding(
+            padding: EdgeInsets.only(
+              left: 20.w,
+              right: 20.w,
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.key_outlined,
+                  color: Colors.grey,
+                  size: 50.w,
+                ),
+                SizedBox(
+                  width: 10.w,
+                ),
+                RichText(
+                  text: TextSpan(
+                      text: "So tien coc :",
+                      style: TextStyle(fontSize: 36.sp, color: Colors.black),
+                      children: [
+                        TextSpan(
+                            text: "3.000.000 d",
+                            style:
+                                TextStyle(fontSize: 36.sp, color: Colors.black))
+                      ]),
+                )
+              ],
+            ),
           ),
         ],
       ),
@@ -308,27 +318,29 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Mô tả chi tiết",
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 46.sp),
-            maxLines: null,
-          ),
+          _titleText(context, "Mô tả chi tiết"),
           SizedBox(
-            height: 30.h,
+            height: 15.h,
           ),
-          Text(
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-            maxLines: null,
-            style: TextStyle(fontSize: 36.sp),
-          ),
-          GestureDetector(
-            onTap: () {},
+          Padding(
+            padding: EdgeInsets.only(left: 20.w, right: 20.w),
             child: Text(
-              "Liên hệ ngay: " + "0123456789",
-              style: TextStyle(
-                  decoration: TextDecoration.underline,
-                  color: Colors.blue,
-                  fontSize: 36.sp),
+              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+              maxLines: null,
+              style: TextStyle(fontSize: 36.sp),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 20.w, right: 20.w),
+            child: GestureDetector(
+              onTap: () {},
+              child: Text(
+                "Liên hệ ngay: " + "0123456789",
+                style: TextStyle(
+                    decoration: TextDecoration.underline,
+                    color: Colors.blue,
+                    fontSize: 36.sp),
+              ),
             ),
           )
         ],
@@ -346,12 +358,9 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Địa điểm bất động sản",
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 46.sp),
-          ),
+          _titleText(context, "Địa điểm bất động sản"),
           SizedBox(
-            height: 30.h,
+            height: 15.h,
           ),
           SizedBox(
             width: 1920.w,
@@ -379,7 +388,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
             ),
           ),
           SizedBox(
-            width: 20.w,
+            width: 15.w,
           ),
           Expanded(
             child: Column(
@@ -461,21 +470,147 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
   Widget _chatWithSaler(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(left: 20.w, right: 20.w),
-      color: Colors.grey,
+      // color: Colors.grey,
       width: 1920.w,
+      height: 120.h,
+      // height: 100.h,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Chat với người bán hàng",
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 46.sp),
+          _titleText(context, "Chat với người bán hàng"),
+          SizedBox(
+            height: 15.h,
           ),
-          ListView(
-            scrollDirection: Axis.horizontal,
-            children: [],
+          Expanded(
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                _commonAsk(context, "Căn hộ này còn không ạ"),
+                _commonAsk(context, "Thời hạn thuê tối đa là bao lâu"),
+                _commonAsk(context, "Thời gian thuê tối thiểu là bao lâu"),
+                _commonAsk(context, "Căn hộ có sẵn nội thất chưa ạ"),
+                _commonAsk(context, "Có thêm chi phí phát sinh gì nữa không"),
+              ],
+            ),
           )
         ],
       ),
     );
+  }
+
+  Widget _commonAsk(BuildContext context, String text) {
+    return Container(
+      margin: EdgeInsets.only(left: 10.w, right: 10.w),
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(left: 20.w, right: 20.w),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: const Color.fromARGB(255, 201, 201, 201)),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 36.sp,
+        ),
+        softWrap: true,
+      ),
+    );
+  }
+
+  Widget _otherPost(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(left: 20.w, right: 20.w),
+      width: 1920.w,
+      height: 750.h,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _titleText(context, "Tin rao khác của ABC"),
+          SizedBox(
+            height: 15.h,
+          ),
+          Expanded(
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                _otherRoomDetail(context),
+                _otherRoomDetail(context),
+                _otherRoomDetail(context),
+                _otherRoomDetail(context),
+                _otherRoomDetail(context),
+              ],
+            ),
+          ),
+          Center(
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: "Xem tất cả",
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 36.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  WidgetSpan(
+                      child: Icon(
+                    Icons.keyboard_arrow_right,
+                    color: Colors.blue,
+                    size: 46.w,
+                  ))
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _otherRoomDetail(BuildContext context) {
+    return Container(
+      width: 300.w,
+      height: 400.h,
+      // decoration: BoxDecoration(
+      //     border: Border.all(
+      //       width: 2.w,
+      //     ),
+      //     borderRadius: BorderRadius.circular(12)),
+      margin: EdgeInsets.all(8.w),
+      padding: EdgeInsets.all(8.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: double.infinity,
+            height: 300.h,
+            child: Image.asset(
+              "assets/images/image.jpg",
+              fit: BoxFit.fill,
+            ),
+          ),
+          Text(
+            "Cho thue tro gan DHH",
+            style: TextStyle(fontSize: 36.sp, fontWeight: FontWeight.w500),
+          ),
+          Text(
+            "30 m2",
+            style: TextStyle(fontSize: 34.sp, color: Colors.grey),
+          ),
+          Text(
+            "700.000d/thang",
+            style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.w700,
+                fontSize: 40.sp),
+          ),
+          Text(
+            "Tp.Hue",
+            style: TextStyle(fontSize: 36.sp, color: Colors.grey),
+          ),
+        ],
+      ),
+    );
+    ;
   }
 }
