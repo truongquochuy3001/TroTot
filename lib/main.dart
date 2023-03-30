@@ -2,9 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:tro_tot_app/uis/home_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tro_tot_app/uis/room_detail.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: 'https://sqdjokefctvpkhsluzuj.supabase.co',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNxZGpva2VmY3R2cGtoc2x1enVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODAwNTk2NzIsImV4cCI6MTk5NTYzNTY3Mn0.bWaYZHIPiarLI5ZDQsTiP4w4KFczVjHnyj3SgTXh98s',
+  );
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
