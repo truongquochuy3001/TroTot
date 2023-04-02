@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "482786825955",
+    "project_id": "datatrotot",
+    "storage_bucket": "datatrotot.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:482786825955:android:fa08341da1fec4d00097d6",
+        "android_client_info": {
+          "package_name": "com.example.tro_tot_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "482786825955-vtrfdkkajpbjmgbmks4810kifmea1e21.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tro_tot_app",
+            "certificate_hash": "d6b16302df458c066238d686c5e45dbaea0e8486"
+          }
+        },
+        {
+          "client_id": "482786825955-9390bmie5p82nf0u4t4nuvjs7128qnor.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPT6A9I6zyZx2iNJ722lW5qMSktTgw-2g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "482786825955-9390bmie5p82nf0u4t4nuvjs7128qnor.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
