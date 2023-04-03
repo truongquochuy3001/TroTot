@@ -1,5 +1,9 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
 
 class HomePageScreen extends StatefulWidget {
   const HomePageScreen({super.key});
@@ -9,6 +13,8 @@ class HomePageScreen extends StatefulWidget {
 }
 
 class _HomePageScreenState extends State<HomePageScreen> {
+  CollectionReference room = FirebaseFirestore.instance.collection('Room');
+  RoomData getRoom = RoomData();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -324,46 +330,62 @@ class _HomePageScreenState extends State<HomePageScreen> {
   }
 
   Widget _roomDetailGridView(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          border: Border.all(
-            width: 2.w,
+    return FutureBuilder(
+      future: getRoom.getRoom(),
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Text('Lỗi: ${snapshot.error}');
+        }
+        final List<QueryDocumentSnapshot<Object?>> docs = snapshot.data!.docs;
+        if (docs.isEmpty) {
+          return Center(child: Text('Không tìm thấy phòng trọ!'));
+        }
+        final roomData = docs.first.data() as Map<String, dynamic>;
+        return Container(
+          decoration: BoxDecoration(
+              border: Border.all(
+                width: 2.w,
+              ),
+              borderRadius: BorderRadius.circular(12)),
+          margin: EdgeInsets.all(8.w),
+          padding: EdgeInsets.all(8.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: double.infinity,
+                height: 150,
+                child: Image.network(
+                  roomData["RoomImage"].toString(),
+                  fit: BoxFit.fill,
+                ),
+              ),
+              Text(
+                roomData["RoomTitle"],
+                style: TextStyle(fontSize: 36.sp, fontWeight: FontWeight.w500),
+              ),
+              Text(
+                roomData["RoomSize"].toString() + "m2",
+                style: TextStyle(fontSize: 34.sp, color: Colors.grey),
+              ),
+              Text(
+                roomData["RoomPrice"].toString(),
+                style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 40.sp),
+              ),
+              Text(
+                roomData["RoomAddr"],
+                style: TextStyle(fontSize: 36.sp, color: Colors.grey),
+              ),
+            ],
           ),
-          borderRadius: BorderRadius.circular(12)),
-      margin: EdgeInsets.all(8.w),
-      padding: EdgeInsets.all(8.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: double.infinity,
-            height: 150,
-            child: Image.asset(
-              "assets/images/image.jpg",
-              fit: BoxFit.fill,
-            ),
-          ),
-          Text(
-            "Cho thue tro gan DHH",
-            style: TextStyle(fontSize: 36.sp, fontWeight: FontWeight.w500),
-          ),
-          Text(
-            "30 m2",
-            style: TextStyle(fontSize: 34.sp, color: Colors.grey),
-          ),
-          Text(
-            "700.000d/thang",
-            style: TextStyle(
-                color: Colors.red,
-                fontWeight: FontWeight.w700,
-                fontSize: 40.sp),
-          ),
-          Text(
-            "Tp.Hue",
-            style: TextStyle(fontSize: 36.sp, color: Colors.grey),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
