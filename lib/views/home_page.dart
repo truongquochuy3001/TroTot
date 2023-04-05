@@ -1,9 +1,10 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:tro_tot_app/models/room_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
+import 'package:tro_tot_app/views/room_detail.dart';
 
 class HomePageScreen extends StatefulWidget {
   const HomePageScreen({super.key});
@@ -14,31 +15,52 @@ class HomePageScreen extends StatefulWidget {
 
 class _HomePageScreenState extends State<HomePageScreen> {
   CollectionReference room = FirebaseFirestore.instance.collection('Room');
-  RoomData getRoom = RoomData();
+  RoomData room1 = RoomData();
+  late Future getRoom;
+  late Future<List<Room>> _listRoom;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _listRoom = room1.getAllRoom();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        children: [
-          _search(context),
-          _sortArea(context),
-          SizedBox(
-            height: 8.h,
-          ),
-          _sortCatalog(context),
-          SizedBox(
-            height: 16.h,
-          ),
-          _sortApartmentType(context),
-          SizedBox(
-            height: 8.h,
-          ),
-          _gridviewCount(context),
-          SizedBox(
-            height: 8.h,
-          ),
-        ],
-      ),
+      body: FutureBuilder(
+          future: _listRoom,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Text('Lỗi: ${snapshot.error}');
+            } else {
+              final List<Room> roomList = snapshot.data!;
+
+              return ListView(
+                children: [
+                  _search(context),
+                  _sortArea(context),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  _sortCatalog(context),
+                  SizedBox(
+                    height: 16.h,
+                  ),
+                  _sortApartmentType(context),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  _gridviewCount(context, roomList),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                ],
+              );
+            }
+          }),
     );
   }
 
@@ -304,88 +326,86 @@ class _HomePageScreenState extends State<HomePageScreen> {
     );
   }
 
-  Widget _gridviewCount(BuildContext context) {
+  Widget _gridviewCount(BuildContext context, List<Room> roomData) {
     return Flex(direction: Axis.horizontal, children: [
       Expanded(
         child: SizedBox(
-          child: GridView.count(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            childAspectRatio: (300.w / 380.h),
-            crossAxisCount: 2,
-            children: [
-              _roomDetailGridView(context),
-              _roomDetailGridView(context),
-              _roomDetailGridView(context),
-              _roomDetailGridView(context),
-              _roomDetailGridView(context),
-              _roomDetailGridView(context),
-              _roomDetailGridView(context),
-              _roomDetailGridView(context),
-            ],
-          ),
+          child: GridView.builder(
+              itemCount: roomData.length,
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: (300.w / 380.h),
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                // Lấy phòng trọ tại vị trí index
+                Room room = roomData[index];
+                return _roomDetailGridView(context, room);
+                // _roomDetailGridView(context),
+                // _roomDetailGridView(context),
+                // _roomDetailGridView(context),
+                // _roomDetailGridView(context),
+                // _roomDetailGridView(context),
+                // _roomDetailGridView(context),
+                // _roomDetailGridView(context),
+              }),
         ),
       ),
     ]);
   }
 
-  Widget _roomDetailGridView(BuildContext context) {
-    return FutureBuilder(
-      future: getRoom.getRoom(),
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return Text('Lỗi: ${snapshot.error}');
-        }
-        final List<QueryDocumentSnapshot<Object?>> docs = snapshot.data!.docs;
-        if (docs.isEmpty) {
-          return Center(child: Text('Không tìm thấy phòng trọ!'));
-        }
-        final roomData = docs.first.data() as Map<String, dynamic>;
-        return Container(
-          decoration: BoxDecoration(
-              border: Border.all(
-                width: 2.w,
-              ),
-              borderRadius: BorderRadius.circular(12)),
-          margin: EdgeInsets.all(8.w),
-          padding: EdgeInsets.all(8.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: double.infinity,
-                height: 150,
-                child: Image.network(
-                  roomData["RoomImage"].toString(),
-                  fit: BoxFit.fill,
-                ),
-              ),
-              Text(
-                roomData["RoomTitle"],
-                style: TextStyle(fontSize: 36.sp, fontWeight: FontWeight.w500),
-              ),
-              Text(
-                roomData["RoomSize"].toString() + "m2",
-                style: TextStyle(fontSize: 34.sp, color: Colors.grey),
-              ),
-              Text(
-                roomData["RoomPrice"].toString(),
-                style: TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 40.sp),
-              ),
-              Text(
-                roomData["RoomAddr"],
-                style: TextStyle(fontSize: 36.sp, color: Colors.grey),
-              ),
-            ],
-          ),
-        );
+  Widget _roomDetailGridView(BuildContext context, Room roomData) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => RoomDetailPage(
+                      id: '${roomData.id}',
+                    )));
       },
+      child: Container(
+        decoration: BoxDecoration(
+            border: Border.all(
+              width: 2.w,
+            ),
+            borderRadius: BorderRadius.circular(12)),
+        margin: EdgeInsets.all(8.w),
+        padding: EdgeInsets.all(8.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: 150,
+              child: Image.network(
+                roomData.image,
+                fit: BoxFit.fill,
+              ),
+            ),
+            Text(
+              roomData.name,
+              style: TextStyle(fontSize: 36.sp, fontWeight: FontWeight.w500),
+            ),
+            Text(
+              roomData.capacity.toString() + "m2",
+              style: TextStyle(fontSize: 34.sp, color: Colors.grey),
+            ),
+            Text(
+              roomData.price.toString(),
+              style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 40.sp),
+            ),
+            Text(
+              roomData.address,
+              style: TextStyle(fontSize: 36.sp, color: Colors.grey),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
