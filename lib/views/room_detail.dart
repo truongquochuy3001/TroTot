@@ -1,24 +1,31 @@
-import 'dart:math';
-
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tro_tot_app/models/room_model.dart';
+import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
 
 class RoomDetailPage extends StatefulWidget {
-  const RoomDetailPage({super.key});
+  final String id;
+  const RoomDetailPage({super.key, required this.id});
 
   @override
   State<RoomDetailPage> createState() => _RoomDetailPageState();
 }
 
 class _RoomDetailPageState extends State<RoomDetailPage> {
-  List<String> listImage = [
-    "assets/images/image.jpg",
-    "assets/images/image.jpg",
-    "assets/images/image.jpg",
-  ];
+  RoomData room1 = RoomData();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getRoom = room1.getRoomData(widget.id);
+    print(widget.id);
+  }
+
+  late Future getRoom;
+
   var _currentPageCount = 0;
   @override
   Widget build(BuildContext context) {
@@ -27,7 +34,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.white,
-        leading: BackButton(
+        leading: const BackButton(
           color: Colors.black,
         ),
         title: Text(
@@ -45,41 +52,56 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _carouselImage(context),
-            SizedBox(
-              height: 40.h,
-            ),
-            _generalInfo(context),
-            SizedBox(
-              height: 40.h,
-            ),
-            _roomDetail(context),
-            SizedBox(
-              height: 40.h,
-            ),
-            _detailDecribe(context),
-            SizedBox(
-              height: 40.h,
-            ),
-            _Location(context),
-            SizedBox(
-              height: 40.h,
-            ),
-            _userInfor(context),
-            SizedBox(
-              height: 40.h,
-            ),
-            _chatWithSaler(context),
-            SizedBox(
-              height: 40.h,
-            ),
-            _otherPost(context),
-            SizedBox(
-              height: 40.h,
-            ),
-          ],
+        child: FutureBuilder(
+          future: getRoom,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Text('Lỗi: ${snapshot.error}');
+            } else if (!snapshot.hasData) {
+              return const Center(child: Text('Không tìm thấy phòng trọ!'));
+            } else {
+              final roomData =
+                  Room.fromJson(snapshot.data as Map<String, dynamic>);
+              return Column(
+                children: [
+                  _carouselImage(context, roomData),
+                  SizedBox(
+                    height: 40.h,
+                  ),
+                  _generalInfo(context, roomData),
+                  SizedBox(
+                    height: 40.h,
+                  ),
+                  _roomDetail(context),
+                  SizedBox(
+                    height: 40.h,
+                  ),
+                  _detailDecribe(context, roomData),
+                  SizedBox(
+                    height: 40.h,
+                  ),
+                  _Location(context),
+                  SizedBox(
+                    height: 40.h,
+                  ),
+                  _userInfor(context),
+                  SizedBox(
+                    height: 40.h,
+                  ),
+                  _chatWithSaler(context),
+                  SizedBox(
+                    height: 40.h,
+                  ),
+                  _otherPost(context),
+                  SizedBox(
+                    height: 40.h,
+                  ),
+                ],
+              );
+            }
+          },
         ),
       ),
     );
@@ -92,12 +114,13 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
     );
   }
 
-  Widget _carouselImage(BuildContext context) {
+  Widget _carouselImage(BuildContext context, Room roomData) {
     return Stack(
       alignment: AlignmentDirectional.bottomCenter,
       children: [
         CarouselSlider.builder(
-          itemCount: listImage.length,
+          itemCount: roomData.images.length,
+          // itemCount: roomData["RoomImages"].length,
           options: CarouselOptions(
             aspectRatio: 16 / 10,
             viewportFraction: 1,
@@ -113,7 +136,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
               width: 1920.w,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(listImage[index]),
+                  image: NetworkImage(roomData.images[index]),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -131,7 +154,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
             ),
             child: Center(
               child: Text(
-                "${_currentPageCount + 1}/${listImage.length}",
+                "${_currentPageCount + 1}/${roomData.images.length}",
                 style: TextStyle(color: Colors.white, fontSize: 36.sp),
               ),
             ),
@@ -141,7 +164,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
     );
   }
 
-  Widget _generalInfo(BuildContext context) {
+  Widget _generalInfo(BuildContext context, Room roomData) {
     return Container(
       padding: EdgeInsets.only(left: 20.w, right: 20.w),
       // color: Colors.green,
@@ -150,7 +173,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _titleText(context, "Cho thue can ho ABC"),
+          _titleText(context, roomData.name),
           SizedBox(
             height: 5.h,
           ),
@@ -161,14 +184,14 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
               children: [
                 RichText(
                   text: TextSpan(
-                    text: "3.5 trieu/thang",
+                    text: roomData.price.toString(),
                     style: TextStyle(
                         color: Colors.red,
                         fontSize: 42.sp,
                         fontWeight: FontWeight.w600),
                     children: [
                       TextSpan(
-                        text: " - 50 m2",
+                        text: roomData.price.toString(),
                         style: TextStyle(color: Colors.grey, fontSize: 30.sp),
                       ),
                     ],
@@ -206,7 +229,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                 ),
                 Expanded(
                   child: Text(
-                    "30/137 Dinh Tien Hoang, Phuong Thuan Loc, Thanh Pho Hue ",
+                    roomData.address,
                     style: TextStyle(color: Colors.grey, fontSize: 36.sp),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
@@ -228,7 +251,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                   color: Colors.grey,
                 ),
                 Text(
-                  "Dang hom qua",
+                  roomData.postingDate.toString(),
                   style: TextStyle(color: Colors.grey, fontSize: 36.sp),
                 ),
               ],
@@ -311,7 +334,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
     );
   }
 
-  Widget _detailDecribe(BuildContext context) {
+  Widget _detailDecribe(BuildContext context, Room roomData) {
     return Container(
       padding: EdgeInsets.only(left: 20.w, right: 20.w),
       width: 1920.w,
@@ -325,7 +348,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
           Padding(
             padding: EdgeInsets.only(left: 20.w, right: 20.w),
             child: Text(
-              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+              roomData.description,
               maxLines: null,
               style: TextStyle(fontSize: 36.sp),
             ),
