@@ -14,7 +14,7 @@ class HomePageScreen extends StatefulWidget {
 }
 
 class _HomePageScreenState extends State<HomePageScreen> {
-  CollectionReference room = FirebaseFirestore.instance.collection('Room');
+  // CollectionReference room = FirebaseFirestore.instance.collection('Room');
   RoomData room1 = RoomData();
   late Future getRoom;
   late Future<List<Room>> _listRoom;
@@ -22,7 +22,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _listRoom = room1.getAllRoom();
   }
 
   @override

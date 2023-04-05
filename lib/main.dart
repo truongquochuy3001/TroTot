@@ -45,6 +45,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthViewModel()),
+        ChangeNotifierProvider(create: (_) => RoomData())
       ],
       child: ScreenUtilInit(
         // designSize: const Size(1080, 1920),
