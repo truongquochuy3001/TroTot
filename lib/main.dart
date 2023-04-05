@@ -6,6 +6,7 @@ import 'package:tro_tot_app/view_models.dart/auth_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
 import 'package:tro_tot_app/views/add_room_test.dart';
 import 'package:tro_tot_app/views/home_page.dart';
+import 'package:tro_tot_app/views/list_room_page.dart';
 import 'package:tro_tot_app/views/login_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tro_tot_app/views/room_detail.dart';
@@ -46,11 +47,13 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthViewModel()),
       ],
       child: ScreenUtilInit(
-        designSize: const Size(1080, 1920),
+        // designSize: const Size(1080, 1920),
+        designSize: const Size(360, 640),
         builder: (BuildContext context, Widget? child) {
           return MaterialApp(
+            debugShowCheckedModeBanner: false,
             title: 'Login Demo',
-            home: HomePageScreen(),
+            home: ListRoomPage(),
           );
         },
       ),
