@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:tro_tot_app/models/room_model.dart';
+import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
+import 'package:tro_tot_app/views/room_detail.dart';
 
 class ListRoomPage extends StatefulWidget {
   const ListRoomPage({super.key});
@@ -11,26 +15,53 @@ class ListRoomPage extends StatefulWidget {
 }
 
 class _ListRoomPageState extends State<ListRoomPage> {
+  RoomData room1 = RoomData();
+  late Future _getRooms;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getRooms = context.read<RoomData>().getAllRoom();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 245, 245, 250),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              _searchFeild(context),
-              _sortAndArea(context),
-              SizedBox(
-                height: 10.h,
-              ),
-              Container(
-                  margin: EdgeInsets.only(left: 16.w, right: 16.w),
-                  child: _listRoom(context)),
-            ],
+    return Consumer<RoomData>(
+      builder: (context, value, child) {
+        return Scaffold(
+          backgroundColor: const Color.fromARGB(255, 245, 245, 250),
+          body: SafeArea(
+            child: FutureBuilder(
+              future: _getRooms,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text("Lỗi: ${snapshot.error}");
+                } else {
+                  return SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        _searchFeild(context),
+                        _sortAndArea(context),
+                        SizedBox(
+                          height: 10.h,
+                        ),
+                        Container(
+                            margin: EdgeInsets.only(left: 16.w, right: 16.w),
+                            child: _listRoom(context, value.rooms)),
+                      ],
+                    ),
+                  );
+                }
+              },
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -60,6 +91,18 @@ class _ListRoomPageState extends State<ListRoomPage> {
                   fontWeight: FontWeight.w700),
             ),
           ),
+          IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.notifications,
+                color: Colors.white,
+              )),
+          IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.message,
+                color: Colors.white,
+              ))
         ],
       ),
     );
@@ -132,37 +175,27 @@ class _ListRoomPageState extends State<ListRoomPage> {
     );
   }
 
-  Widget _listRoom(BuildContext context) {
-    return ListView(
+  Widget _listRoom(BuildContext context, List<Room> roomData) {
+    return ListView.builder(
+      itemCount: roomData.length,
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      children: [
-        _roomInfor(context),
-        SizedBox(
-          height: 8.h,
-        ),
-        _roomInfor(context),
-        SizedBox(
-          height: 8.h,
-        ),
-        _roomInfor(context),
-        SizedBox(
-          height: 8.h,
-        ),
-        _roomInfor(context),
-        SizedBox(
-          height: 8.h,
-        ),
-        _roomInfor(context),
-        SizedBox(
-          height: 8.h,
-        ),
-        _roomInfor(context),
-      ],
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (BuildContext context, int index) {
+        Room room = roomData[index];
+        return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RoomDetailPage(id: room.id!),
+                  ));
+            },
+            child: _roomInfor(context, room));
+      },
     );
   }
 
-  Widget _roomInfor(BuildContext context) {
+  Widget _roomInfor(BuildContext context, Room room) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.w),
@@ -173,8 +206,8 @@ class _ListRoomPageState extends State<ListRoomPage> {
       padding: EdgeInsets.all(12.w),
       child: Row(
         children: [
-          Image.asset(
-            "assets/images/image.jpg",
+          Image.network(
+            room.image,
             width: 120.w,
             height: 120.h,
             fit: BoxFit.fill,
@@ -195,9 +228,8 @@ class _ListRoomPageState extends State<ListRoomPage> {
                     children: [
                       SizedBox(
                         width: 172.w,
-                        height: 42.h,
                         child: Text(
-                          "Tên khách sạn được hiển thị tối đa 2 dòng",
+                          room.name,
                           maxLines: 2,
                           style: TextStyle(
                             overflow: TextOverflow.ellipsis,
@@ -208,7 +240,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
                         ),
                       ),
                       Text(
-                        "50 m2 ",
+                        room.capacity.toString() + " m2",
                         style: TextStyle(
                             fontSize: 10.sp,
                             fontWeight: FontWeight.w400,
@@ -219,7 +251,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
                         height: 4.h,
                       ),
                       Text(
-                        "2.000.000/Thang",
+                        room.price.toString() + "/Tháng",
                         style: TextStyle(
                             color: const Color.fromARGB(255, 26, 148, 255),
                             fontSize: 14.sp,

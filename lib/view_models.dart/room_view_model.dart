@@ -3,36 +3,31 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:tro_tot_app/models/room_model.dart';
 
-class RoomData with ChangeNotifier {
+import '../services/room_services.dart';
+
+class RoomData extends ChangeNotifier {
   final CollectionReference _postCollection =
       FirebaseFirestore.instance.collection('Room');
 
-  Future<QuerySnapshot<Map<String, dynamic>>> getRoom() async {
-    final collection =
-        await FirebaseFirestore.instance.collection('Room').get();
+  final RoomServices _roomServices = RoomServices();
+  List<Room> _rooms = [];
+  List<Room> get rooms => _rooms;
 
-    return collection;
+  Future<Room?> getRoom(String id) async {
+    return await _roomServices.getRoom(id);
   }
 
-  Future<List<Room>> getAllRoom() async {
-    List<Room> rooms = [];
-    QuerySnapshot<Map<String, dynamic>> querySnapshot =
-        await FirebaseFirestore.instance.collection('Room').get();
-
-    querySnapshot.docs.forEach((doc) {
-      Room room = Room.fromJson(doc.data());
-      rooms.add(room);
-    });
-
-    return rooms;
+  Future<void> getAllRoom() async {
+    _rooms = await _roomServices.getRooms();
+    notifyListeners();
   }
 
-  Future<Map<String, dynamic>> getRoomData(String roomId) async {
-    DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
-        await FirebaseFirestore.instance.collection('Room').doc(roomId).get();
-    Map<String, dynamic> data = documentSnapshot.data()!;
-    return data;
-  }
+  // Future<Map<String, dynamic>> getRoomData(String roomId) async {
+  //   DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+  //       await FirebaseFirestore.instance.collection('Room').doc(roomId).get();
+  //   Map<String, dynamic> data = documentSnapshot.data()!;
+  //   return data;
+  // }
 
   Future<void> addRoom(
       String name,

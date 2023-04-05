@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:tro_tot_app/models/room_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
 
@@ -15,12 +16,10 @@ class RoomDetailPage extends StatefulWidget {
 }
 
 class _RoomDetailPageState extends State<RoomDetailPage> {
-  RoomData room1 = RoomData();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getRoom = room1.getRoomData(widget.id);
     print(widget.id);
   }
 
@@ -30,81 +29,81 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.white,
-        leading: const BackButton(
-          color: Colors.black,
-        ),
-        title: Text(
-          "Cho thue can ho ABC dasdasd",
-          style: TextStyle(color: Colors.black, fontSize: 34.sp),
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
-        ),
-        actions: [
-          Icon(
-            Icons.more_vert,
+        appBar: AppBar(
+          centerTitle: true,
+          elevation: 0,
+          backgroundColor: Colors.white,
+          leading: const BackButton(
             color: Colors.black,
-            size: 70.h,
-          )
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: FutureBuilder(
-          future: getRoom,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Text('Lỗi: ${snapshot.error}');
-            } else if (!snapshot.hasData) {
-              return const Center(child: Text('Không tìm thấy phòng trọ!'));
-            } else {
-              final roomData =
-                  Room.fromJson(snapshot.data as Map<String, dynamic>);
-              return Column(
-                children: [
-                  _carouselImage(context, roomData),
-                  SizedBox(
-                    height: 40.h,
-                  ),
-                  _generalInfo(context, roomData),
-                  SizedBox(
-                    height: 40.h,
-                  ),
-                  _roomDetail(context),
-                  SizedBox(
-                    height: 40.h,
-                  ),
-                  _detailDecribe(context, roomData),
-                  SizedBox(
-                    height: 40.h,
-                  ),
-                  _Location(context),
-                  SizedBox(
-                    height: 40.h,
-                  ),
-                  _userInfor(context),
-                  SizedBox(
-                    height: 40.h,
-                  ),
-                  _chatWithSaler(context),
-                  SizedBox(
-                    height: 40.h,
-                  ),
-                  _otherPost(context),
-                  SizedBox(
-                    height: 40.h,
-                  ),
-                ],
-              );
-            }
-          },
+          ),
+          title: Text(
+            "Cho thue can ho ABC dasdasd",
+            style: TextStyle(color: Colors.black, fontSize: 34.sp),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+          actions: [
+            Icon(
+              Icons.more_vert,
+              color: Colors.black,
+              size: 70.h,
+            )
+          ],
         ),
-      ),
-    );
+        body: SingleChildScrollView(child: Consumer<RoomData>(
+          builder: (context, value, child) {
+            return FutureBuilder(
+              future: value.getRoom(widget.id),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Text('Lỗi: ${snapshot.error}');
+                } else if (!snapshot.hasData) {
+                  return const Center(child: Text('Không tìm thấy phòng trọ!'));
+                } else {
+                  final roomData = snapshot.data;
+                  return Column(
+                    children: [
+                      _carouselImage(context, roomData!),
+                      SizedBox(
+                        height: 40.h,
+                      ),
+                      _generalInfo(context, roomData),
+                      SizedBox(
+                        height: 40.h,
+                      ),
+                      _roomDetail(context),
+                      SizedBox(
+                        height: 40.h,
+                      ),
+                      _detailDecribe(context, roomData),
+                      SizedBox(
+                        height: 40.h,
+                      ),
+                      _Location(context),
+                      SizedBox(
+                        height: 40.h,
+                      ),
+                      _userInfor(context),
+                      SizedBox(
+                        height: 40.h,
+                      ),
+                      _chatWithSaler(context),
+                      SizedBox(
+                        height: 40.h,
+                      ),
+                      _otherPost(context),
+                      SizedBox(
+                        height: 40.h,
+                      ),
+                    ],
+                  );
+                }
+              },
+            );
+          },
+        )));
   }
 
   Widget _titleText(BuildContext context, String title) {
