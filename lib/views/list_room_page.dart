@@ -15,19 +15,20 @@ class ListRoomPage extends StatefulWidget {
 }
 
 class _ListRoomPageState extends State<ListRoomPage> {
-  RoomData room1 = RoomData();
+  RoomViewModel room1 = RoomViewModel();
   late Future _getRooms;
+  bool isClickSearch = false;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _getRooms = context.read<RoomData>().getAllRoom();
+    _getRooms = context.read<RoomViewModel>().getAllRoom();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<RoomData>(
+    return Consumer<RoomViewModel>(
       builder: (context, value, child) {
         return Scaffold(
           backgroundColor: const Color.fromARGB(255, 245, 245, 250),
@@ -60,6 +61,9 @@ class _ListRoomPageState extends State<ListRoomPage> {
               },
             ),
           ),
+          // bottomNavigationBar: BottomNavigationBar(
+          //   items: [],
+          // ),
         );
       },
     );
@@ -82,13 +86,23 @@ class _ListRoomPageState extends State<ListRoomPage> {
                 color: Colors.white,
               )),
           Expanded(
-            child: Text(
-              "Thừa Thiên Huế ",
-              style: TextStyle(
-                  fontSize: 18.sp,
-                  color: Colors.white,
-                  overflow: TextOverflow.ellipsis,
-                  fontWeight: FontWeight.w700),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => _searchPage(context),
+                  ),
+                );
+              },
+              child: Text(
+                "Thừa Thiên Huế ",
+                style: TextStyle(
+                    fontSize: 18.sp,
+                    color: Colors.white,
+                    overflow: TextOverflow.ellipsis,
+                    fontWeight: FontWeight.w700),
+              ),
             ),
           ),
           IconButton(
@@ -104,6 +118,33 @@ class _ListRoomPageState extends State<ListRoomPage> {
                 color: Colors.white,
               ))
         ],
+      ),
+    );
+  }
+
+  Widget _searchPage(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(onPressed: (){ Navigator.pop(context);}, icon: const Icon(Icons.arrow_back_ios, color: Colors.white,)),
+        elevation: 0,
+        titleSpacing: 1.w,
+        title: TextField(
+
+          style: const TextStyle(color: Colors.black, ),
+          decoration: InputDecoration(
+
+            filled: true,
+            fillColor: Colors.white,
+            hintText: "Search",
+            hintStyle: TextStyle(color: Colors.black , fontSize: 14.sp ),
+            // enabledBorder: OutlineInputBorder(
+            //     borderRadius: BorderRadius.circular(16.w),
+            //
+            // ),
+
+
+          ),
+        ),
       ),
     );
   }
