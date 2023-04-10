@@ -53,10 +53,10 @@ class MyApp extends StatelessWidget {
         // designSize: const Size(1080, 1920),
         designSize: const Size(360, 640),
         builder: (BuildContext context, Widget? child) {
-          return MaterialApp(
+          return const MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Login Demo',
-            home: ProfilePage(),
+            home: ListRoomPage(),
           );
         },
       ),
