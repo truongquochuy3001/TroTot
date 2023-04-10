@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:dropdown_search/dropdown_search.dart';
 
 class PostPage extends StatefulWidget {
   const PostPage({Key? key}) : super(key: key);
@@ -124,7 +124,7 @@ class _PostPageState extends State<PostPage> {
                   child: Padding(
                     padding: EdgeInsets.only(left: 10.w),
                     child: ListView.separated(
-                      // shrinkWrap: true,
+                        // shrinkWrap: true,
                         itemBuilder: (context, index) {
                           return GestureDetector(
                               child: Text(_items[index]),
@@ -264,7 +264,7 @@ class _PostPageState extends State<PostPage> {
                   child: Padding(
                     padding: EdgeInsets.only(left: 10.w),
                     child: ListView.separated(
-                      // shrinkWrap: true,
+                        // shrinkWrap: true,
                         itemBuilder: (context, index) {
                           return GestureDetector(
                               child: Text(_furStatus[index]),
@@ -371,7 +371,7 @@ class _PostPageState extends State<PostPage> {
 
             labelStyle: TextStyle(),
             hintText:
-            "vd: Phòng trọ 30m2 đường nguyễn A, Phường A, thành phố A, nội thất đầy đủ",
+                "vd: Phòng trọ 30m2 đường nguyễn A, Phường A, thành phố A, nội thất đầy đủ",
             hintMaxLines: 10,
             alignLabelWithHint: true,
             floatingLabelAlignment: FloatingLabelAlignment.start,

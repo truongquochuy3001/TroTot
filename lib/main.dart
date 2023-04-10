@@ -8,9 +8,9 @@ import 'package:tro_tot_app/views/add_room_test.dart';
 import 'package:tro_tot_app/views/home_page.dart';
 import 'package:tro_tot_app/views/list_room_page.dart';
 import 'package:tro_tot_app/views/login_page.dart';
+import 'package:tro_tot_app/views/login_page1.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tro_tot_app/views/post_page.dart';
-import 'package:tro_tot_app/views/profile_page.dart';
 import 'package:tro_tot_app/views/room_detail.dart';
 
 void main() async {
@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthViewModel()),
-        ChangeNotifierProvider(create: (_) => RoomData())
+        ChangeNotifierProvider(create: (_) => RoomViewModel())
       ],
       child: ScreenUtilInit(
         // designSize: const Size(1080, 1920),
@@ -56,7 +56,11 @@ class MyApp extends StatelessWidget {
           return const MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Login Demo',
+<<<<<<< HEAD
             home: ListRoomPage(),
+=======
+            home: PostPage(),
+>>>>>>> 84fe3ca19ff75dfb1b867f746c88fe316c515f92
           );
         },
       ),
