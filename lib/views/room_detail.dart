@@ -38,7 +38,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
           ),
           title: Text(
             "Cho thue can ho ABC dasdasd",
-            style: TextStyle(color: Colors.black, fontSize: 34.sp),
+            style: TextStyle(color: Colors.black, fontSize: 16.sp),
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
           ),
@@ -46,7 +46,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
             Icon(
               Icons.more_vert,
               color: Colors.black,
-              size: 70.h,
+              size: 30.h,
             )
           ],
         ),
@@ -67,35 +67,35 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                     children: [
                       _carouselImage(context, roomData!),
                       SizedBox(
-                        height: 40.h,
+                        height: 10.h,
                       ),
                       _generalInfo(context, roomData),
                       SizedBox(
-                        height: 40.h,
+                        height: 10.h,
                       ),
                       _roomDetail(context),
                       SizedBox(
-                        height: 40.h,
+                        height: 10.h,
                       ),
                       _detailDecribe(context, roomData),
                       SizedBox(
-                        height: 40.h,
+                        height: 10.h,
                       ),
                       _Location(context),
                       SizedBox(
-                        height: 40.h,
+                        height: 10.h,
                       ),
                       _userInfor(context),
                       SizedBox(
-                        height: 40.h,
+                        height: 10.h,
                       ),
                       _chatWithSaler(context),
                       SizedBox(
-                        height: 40.h,
+                        height: 10.h,
                       ),
                       _otherPost(context),
                       SizedBox(
-                        height: 40.h,
+                        height: 10.h,
                       ),
                     ],
                   );
@@ -109,7 +109,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
   Widget _titleText(BuildContext context, String title) {
     return Text(
       title,
-      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 46.sp),
+      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18.sp),
     );
   }
 
@@ -132,7 +132,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
           ),
           itemBuilder: (BuildContext context, int index, int realIndex) {
             return Container(
-              width: 1920.w,
+              width: 360.w,
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: NetworkImage(roomData.images[index]),
@@ -145,8 +145,8 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
         Positioned(
           bottom: 12.h,
           child: Container(
-            width: 100.w,
-            height: 50.h,
+            width: 40.w,
+            height: 20.h,
             decoration: BoxDecoration(
               color: Colors.grey,
               borderRadius: BorderRadius.circular(18),
@@ -154,7 +154,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
             child: Center(
               child: Text(
                 "${_currentPageCount + 1}/${roomData.images.length}",
-                style: TextStyle(color: Colors.white, fontSize: 36.sp),
+                style: TextStyle(color: Colors.white, fontSize: 12.sp),
               ),
             ),
           ),
@@ -167,7 +167,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
     return Container(
       padding: EdgeInsets.only(left: 20.w, right: 20.w),
       // color: Colors.green,
-      width: 1920.w,
+      width: 360.w,
       // height: 800.h,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,12 +186,12 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                     text: roomData.price.toString(),
                     style: TextStyle(
                         color: Colors.red,
-                        fontSize: 42.sp,
+                        fontSize: 12.sp,
                         fontWeight: FontWeight.w600),
                     children: [
                       TextSpan(
                         text: roomData.price.toString(),
-                        style: TextStyle(color: Colors.grey, fontSize: 30.sp),
+                        style: TextStyle(color: Colors.grey, fontSize: 12.sp),
                       ),
                     ],
                   ),
@@ -202,14 +202,14 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                       Icon(
                         Icons.favorite_outline,
                         color: Colors.red,
-                        size: 60.w,
+                        size: 16.w,
                       ),
                       SizedBox(
                         width: 8.w,
                       ),
                       Text(
                         "Lưu",
-                        style: TextStyle(fontSize: 38.sp),
+                        style: TextStyle(fontSize: 12.sp),
                       )
                     ],
                   ),
@@ -224,12 +224,12 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                 Icon(
                   Icons.location_on_outlined,
                   color: Colors.grey,
-                  size: 50.w,
+                  size: 16.w,
                 ),
                 Expanded(
                   child: Text(
                     roomData.address,
-                    style: TextStyle(color: Colors.grey, fontSize: 36.sp),
+                    style: TextStyle(color: Colors.grey, fontSize: 12.sp),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                   ),
@@ -246,12 +246,12 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
               children: [
                 Icon(
                   Icons.access_time_outlined,
-                  size: 50.w,
+                  size: 16.w,
                   color: Colors.grey,
                 ),
                 Text(
                   roomData.postingDate.toString(),
-                  style: TextStyle(color: Colors.grey, fontSize: 36.sp),
+                  style: TextStyle(color: Colors.grey, fontSize: 12.sp),
                 ),
               ],
             ),
@@ -264,7 +264,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
   Widget _roomDetail(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(left: 20.w, right: 20.w),
-      width: 1920.w,
+      width: 360.w,
       // color: Colors.grey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -280,7 +280,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                 Icon(
                   Icons.zoom_out_map,
                   color: Colors.grey,
-                  size: 50.w,
+                  size: 16.w,
                 ),
                 SizedBox(
                   width: 10.w,
@@ -288,12 +288,12 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                 RichText(
                   text: TextSpan(
                       text: "Dien tich : ",
-                      style: TextStyle(fontSize: 36.sp, color: Colors.black),
+                      style: TextStyle(fontSize: 12.sp, color: Colors.black),
                       children: [
                         TextSpan(
                             text: "25 m2",
                             style:
-                                TextStyle(fontSize: 36.sp, color: Colors.black))
+                                TextStyle(fontSize: 12.sp, color: Colors.black))
                       ]),
                 )
               ],
@@ -309,7 +309,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                 Icon(
                   Icons.key_outlined,
                   color: Colors.grey,
-                  size: 50.w,
+                  size: 16.w,
                 ),
                 SizedBox(
                   width: 10.w,
@@ -317,12 +317,12 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                 RichText(
                   text: TextSpan(
                       text: "So tien coc :",
-                      style: TextStyle(fontSize: 36.sp, color: Colors.black),
+                      style: TextStyle(fontSize: 12.sp, color: Colors.black),
                       children: [
                         TextSpan(
                             text: "3.000.000 d",
                             style:
-                                TextStyle(fontSize: 36.sp, color: Colors.black))
+                                TextStyle(fontSize: 12.sp, color: Colors.black))
                       ]),
                 )
               ],
@@ -336,7 +336,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
   Widget _detailDecribe(BuildContext context, Room roomData) {
     return Container(
       padding: EdgeInsets.only(left: 20.w, right: 20.w),
-      width: 1920.w,
+      width: 360.w,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -349,7 +349,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
             child: Text(
               roomData.description,
               maxLines: null,
-              style: TextStyle(fontSize: 36.sp),
+              style: TextStyle(fontSize: 12.sp),
             ),
           ),
           Padding(
@@ -361,7 +361,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                 style: TextStyle(
                     decoration: TextDecoration.underline,
                     color: Colors.blue,
-                    fontSize: 36.sp),
+                    fontSize: 12.sp),
               ),
             ),
           )
@@ -376,7 +376,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
         left: 20.w,
         right: 20.w,
       ),
-      width: 1920.w,
+      width: 360.w,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -385,8 +385,8 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
             height: 15.h,
           ),
           SizedBox(
-            width: 1920.w,
-            height: 300.h,
+            width: 360.w,
+            height: 100.h,
             child: Image.asset(
               "assets/images/maps.jpg",
               fit: BoxFit.cover,
@@ -400,7 +400,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
   Widget _userInfor(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(left: 20.w, right: 20.w),
-      width: 1920.w,
+      width: 360.w,
       // color: Colors.grey,
       child: Row(
         children: [
@@ -419,7 +419,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                 Text(
                   "Khanh",
                   style:
-                      TextStyle(fontWeight: FontWeight.w700, fontSize: 46.sp),
+                      TextStyle(fontWeight: FontWeight.w700, fontSize: 12.sp),
                 ),
                 SizedBox(
                   height: 8.h,
@@ -428,7 +428,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                   children: [
                     Icon(
                       Icons.account_circle_outlined,
-                      size: 40.w,
+                      size: 16.w,
                       color: Colors.grey,
                     ),
                     SizedBox(
@@ -436,7 +436,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                     ),
                     Text(
                       "Cá nhân",
-                      style: TextStyle(color: Colors.grey, fontSize: 36.sp),
+                      style: TextStyle(color: Colors.grey, fontSize: 12.sp),
                     )
                   ],
                 ),
@@ -445,14 +445,14 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                     Icon(
                       Icons.brightness_1,
                       color: Colors.grey,
-                      size: 40.w,
+                      size: 16.w,
                     ),
                     SizedBox(
                       width: 8.w,
                     ),
                     Text(
                       "Hoat dong 30 phut truoc",
-                      style: TextStyle(color: Colors.grey, fontSize: 36.sp),
+                      style: TextStyle(color: Colors.grey, fontSize: 12.sp),
                     )
                   ],
                 )
@@ -474,12 +474,12 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
               children: [
                 Text(
                   "Xem trang",
-                  style: TextStyle(color: Colors.orange, fontSize: 36.sp),
+                  style: TextStyle(color: Colors.orange, fontSize: 12.sp),
                 ),
                 Icon(
                   Icons.keyboard_arrow_right,
                   color: Colors.yellow,
-                  size: 40.w,
+                  size: 16.w,
                 )
               ],
             ),
@@ -493,8 +493,8 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
     return Container(
       padding: EdgeInsets.only(left: 20.w, right: 20.w),
       // color: Colors.grey,
-      width: 1920.w,
-      height: 120.h,
+      width: 360.w,
+      height: 50.h,
       // height: 100.h,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -531,7 +531,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
       child: Text(
         text,
         style: TextStyle(
-          fontSize: 36.sp,
+          fontSize: 12.sp,
         ),
         softWrap: true,
       ),
@@ -541,8 +541,8 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
   Widget _otherPost(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(left: 20.w, right: 20.w),
-      width: 1920.w,
-      height: 750.h,
+      width: 360.w,
+      height: 280.h,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -570,7 +570,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                     text: "Xem tất cả",
                     style: TextStyle(
                       color: Colors.blue,
-                      fontSize: 36.sp,
+                      fontSize: 12.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -578,7 +578,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                       child: Icon(
                     Icons.keyboard_arrow_right,
                     color: Colors.blue,
-                    size: 46.w,
+                    size: 16.w,
                   ))
                 ],
               ),
@@ -591,13 +591,8 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
 
   Widget _otherRoomDetail(BuildContext context) {
     return Container(
-      width: 300.w,
-      height: 400.h,
-      // decoration: BoxDecoration(
-      //     border: Border.all(
-      //       width: 2.w,
-      //     ),
-      //     borderRadius: BorderRadius.circular(12)),
+      width: 150.w,
+      height: 250.h,
       margin: EdgeInsets.all(8.w),
       padding: EdgeInsets.all(8.w),
       child: Column(
@@ -605,7 +600,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
         children: [
           SizedBox(
             width: double.infinity,
-            height: 300.h,
+            height: 150.h,
             child: Image.asset(
               "assets/images/image.jpg",
               fit: BoxFit.fill,
@@ -613,22 +608,22 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
           ),
           Text(
             "Cho thue tro gan DHH",
-            style: TextStyle(fontSize: 36.sp, fontWeight: FontWeight.w500),
+            style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w500),
           ),
           Text(
             "30 m2",
-            style: TextStyle(fontSize: 34.sp, color: Colors.grey),
+            style: TextStyle(fontSize: 12.sp, color: Colors.grey),
           ),
           Text(
             "700.000d/thang",
             style: TextStyle(
                 color: Colors.red,
                 fontWeight: FontWeight.w700,
-                fontSize: 40.sp),
+                fontSize: 12.sp),
           ),
           Text(
             "Tp.Hue",
-            style: TextStyle(fontSize: 36.sp, color: Colors.grey),
+            style: TextStyle(fontSize: 12.sp, color: Colors.grey),
           ),
         ],
       ),
