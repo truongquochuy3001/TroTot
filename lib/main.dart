@@ -11,6 +11,10 @@ import 'package:tro_tot_app/views/login_page.dart';
 import 'package:tro_tot_app/views/login_page1.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tro_tot_app/views/post_page.dart';
+<<<<<<< HEAD
+=======
+import 'package:tro_tot_app/views/profile_page.dart';
+>>>>>>> ee558709faedeae58a1dc2b424c7e3b7adfd34dc
 import 'package:tro_tot_app/views/room_detail.dart';
 
 void main() async {
@@ -56,7 +60,11 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Login Demo',
+<<<<<<< HEAD
             home: PostPage(),
+=======
+            home: ProfilePage(),
+>>>>>>> ee558709faedeae58a1dc2b424c7e3b7adfd34dc
           );
         },
       ),
