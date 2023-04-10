@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:dropdown_search/dropdown_search.dart';
+
 
 class PostPage extends StatefulWidget {
   const PostPage({Key? key}) : super(key: key);
