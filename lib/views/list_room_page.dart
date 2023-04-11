@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:tro_tot_app/models/room_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
+import 'package:tro_tot_app/views/post_page.dart';
 import 'package:tro_tot_app/views/room_detail.dart';
 
 class ListRoomPage extends StatefulWidget {
@@ -61,9 +62,18 @@ class _ListRoomPageState extends State<ListRoomPage> {
               },
             ),
           ),
-          // bottomNavigationBar: BottomNavigationBar(
-          //   items: [],
-          // ),
+          bottomNavigationBar: BottomNavigationBar(
+           
+
+            elevation: 0,
+            type: BottomNavigationBarType.fixed,
+            items: [
+              BottomNavigationBarItem(icon: Icon(Icons.home_filled, color: Colors.blue,), label: "Trang chủ", ),
+              BottomNavigationBarItem(icon: Icon(Icons.article_outlined, color: Colors.blue,), label: "Quản lý tin"),
+              BottomNavigationBarItem(icon: Icon(Icons.post_add_outlined, color: Colors.blue,), label: "Đăng tin", ),
+              BottomNavigationBarItem(icon: Icon(Icons.account_circle_outlined, color: Colors.blue,), label: "Tài khoản"),
+            ],
+          ),
         );
       },
     );
@@ -125,24 +135,29 @@ class _ListRoomPageState extends State<ListRoomPage> {
   Widget _searchPage(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(onPressed: (){ Navigator.pop(context);}, icon: const Icon(Icons.arrow_back_ios, color: Colors.white,)),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: Colors.white,
+            )),
         elevation: 0,
         titleSpacing: 1.w,
         title: TextField(
-
-          style: const TextStyle(color: Colors.black, ),
+          style: const TextStyle(
+            color: Colors.black,
+          ),
           decoration: InputDecoration(
-
             filled: true,
             fillColor: Colors.white,
             hintText: "Search",
-            hintStyle: TextStyle(color: Colors.black , fontSize: 14.sp ),
+            hintStyle: TextStyle(color: Colors.black, fontSize: 14.sp),
             // enabledBorder: OutlineInputBorder(
             //     borderRadius: BorderRadius.circular(16.w),
             //
             // ),
-
-
           ),
         ),
       ),
