@@ -475,11 +475,11 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
               children: [
                 Text(
                   "Xem trang",
-                  style: TextStyle(color: Colors.orange, fontSize: 12.sp),
+                  style: TextStyle(color: Colors.blue , fontSize: 12.sp),
                 ),
                 Icon(
                   Icons.keyboard_arrow_right,
-                  color: Colors.yellow,
+                  color: Colors.blue,
                   size: 16.w,
                 )
               ],
@@ -543,7 +543,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
     return Container(
       padding: EdgeInsets.only(left: 20.w, right: 20.w),
       width: 360.w,
-      height: 280.h,
+      height: 220.h,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

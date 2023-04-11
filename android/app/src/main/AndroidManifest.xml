@@ -4,6 +4,8 @@
         android:label="tro_tot_app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyDNI_ZWPqvdS6r6gPVO50I4TlYkfkZdXh8"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
