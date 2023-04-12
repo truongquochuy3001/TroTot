@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
           return const MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Login Demo',
-            home: ProfilePage(),
+            home: PostPage(),
           );
         },
       ),
