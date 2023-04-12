@@ -204,7 +204,6 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _listPost(BuildContext context) {
     return Container(
       width: 360.w,
-      height: 400.h,
       color: Colors.white,
       child: Column(
         children: [
@@ -262,35 +261,33 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
           ),
-          Expanded(
-            child: ListView.builder(
-              // itemCount: 2,
-              shrinkWrap: true,
-              // physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (BuildContext context, int index) {
-                return Column(
-                  children: [
-                    // _roomInfor(context),
-                    _roomInfor(context),
-                    _roomInfor(context),
-                    _roomInfor(context),
-                    _roomInfor(context),
-                    _roomInfor(context),
-                    _roomInfor(context),
-                    _roomInfor(context),
-                    _roomInfor(context),
-                    _roomInfor(context),
-                    _roomInfor(context),
-                    _roomInfor(context),
-                    _roomInfor(context),
-                    _roomInfor(context),
-                    _roomInfor(context),
-                    _roomInfor(context),
-                    _roomInfor(context),
-                  ],
-                );
-              },
-            ),
+          ListView.builder(
+            itemCount: 8,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (BuildContext context, int index) {
+              return Column(
+                children: [
+                  // _roomInfor(context),
+                  _roomInfor(context),
+                  _roomInfor(context),
+                  _roomInfor(context),
+                  _roomInfor(context),
+                  _roomInfor(context),
+                  _roomInfor(context),
+                  _roomInfor(context),
+                  _roomInfor(context),
+                  // _roomInfor(context),
+                  // _roomInfor(context),
+                  // _roomInfor(context),
+                  // _roomInfor(context),
+                  // _roomInfor(context),
+                  // _roomInfor(context),
+                  // _roomInfor(context),
+                  // _roomInfor(context),
+                ],
+              );
+            },
           ),
           // _moreInfoButton(context)
         ],
