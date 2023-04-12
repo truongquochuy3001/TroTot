@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tro_tot_app/models/room_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
@@ -21,6 +22,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
     // TODO: implement initState
     super.initState();
     print(widget.id);
+    getRoom = context.read<RoomViewModel>().getRoom(widget.id);
   }
 
   late Future getRoom;
@@ -54,7 +56,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
         body: SingleChildScrollView(child: Consumer<RoomViewModel>(
           builder: (context, value, child) {
             return FutureBuilder(
-              future: value.getRoom(widget.id),
+              future: getRoom,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -82,7 +84,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                       SizedBox(
                         height: 10.h,
                       ),
-                      _Location(context),
+                      _location(context, roomData),
                       SizedBox(
                         height: 10.h,
                       ),
@@ -371,7 +373,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
     );
   }
 
-  Widget _Location(BuildContext context) {
+  Widget _location(BuildContext context, Room roomData) {
     return Container(
       padding: EdgeInsets.only(
         left: 12.w,
@@ -388,10 +390,23 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
           SizedBox(
             width: 360.w,
             height: 100.h,
-            child: Image.asset(
-              "assets/images/maps.jpg",
-              fit: BoxFit.cover,
-            ),
+            // child: Image.asset(
+            //   "assets/images/maps.jpg",
+            //   fit: BoxFit.cover,
+            // ),
+            child: GoogleMap(
+                zoomControlsEnabled: false,
+                myLocationEnabled: true,
+                markers: {
+                  Marker(
+                      markerId: MarkerId(''),
+                      position: LatLng(roomData.latitude, roomData.longitude))
+                },
+                // markers: Set<Marker>.of(Marker(markerId: markerId)),
+                mapToolbarEnabled: true,
+                initialCameraPosition: CameraPosition(
+                    zoom: 13,
+                    target: LatLng(roomData.latitude, roomData.longitude))),
           )
         ],
       ),
@@ -475,7 +490,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
               children: [
                 Text(
                   "Xem trang",
-                  style: TextStyle(color: Colors.blue , fontSize: 12.sp),
+                  style: TextStyle(color: Colors.blue, fontSize: 12.sp),
                 ),
                 Icon(
                   Icons.keyboard_arrow_right,

@@ -11,6 +11,8 @@ class Room {
   final bool status;
   final String description;
   final bool furniture;
+  final double longitude;
+  final double latitude;
 
   Room({
     this.id,
@@ -25,6 +27,8 @@ class Room {
     required this.status,
     required this.description,
     required this.furniture,
+    required this.longitude,
+    required this.latitude,
   });
 
   factory Room.fromJson(Map<String, dynamic> json) {
@@ -41,6 +45,8 @@ class Room {
       status: json['status'],
       description: json['description'],
       furniture: json['furniture'],
+      longitude: json['longitude'],
+      latitude: json['latitude'],
     );
   }
 
@@ -57,6 +63,8 @@ class Room {
       'status': status,
       'description': description,
       'furniture': furniture,
+      'longitude': longitude,
+      'latitude': latitude,
     };
     if (id != null) {
       data['id'] = id;
