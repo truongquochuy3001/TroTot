@@ -47,10 +47,10 @@ class City {
 
 class District {
   final String name;
-  final int code;
+  final int? code;
   final String divisionType;
   final String codename;
-  final int provinceCode;
+  final int? provinceCode;
   final List<Ward> wards;
 
   District({
@@ -92,10 +92,10 @@ class District {
 
 class Ward {
   final String name;
-  final int code;
+  final int? code;
   final String divisionType;
   final String codename;
-  final int districtCode;
+  final int? districtCode;
 
   Ward({
     required this.name,
