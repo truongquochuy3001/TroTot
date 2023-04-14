@@ -23,7 +23,7 @@ class _PostPageState extends State<PostPage> {
   String _selected = 'Loại phòng';
   String _selectedFur = "Không";
 
-  bool _isReset = false;
+  bool isSelected = true;
 
   late Future _getCities;
   late ProvinceViewModel _cityProvider;
@@ -42,14 +42,33 @@ class _PostPageState extends State<PostPage> {
   StreamController<Ward> wardController = StreamController<Ward>.broadcast();
 
   void _selectedCity(City city) {
-    cityController.sink.add(city);
+    if (selectedCity == null) {}
+    if (!cityController.isClosed) cityController.sink.add(city);
     selectedCity = city;
     selectedDistrict = null;
+    selectedWard = null;
+
+    districtController.sink.add(District(
+        name: "",
+        code: 0,
+        divisionType: "",
+        codename: "0",
+        provinceCode: 0,
+        wards: []));
+
+    wardController.sink.add(
+      Ward(name: "", code: 0, divisionType: "", codename: "0", districtCode: 0),
+    );
   }
 
   void _selectedDistrict(District district) {
     districtController.sink.add(district);
     selectedDistrict = district;
+    selectedWard = null;
+
+    wardController.sink.add(
+      Ward(name: "", code: 0, divisionType: "", codename: "0", districtCode: 0),
+    );
   }
 
   void _selectedWard(Ward ward) {
@@ -240,90 +259,72 @@ class _PostPageState extends State<PostPage> {
     return GestureDetector(
       onTap: () {
         showModalBottomSheet(
+          isScrollControlled: true,
           context: context,
           enableDrag: true,
           builder: (context) {
             return SingleChildScrollView(
-              child: Column(
-                children: [
-                  Container(
-                    alignment: Alignment.center,
-                    width: 360.w,
-                    height: 40.h,
-                    color: Colors.blue,
-                    child: Text(
-                      "Địa chỉ",
-                      style: TextStyle(color: Colors.white, fontSize: 16.sp),
+              child: SizedBox(
+                height: 640.h,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 20.h,
                     ),
-                  ),
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                  _citySelect(context),
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                  _districtSelect(context),
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                  _wardSelect(context),
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                  _roadSelect(context),
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    margin: EdgeInsets.only(left: 12.w, right: 12.w),
-                    padding: EdgeInsets.only(left: 8.w, right: 8.w),
-                    width: 360.w,
-                    height: 40.h,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.w),
-                      border: Border.all(color: Colors.blue, width: 1.w),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Số nhà",
-                          style: TextStyle(
-                              fontSize: 14.sp,
-                              color: const Color.fromARGB(255, 128, 128, 137)),
-                        ),
-                        Icon(
-                          Icons.arrow_drop_down,
-                          size: 26.w,
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 12.h,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 12.w, right: 12.w),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.w)),
-                          elevation: 0,
-                          backgroundColor: Colors.blue,
-                          fixedSize: Size(360.w, 40.h)),
-                      onPressed: () {},
+                    Container(
+                      alignment: Alignment.center,
+                      width: 360.w,
+                      height: 40.h,
+                      color: Colors.blue,
                       child: Text(
-                        "Hoàn thành",
-                        style: TextStyle(color: Colors.white, fontSize: 14.sp),
+                        "Địa chỉ",
+                        style: TextStyle(color: Colors.white, fontSize: 16.sp),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 5.h,
-                  ),
-                ],
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _citySelect(context),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _districtSelect(context),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _wardSelect(context),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _roadInput(context),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    SizedBox(
+                      height: 12.h,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 12.w, right: 12.w),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.w)),
+                            elevation: 0,
+                            backgroundColor: Colors.blue,
+                            fixedSize: Size(360.w, 40.h)),
+                        onPressed: () {},
+                        child: Text(
+                          "Hoàn thành",
+                          style:
+                              TextStyle(color: Colors.white, fontSize: 14.sp),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5.h,
+                    ),
+                  ],
+                ),
               ),
             );
           },
@@ -372,55 +373,62 @@ class _PostPageState extends State<PostPage> {
               List<City> citiesData = value.GetCities;
               return GestureDetector(
                 onTap: () {
-                  _isReset = !_isReset;
                   showModalBottomSheet(
+                    enableDrag: true,
+                    isScrollControlled: true,
                     context: context,
                     builder: (context) {
-                      return SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            Container(
-                              alignment: Alignment.center,
-                              width: 360.w,
-                              height: 40.h,
-                              color: Colors.blue,
-                              child: Text(
-                                "Chọn tỉnh, thành phố",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 16.sp),
+                      return SizedBox(
+                        height: 640.h,
+                        child: SingleChildScrollView(
+                          physics: NeverScrollableScrollPhysics(),
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 20.h,
                               ),
-                            ),
-                            SizedBox(
-                                height: 640.h,
-                                child: ListView.separated(
-                                  separatorBuilder: (context, index) {
-                                    return Divider();
-                                  },
-                                  shrinkWrap: true,
-                                  // physics:
-                                  //     NeverScrollableScrollPhysics(),
-                                  itemCount: citiesData.length,
-                                  itemBuilder: (context, index) {
-                                    City city = citiesData[index];
+                              Container(
+                                alignment: Alignment.center,
+                                width: 360.w,
+                                height: 40.h,
+                                color: Colors.blue,
+                                child: Text(
+                                  "Chọn tỉnh, thành phố",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 16.sp),
+                                ),
+                              ),
+                              SizedBox(
+                                  height: 640.h,
+                                  child: ListView.separated(
+                                    separatorBuilder: (context, index) {
+                                      return Divider();
+                                    },
+                                    // shrinkWrap: true,
+                                    // physics:
+                                    //     const NeverScrollableScrollPhysics(),
+                                    itemCount: citiesData.length,
+                                    itemBuilder: (context, index) {
+                                      City city = citiesData[index];
 
-                                    return GestureDetector(
-                                      onTap: () {
-                                        _selectedCity(city);
-                                        // _cityCode = city.code;
-                                        // print(_cityCode);
-                                        Navigator.pop(context);
-                                      },
-                                      child: Padding(
-                                        padding: EdgeInsets.only(left: 12.w),
-                                        child: Text(
-                                          city.name,
-                                          style: TextStyle(),
+                                      return GestureDetector(
+                                        onTap: () {
+                                          _selectedCity(city);
+
+                                          Navigator.pop(context);
+                                        },
+                                        child: Padding(
+                                          padding: EdgeInsets.only(left: 12.w),
+                                          child: Text(
+                                            city.name,
+                                            style: TextStyle(),
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                ))
-                          ],
+                                      );
+                                    },
+                                  ))
+                            ],
+                          ),
                         ),
                       );
                     },
@@ -445,7 +453,7 @@ class _PostPageState extends State<PostPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Chon tinh thanh pho",
+                              "Chọn tỉnh, thành phố",
                               style: TextStyle(
                                   fontSize: 14.sp,
                                   color:
@@ -500,59 +508,74 @@ class _PostPageState extends State<PostPage> {
   Widget _districtSelect(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        showModalBottomSheet(
-          context: context,
-          builder: (context) {
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  Container(
-                    alignment: Alignment.center,
-                    width: 360.w,
-                    height: 40.h,
-                    color: Colors.blue,
-                    child: Text(
-                      "Chọn quận, huyện",
-                      style: TextStyle(color: Colors.white, fontSize: 16.sp),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 640.h,
-                    child: ListView.separated(
-                        physics: NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          District district = selectedCity!.districts[index];
+        if (selectedCity == null) {
+          districtController.sink.addError("vui long nhap tinh, thahn pho");
+        } else {
+          showModalBottomSheet(
+            isScrollControlled: true,
+            context: context,
+            builder: (context) {
+              return SizedBox(
+                height: 640.h,
+                child: SingleChildScrollView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 20.h,
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        width: 360.w,
+                        height: 40.h,
+                        color: Colors.blue,
+                        child: Text(
+                          "Chọn quận, huyện",
+                          style:
+                              TextStyle(color: Colors.white, fontSize: 16.sp),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 640.h,
+                        child: ListView.separated(
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              District district =
+                                  selectedCity!.districts[index];
 
-                          return GestureDetector(
-                            onTap: () {
-                              _selectedDistrict(district);
-                              Navigator.pop(context);
+                              return GestureDetector(
+                                onTap: () {
+                                  _selectedDistrict(district);
+                                  Navigator.pop(context);
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 12.w),
+                                  child: Text(
+                                    district.name,
+                                    style: TextStyle(),
+                                  ),
+                                ),
+                              );
                             },
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 12.w),
-                              child: Text(
-                                district.name,
-                                style: TextStyle(),
-                              ),
-                            ),
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return Divider();
-                        },
-                        itemCount: selectedCity!.districts.length),
-                  )
-                ],
-              ),
-            );
-          },
-        );
+                            separatorBuilder: (context, index) {
+                              return Divider();
+                            },
+                            itemCount: selectedCity!.districts.length),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        }
       },
       child: StreamBuilder<District>(
         stream: districtController.stream,
         initialData: selectedDistrict,
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
+          if (!snapshot.hasData || snapshot.data!.code == 0) {
+            //
             return Container(
               alignment: Alignment.centerLeft,
               margin: EdgeInsets.only(left: 12.w, right: 12.w),
@@ -568,6 +591,33 @@ class _PostPageState extends State<PostPage> {
                 children: [
                   Text(
                     "Chọn quận, huyện, thị xã",
+                    style: TextStyle(
+                        fontSize: 14.sp,
+                        color: const Color.fromARGB(255, 128, 128, 137)),
+                  ),
+                  Icon(
+                    Icons.arrow_drop_down,
+                    size: 26.w,
+                  ),
+                ],
+              ),
+            );
+          } else if (snapshot.hasData) {
+            return Container(
+              alignment: Alignment.centerLeft,
+              margin: EdgeInsets.only(left: 12.w, right: 12.w),
+              padding: EdgeInsets.only(left: 8.w, right: 8.w),
+              width: 360.w,
+              height: 40.h,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.w),
+                border: Border.all(color: Colors.blue, width: 1.w),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Loi",
                     style: TextStyle(
                         fontSize: 14.sp,
                         color: const Color.fromARGB(255, 128, 128, 137)),
@@ -615,101 +665,143 @@ class _PostPageState extends State<PostPage> {
   Widget _wardSelect(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        showModalBottomSheet(
-          context: context,
-          builder: (context) {
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  Container(
-                    alignment: Alignment.center,
-                    width: 360.w,
-                    height: 40.h,
-                    color: Colors.blue,
-                    child: Text(
-                      "Chọn phường, xã, thị trấn",
-                      style: TextStyle(color: Colors.white, fontSize: 16.sp),
+        if (selectedCity == null || selectedDistrict == null) {
+        } else {
+          showModalBottomSheet(
+            isScrollControlled: true,
+            context: context,
+            builder: (context) {
+              return SafeArea(
+                child: SizedBox(
+                  height: 640.h,
+                  child: SingleChildScrollView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    child: Column(
+                      children: [
+                        // SizedBox(height: 20.h,),
+                        Container(
+                          alignment: Alignment.center,
+                          width: 360.w,
+                          height: 40.h,
+                          color: Colors.blue,
+                          child: Text(
+                            "Chọn phường, xã, thị trấn",
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 16.sp),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 640.h,
+                          child: ListView.separated(
+                              // physics: NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                Ward ward = selectedDistrict!.wards[index];
+                                return GestureDetector(
+                                    onTap: () {
+                                      _selectedWard(ward);
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text(ward.name));
+                              },
+                              separatorBuilder: (context, index) {
+                                return Divider();
+                              },
+                              itemCount: selectedDistrict!.wards.length),
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(
-                    height: 640.h,
-                    child: ListView.separated(
-                        physics: NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          Ward ward = selectedDistrict!.wards[index];
-                          return Text(ward.name);
-                        },
-                        separatorBuilder: (context, index) {
-                          return Divider();
-                        },
-                        itemCount: selectedDistrict!.wards.length),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
+                ),
+              );
+            },
+          );
+        }
       },
       child: StreamBuilder<Ward>(
         stream: wardController.stream,
         initialData: selectedWard,
         builder: (context, snapshot) {
-          return Container(
-            alignment: Alignment.centerLeft,
-            margin: EdgeInsets.only(left: 12.w, right: 12.w),
-            padding: EdgeInsets.only(left: 8.w, right: 8.w),
-            width: 360.w,
-            height: 40.h,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.w),
-              border: Border.all(color: Colors.blue, width: 1.w),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Chọn phường, xã, thị trấn",
-                  style: TextStyle(
-                      fontSize: 14.sp,
-                      color: const Color.fromARGB(255, 128, 128, 137)),
-                ),
-                Icon(
-                  Icons.arrow_drop_down,
-                  size: 26.w,
-                ),
-              ],
-            ),
-          );
+          if (!snapshot.hasData || snapshot.data!.code == 0) {
+            return Container(
+              alignment: Alignment.centerLeft,
+              margin: EdgeInsets.only(left: 12.w, right: 12.w),
+              padding: EdgeInsets.only(left: 8.w, right: 8.w),
+              width: 360.w,
+              height: 40.h,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.w),
+                border: Border.all(color: Colors.blue, width: 1.w),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Chọn phường, xã, thị trấn",
+                    style: TextStyle(
+                        fontSize: 14.sp,
+                        color: const Color.fromARGB(255, 128, 128, 137)),
+                  ),
+                  Icon(
+                    Icons.arrow_drop_down,
+                    size: 26.w,
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return Container(
+              alignment: Alignment.centerLeft,
+              margin: EdgeInsets.only(left: 12.w, right: 12.w),
+              padding: EdgeInsets.only(left: 8.w, right: 8.w),
+              width: 360.w,
+              height: 40.h,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.w),
+                border: Border.all(color: Colors.blue, width: 1.w),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    selectedWard!.name,
+                    style: TextStyle(
+                        fontSize: 14.sp,
+                        color: const Color.fromARGB(255, 128, 128, 137)),
+                  ),
+                  Icon(
+                    Icons.arrow_drop_down,
+                    size: 26.w,
+                  ),
+                ],
+              ),
+            );
+          }
         },
       ),
     );
   }
 
-  Widget _roadSelect(BuildContext context) {
-    return Container(
-      alignment: Alignment.centerLeft,
-      margin: EdgeInsets.only(left: 12.w, right: 12.w),
-      padding: EdgeInsets.only(left: 8.w, right: 8.w),
-      width: 360.w,
-      height: 40.h,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.w),
-        border: Border.all(color: Colors.blue, width: 1.w),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            "Tên đường",
-            style: TextStyle(
-                fontSize: 14.sp,
-                color: const Color.fromARGB(255, 128, 128, 137)),
-          ),
-          Icon(
-            Icons.arrow_drop_down,
-            size: 26.w,
-          ),
-        ],
+  Widget _roadInput(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: 12.w, right: 12.w),
+      child: TextFormField(
+        decoration: InputDecoration(
+            constraints: BoxConstraints(
+              minWidth: 50.h,
+              maxHeight: 360.w,
+            ),
+            label: Text("Nhập đường"),
+            floatingLabelAlignment: FloatingLabelAlignment.start,
+            border: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue, width: 1.w),
+              borderRadius: BorderRadius.circular(10.w),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue, width: 1.w),
+              borderRadius: BorderRadius.circular(10.w),
+            )),
+        style: TextStyle(
+            fontSize: 14.sp, color: const Color.fromARGB(255, 128, 128, 137)),
       ),
     );
   }
@@ -829,6 +921,7 @@ class _PostPageState extends State<PostPage> {
     return Padding(
       padding: EdgeInsets.only(left: 12.w, right: 12.w),
       child: TextFormField(
+        keyboardType: TextInputType.number,
         // style: TextStyle(fontSize: 12.w),
         decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
