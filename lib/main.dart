@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:tro_tot_app/models/room_model.dart';
 import 'package:tro_tot_app/view_models.dart/auth_view_model.dart';
@@ -17,6 +18,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tro_tot_app/views/post_page.dart';
 import 'package:tro_tot_app/views/profile_page.dart';
 import 'package:tro_tot_app/views/room_detail.dart';
+import 'package:tro_tot_app/views/test_image.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,10 +40,10 @@ class MyApp extends StatelessWidget {
         // designSize: const Size(1080, 1920),
         designSize: const Size(360, 640),
         builder: (BuildContext context, Widget? child) {
-          return const MaterialApp(
+          return  MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Login Demo',
-            home: PostPage(),
+            home:  PostPage(),
           );
         },
       ),

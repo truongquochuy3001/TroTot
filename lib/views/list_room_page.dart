@@ -67,7 +67,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
 
             elevation: 0,
             type: BottomNavigationBarType.fixed,
-            items: [
+            items: const [
               BottomNavigationBarItem(icon: Icon(Icons.home_filled, color: Colors.blue,), label: "Trang chủ", ),
               BottomNavigationBarItem(icon: Icon(Icons.article_outlined, color: Colors.blue,), label: "Quản lý tin"),
               BottomNavigationBarItem(icon: Icon(Icons.post_add_outlined, color: Colors.blue,), label: "Đăng tin", ),

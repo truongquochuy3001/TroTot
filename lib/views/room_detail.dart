@@ -395,6 +395,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
             //   fit: BoxFit.cover,
             // ),
             child: GoogleMap(
+
                 zoomControlsEnabled: false,
                 myLocationEnabled: true,
                 markers: {
