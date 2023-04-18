@@ -1,22 +1,11 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:tro_tot_app/models/room_model.dart';
 import 'package:tro_tot_app/view_models.dart/auth_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/province_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
-import 'package:tro_tot_app/views/add_room_test.dart';
-import 'package:tro_tot_app/views/gg_map_test.dart';
-import 'package:tro_tot_app/views/home_page.dart';
-import 'package:tro_tot_app/views/list_room_page.dart';
-import 'package:tro_tot_app/views/login_page.dart';
-import 'package:tro_tot_app/views/login_page1.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tro_tot_app/views/post_page.dart';
-import 'package:tro_tot_app/views/profile_page.dart';
-import 'package:tro_tot_app/views/room_detail.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

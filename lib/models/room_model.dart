@@ -1,5 +1,8 @@
 class Room {
   final String? id;
+  final int cityId;
+  final int districtId;
+  final int wardId;
   final String name;
   final String address;
   final int price;
@@ -7,7 +10,7 @@ class Room {
   final int capacity;
   final List<String> images;
   final String image;
-  final DateTime postingDate;
+  final DateTime? postingDate;
   final bool status;
   final String description;
   final bool furniture;
@@ -16,6 +19,9 @@ class Room {
 
   Room({
     this.id,
+    required this.cityId,
+    required this.districtId,
+    required this.wardId,
     required this.name,
     required this.address,
     required this.price,
@@ -23,7 +29,7 @@ class Room {
     required this.capacity,
     required this.images,
     required this.image,
-    required this.postingDate,
+     this.postingDate,
     required this.status,
     required this.description,
     required this.furniture,
@@ -34,6 +40,9 @@ class Room {
   factory Room.fromJson(Map<String, dynamic> json) {
     return Room(
       id: json['id'],
+      cityId: json['cityId'],
+      districtId: json['districtId'],
+      wardId: json['wardId'],
       name: json['name'],
       address: json['address'],
       price: json['price'],
@@ -52,6 +61,9 @@ class Room {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {
+      'cityId' : cityId,
+      'districtId' : districtId,
+      'wardId' : wardId,
       'name': name,
       'address': address,
       'price': price,

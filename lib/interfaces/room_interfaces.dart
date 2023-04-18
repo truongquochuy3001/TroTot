@@ -4,4 +4,6 @@ abstract class IRoomServices {
   Future<List<Room>> getRooms();
 
   Future<Room?> getRoom(String id);
+
+  void addRoom(Room room);
 }

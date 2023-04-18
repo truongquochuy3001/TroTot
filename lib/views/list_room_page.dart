@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:tro_tot_app/models/room_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
-import 'package:tro_tot_app/views/post_page.dart';
+
 import 'package:tro_tot_app/views/room_detail.dart';
 
 class ListRoomPage extends StatefulWidget {
@@ -67,7 +67,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
 
             elevation: 0,
             type: BottomNavigationBarType.fixed,
-            items: [
+            items: const [
               BottomNavigationBarItem(icon: Icon(Icons.home_filled, color: Colors.blue,), label: "Trang chủ", ),
               BottomNavigationBarItem(icon: Icon(Icons.article_outlined, color: Colors.blue,), label: "Quản lý tin"),
               BottomNavigationBarItem(icon: Icon(Icons.post_add_outlined, color: Colors.blue,), label: "Đăng tin", ),
