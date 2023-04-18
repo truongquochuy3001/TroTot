@@ -40,7 +40,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
             color: Colors.black,
           ),
           title: Text(
-            "Cho thue can ho ABC dasdasd",
+            "Chi tiết",
             style: TextStyle(color: Colors.black, fontSize: 16.sp),
             overflow: TextOverflow.ellipsis,
             maxLines: 1,

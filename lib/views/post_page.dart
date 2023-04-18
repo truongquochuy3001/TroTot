@@ -2,12 +2,15 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:tro_tot_app/models/province_model.dart';
+import 'package:tro_tot_app/models/room_model.dart';
 import 'package:tro_tot_app/view_models.dart/province_view_model.dart';
+import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
 
 class PostPage extends StatefulWidget {
   const PostPage({Key? key}) : super(key: key);
@@ -17,17 +20,25 @@ class PostPage extends StatefulWidget {
 }
 
 class _PostPageState extends State<PostPage> {
-  String _selected = 'Loại phòng';
+  RoomViewModel _roomViewModel = RoomViewModel();
+
+  late Room room;
+
+  late int cityId;
+
+  late int districtId;
+  late int wardId;
+
+  String _selectedRoomType = 'Loại phòng';
   String _selectedFur = "Không";
 
   bool isSelected = true;
   bool isPicked = false;
 
   late Future _getCities;
-  late ProvinceViewModel _cityProvider;
 
-  List<String> _items = ['Phòng trọ', 'Nhà ở', 'Căn hộ/chung cư'];
-  List<String> _furStatus = ["Có", "Không"];
+  final List<String> _items = ['Phòng trọ', 'Nhà ở', 'Căn hộ/chung cư'];
+  final List<String> _furStatus = ["Có", "Không"];
   List<File?> selectedImages = [];
 
   final picker = ImagePicker();
@@ -40,7 +51,8 @@ class _PostPageState extends State<PostPage> {
   StreamController<District> districtController =
       StreamController<District>.broadcast();
   StreamController<Ward> wardController = StreamController<Ward>.broadcast();
-  StreamController<List<File?>> imageController = StreamController<List<File?>>.broadcast();
+  StreamController<List<File?>> imageController =
+      StreamController<List<File?>>.broadcast();
 
   void _selectedCity(City city) {
     if (selectedCity == null) {}
@@ -77,8 +89,6 @@ class _PostPageState extends State<PostPage> {
     selectedWard = ward;
   }
 
-
-
   Future getImages() async {
     final pickedFile = await picker.pickMultiImage();
     List<XFile> xfilePick = pickedFile;
@@ -102,9 +112,6 @@ class _PostPageState extends State<PostPage> {
     // TODO: implement initState
     super.initState();
     _getCities = context.read<ProvinceViewModel>().getCities();
-    _cityProvider = context.read<ProvinceViewModel>();
-    // _districtProvider =
-    //     context.read<ProvinceViewModel>().getDistricts(_cityCode);
   }
 
   @override
@@ -153,7 +160,18 @@ class _PostPageState extends State<PostPage> {
               SizedBox(
                 height: 10.h,
               ),
-              _sizeAndPriceInput(context, "Diện tích"),
+
+              _sizeInput(context),
+              SizedBox(
+                height: 10.h,
+              ),
+              _priceInput(context),
+              SizedBox(
+                height: 10.h,
+              ),
+              _titleText(context, "Tiêu đề tin đăng và mô tả chi tiết"),
+              SizedBox(height: 10.h,),
+              _titleInput(context),
               SizedBox(
                 height: 10.h,
               ),
@@ -221,7 +239,7 @@ class _PostPageState extends State<PostPage> {
                               child: Text(_items[index]),
                               onTap: () {
                                 setState(() {
-                                  _selected = _items[index];
+                                  _selectedRoomType = _items[index];
                                 });
                                 Navigator.of(context).pop();
                               });
@@ -261,7 +279,7 @@ class _PostPageState extends State<PostPage> {
                       color: const Color.fromARGB(255, 128, 128, 137)),
                 ),
                 Text(
-                  _selected,
+                  _selectedRoomType,
                   style: TextStyle(fontSize: 12.sp),
                 )
               ],
@@ -333,7 +351,9 @@ class _PostPageState extends State<PostPage> {
                             elevation: 0,
                             backgroundColor: Colors.blue,
                             fixedSize: Size(360.w, 40.h)),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
                         child: Text(
                           "Hoàn thành",
                           style:
@@ -531,18 +551,18 @@ class _PostPageState extends State<PostPage> {
       onTap: () {
         if (selectedCity == null) {
           Fluttertoast.showToast(
-              msg: "Vui lòng chọn tỉnh, thành phố trước",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 16.w,
+            msg: "Vui lòng chọn tỉnh, thành phố trước",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.w,
           );
 
           districtController.sink.addError("vui long nhap tinh, thahn pho");
-          
-           ScaffoldMessenger.of(context).showSnackBar(
+
+          ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Vui long chon tinh, thanh pho')));
           Text("a");
         } else {
@@ -637,10 +657,7 @@ class _PostPageState extends State<PostPage> {
                 ],
               ),
             );
-
-
-          }
-          else if (snapshot.hasError) {
+          } else if (snapshot.hasError) {
             return Container(
               alignment: Alignment.centerLeft,
               margin: EdgeInsets.only(left: 12.w, right: 12.w),
@@ -667,9 +684,7 @@ class _PostPageState extends State<PostPage> {
                 ],
               ),
             );
-          }
-
-          else {
+          } else {
             return Container(
               alignment: Alignment.centerLeft,
               margin: EdgeInsets.only(left: 12.w, right: 12.w),
@@ -705,7 +720,7 @@ class _PostPageState extends State<PostPage> {
   Widget _wardSelect(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (selectedCity ==null && selectedDistrict == null){
+        if (selectedCity == null && selectedDistrict == null) {
           Fluttertoast.showToast(
             msg: "Vui lòng chọn tỉnh, thành phố và quận, huyện, thị xã",
             toastLength: Toast.LENGTH_SHORT,
@@ -717,7 +732,7 @@ class _PostPageState extends State<PostPage> {
           );
         }
 
-        if ( selectedCity == null) {
+        if (selectedCity == null) {
           Fluttertoast.showToast(
             msg: "Vui lòng chọn tỉnh, thành phố trước",
             toastLength: Toast.LENGTH_SHORT,
@@ -726,9 +741,10 @@ class _PostPageState extends State<PostPage> {
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.w,
-          );}
+          );
+        }
 
-        if ( selectedDistrict == null) {
+        if (selectedDistrict == null) {
           Fluttertoast.showToast(
             msg: "Vui lòng chọn quận, huyện, thị xã trước",
             toastLength: Toast.LENGTH_SHORT,
@@ -738,13 +754,7 @@ class _PostPageState extends State<PostPage> {
             textColor: Colors.white,
             fontSize: 16.w,
           );
-
-        }
-
-
-
-
-        else {
+        } else {
           showModalBottomSheet(
             isScrollControlled: true,
             context: context,
@@ -970,11 +980,17 @@ class _PostPageState extends State<PostPage> {
                           Positioned(
                               right: 5.w,
                               top: 0,
-                              child: GestureDetector( onTap: () {
-                                setState(() {
-                                  selectedImages.removeAt(index);
-                                });
-                              },child: Icon(Icons.remove_circle, color: Colors.red, size: 16.w,)))
+                              child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedImages.removeAt(index);
+                                    });
+                                  },
+                                  child: Icon(
+                                    Icons.remove_circle,
+                                    color: Colors.red,
+                                    size: 16.w,
+                                  )))
                         ],
                       );
                     }
@@ -1075,7 +1091,37 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
-  Widget _sizeAndPriceInput(BuildContext context, String label) {
+  Widget _titleInput(BuildContext context){
+    return Padding(
+      padding: EdgeInsets.only(left: 12.w, right: 12.w),
+      child: TextFormField(
+
+        // style: TextStyle(fontSize: 12.w),
+        decoration: InputDecoration(
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.blue,
+                width: 1.w,
+              ),
+              borderRadius: BorderRadius.circular(10.w)),
+          hoverColor: Colors.blue,
+          constraints: BoxConstraints(maxHeight: 50.h, maxWidth: 360.w),
+          floatingLabelAlignment: FloatingLabelAlignment.start,
+          labelText: "Tiêu đề",
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.w),
+            borderSide: BorderSide(
+              width: 0.5.w,
+              color: Colors.blue,
+            ),
+          ),
+        ),
+      ),
+    );
+
+  }
+
+  Widget _sizeInput(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(left: 12.w, right: 12.w),
       child: TextFormField(
@@ -1091,7 +1137,7 @@ class _PostPageState extends State<PostPage> {
           hoverColor: Colors.blue,
           constraints: BoxConstraints(maxHeight: 50.h, maxWidth: 360.w),
           floatingLabelAlignment: FloatingLabelAlignment.start,
-          labelText: label,
+          labelText: "Diện tích",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8.w),
             borderSide: BorderSide(
@@ -1102,6 +1148,36 @@ class _PostPageState extends State<PostPage> {
         ),
       ),
     );
+  }
+
+  Widget _priceInput(BuildContext context){
+    return Padding(
+      padding: EdgeInsets.only(left: 12.w, right: 12.w),
+      child: TextFormField(
+        keyboardType: TextInputType.number,
+        // style: TextStyle(fontSize: 12.w),
+        decoration: InputDecoration(
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.blue,
+                width: 1.w,
+              ),
+              borderRadius: BorderRadius.circular(10.w)),
+          hoverColor: Colors.blue,
+          constraints: BoxConstraints(maxHeight: 50.h, maxWidth: 360.w),
+          floatingLabelAlignment: FloatingLabelAlignment.start,
+          labelText: "Giá",
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.w),
+            borderSide: BorderSide(
+              width: 0.5.w,
+              color: Colors.blue,
+            ),
+          ),
+        ),
+      ),
+    );
+
   }
 
   Widget _detailDecribe(BuildContext context) {
@@ -1151,7 +1227,9 @@ class _PostPageState extends State<PostPage> {
               fixedSize: Size(360.w, 40.h),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.w))),
-          onPressed: () {},
+          onPressed: () {
+            _roomViewModel.addRoom(room);
+          },
           child: Text(
             "Đăng tin",
             style: TextStyle(

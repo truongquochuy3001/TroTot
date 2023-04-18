@@ -18,4 +18,13 @@ class RoomServices implements IRoomServices {
         snapshot.docs.map((e) => Room.fromJson(e.data())).toList();
     return rooms;
   }
+
+  @override
+  void addRoom(Room room) async {
+    // TODO: implement addRoom
+
+    final snapshot = await FirebaseFirestore.instance.collection('Room').add(room.toJson());
+    final roomId = snapshot.id;
+    await snapshot.update({'id' : roomId});
+  }
 }

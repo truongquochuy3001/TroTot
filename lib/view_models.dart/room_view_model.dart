@@ -21,4 +21,9 @@ class RoomViewModel extends ChangeNotifier {
     _rooms = await _roomServices.getRooms();
     notifyListeners();
   }
+
+  void addRoom(Room room) async{
+     _roomServices.addRoom(room);
+    notifyListeners();
+  }
 }

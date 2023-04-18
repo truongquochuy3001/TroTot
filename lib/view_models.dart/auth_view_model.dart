@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:tro_tot_app/interfaces/auth_interfaces.dart';
+
 import 'package:tro_tot_app/services/auth_services.dart';
 
 class AuthViewModel extends ChangeNotifier {
