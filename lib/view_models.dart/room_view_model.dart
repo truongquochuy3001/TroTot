@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
+
 import 'package:flutter/material.dart';
 import 'package:tro_tot_app/models/room_model.dart';
 
@@ -11,6 +11,7 @@ class RoomViewModel extends ChangeNotifier {
 
   final RoomServices _roomServices = RoomServices();
   List<Room> _rooms = [];
+
   List<Room> get rooms => _rooms;
 
   Future<Room?> getRoom(String id) async {
@@ -22,8 +23,8 @@ class RoomViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addRoom(Room room) async{
-     _roomServices.addRoom(room);
+  void addRoom(Room room) async {
+    _roomServices.addRoom(room);
     notifyListeners();
   }
 }
