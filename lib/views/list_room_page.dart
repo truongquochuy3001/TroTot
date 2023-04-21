@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
+
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:tro_tot_app/models/room_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
+import 'package:tro_tot_app/views/login_page1.dart';
+import 'package:tro_tot_app/views/post_page.dart';
+import 'package:tro_tot_app/views/profile_page.dart';
 
 import 'package:tro_tot_app/views/room_detail.dart';
 
@@ -19,6 +22,30 @@ class _ListRoomPageState extends State<ListRoomPage> {
   RoomViewModel room1 = RoomViewModel();
   late Future _getRooms;
   bool isClickSearch = false;
+
+  int _selectedIndex = 0;
+
+  final List<Widget> _widgetOptions = <Widget>[    ListRoomPage(),    LoginPage(),    PostPage(),    ProfilePage(),  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      if (index ==0){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => ListRoomPage(),));
+      }
+
+      else if (index == 1){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => PostPage(),));
+      }
+      else if (index == 2){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => PostPage(),));
+      }
+      else {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage(),));
+      }
+
+    });
+  }
 
   @override
   void initState() {
@@ -63,8 +90,10 @@ class _ListRoomPageState extends State<ListRoomPage> {
             ),
           ),
           bottomNavigationBar: BottomNavigationBar(
-           
 
+            currentIndex: _selectedIndex,
+            selectedItemColor: Colors.blue,
+            onTap: _onItemTapped,
             elevation: 0,
             type: BottomNavigationBarType.fixed,
             items: const [
@@ -266,7 +295,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
             room.image,
             width: 120.w,
             height: 120.h,
-            fit: BoxFit.fill,
+            fit: BoxFit.cover,
           ),
           SizedBox(
             width: 10.w,
@@ -296,7 +325,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
                         ),
                       ),
                       Text(
-                        room.capacity.toString() + " m2",
+                        "${room.size} m2",
                         style: TextStyle(
                             fontSize: 10.sp,
                             fontWeight: FontWeight.w400,
@@ -307,7 +336,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
                         height: 4.h,
                       ),
                       Text(
-                        room.price.toString() + "/Tháng",
+                        "${room.price}/Tháng",
                         style: TextStyle(
                             color: const Color.fromARGB(255, 26, 148, 255),
                             fontSize: 14.sp,
@@ -341,7 +370,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
                     ),
                     Expanded(
                       child: Text(
-                        "Phuong Thuan Loc",
+                        room.address,
                         style: TextStyle(
                           fontSize: 10.sp,
                           color: const Color.fromARGB(255, 128, 128, 137),

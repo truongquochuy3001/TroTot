@@ -7,7 +7,7 @@ class Room {
   final String address;
   final double price;
   final String roomType;
-  final double capacity;
+  final double size;
   final List<String> images;
   final String image;
   final DateTime? postingDate;
@@ -19,17 +19,17 @@ class Room {
 
   Room({
     this.id,
-     this.cityId,
-     this.districtId,
-     this.wardId,
+    this.cityId,
+    this.districtId,
+    this.wardId,
     required this.name,
     required this.address,
     required this.price,
     required this.roomType,
-    required this.capacity,
+    required this.size,
     required this.images,
     required this.image,
-     this.postingDate,
+    this.postingDate,
     required this.status,
     required this.description,
     required this.furniture,
@@ -47,10 +47,10 @@ class Room {
       address: json['address'],
       price: json['price'],
       roomType: json['roomType'],
-      capacity: json['capacity'],
+      size: json['size'],
       images: List<String>.from(json['images']),
       image: json['image'],
-      postingDate: json['postingDate'].toDate(),
+      postingDate: json['postingDate'],
       status: json['status'],
       description: json['description'],
       furniture: json['furniture'],
@@ -61,14 +61,14 @@ class Room {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {
-      'cityId' : cityId,
-      'districtId' : districtId,
-      'wardId' : wardId,
+      'cityId': cityId,
+      'districtId': districtId,
+      'wardId': wardId,
       'name': name,
       'address': address,
       'price': price,
       'roomType': roomType,
-      'capacity': capacity,
+      'size': size,
       'images': images,
       'image': image,
       'postingDate': postingDate,

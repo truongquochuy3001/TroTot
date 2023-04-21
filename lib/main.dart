@@ -6,6 +6,8 @@ import 'package:tro_tot_app/view_models.dart/province_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tro_tot_app/views/gg_map_test.dart';
+import 'package:tro_tot_app/views/home_page.dart';
+import 'package:tro_tot_app/views/list_room_page.dart';
 import 'package:tro_tot_app/views/map_predict.dart';
 import 'package:tro_tot_app/views/post_page.dart';
 
@@ -33,7 +35,7 @@ class MyApp extends StatelessWidget {
           return  MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Login Demo',
-            home:PostPage(),
+            home:ListRoomPage(),
           );
         },
       ),

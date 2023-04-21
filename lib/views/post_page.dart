@@ -52,6 +52,8 @@ class _PostPageState extends State<PostPage> {
   bool isPicked = false;
   bool isFur = false;
 
+  String address = "Địa chỉ";
+
   late Future _getCities;
 
   final List<String> _items = ['Phòng trọ', 'Nhà ở', 'Căn hộ/chung cư'];
@@ -427,6 +429,13 @@ class _PostPageState extends State<PostPage> {
                             backgroundColor: Colors.blue,
                             fixedSize: Size(360.w, 40.h)),
                         onPressed: () {
+                          setState(() {
+                            if (roadInput.text.isEmpty)
+                            {address = "${selectedCity!.name}, ${selectedDistrict!.name}, ${selectedWard!.name}";}
+                            else
+                            { address = "${selectedCity!.name}, ${selectedDistrict!.name}, ${selectedWard!.name}, ${roadInput.text}";}
+                          });
+
                           Navigator.pop(context);
                         },
                         child: Text(
@@ -467,7 +476,7 @@ class _PostPageState extends State<PostPage> {
                     color: const Color.fromARGB(255, 128, 128, 137)),
               ),
               Text(
-                "Địa chỉ",
+                address,
                 style: TextStyle(fontSize: 12.sp),
               ),
             ]),
@@ -1347,18 +1356,19 @@ class _PostPageState extends State<PostPage> {
                 districtId: districtId,
                 wardId: wardId,
                 name: titleInput.text.toString(),
-                address: roadInput.text.toString(),
+                address: address,
                 price: double.parse(priceInput.text.toString()),
                 roomType: _selectedRoomType,
-                capacity: double.parse(sizeInput.text.toString()),
+                size: double.parse(sizeInput.text.toString()),
                 images: imageUrls,
-                image: "imageUrls[0]",
+                image: imageUrls[0],
                 status: true,
                 description: decribeInput.text.toString(),
                 furniture: isFur,
                 longitude: _latLng!.latitude,
                 latitude: _latLng!.longitude);
             _roomViewModel.addRoom(room );
+            Navigator.pop(context);
           },
           child: Text(
             "Đăng tin",
