@@ -56,6 +56,16 @@ dependencies:
   http: ^0.13.5
   tiengviet: ^0.5.0
   image_picker: ^0.8.7+2
+  geocoding: ^2.1.0
+
+  google_maps_webservice:
+  geocode: ^1.0.2
+  google_places_flutter: ^2.0.5
+  google_maps_flutter_web: ^0.4.0+7
+  firebase_storage: ^11.1.1
+  path: ^1.8.2
+  uuid: ^3.0.7
+
   
   
 
