@@ -1,7 +1,14 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:core';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:path/path.dart' as p;
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,6 +18,7 @@ import 'package:tro_tot_app/models/province_model.dart';
 import 'package:tro_tot_app/models/room_model.dart';
 import 'package:tro_tot_app/view_models.dart/province_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class PostPage extends StatefulWidget {
   const PostPage({Key? key}) : super(key: key);
@@ -22,30 +30,51 @@ class PostPage extends StatefulWidget {
 class _PostPageState extends State<PostPage> {
   RoomViewModel _roomViewModel = RoomViewModel();
 
+  TextEditingController titleInput = TextEditingController();
+  TextEditingController priceInput = TextEditingController();
+  TextEditingController sizeInput = TextEditingController();
+  TextEditingController decribeInput = TextEditingController();
+  TextEditingController roadInput = TextEditingController();
+
   late Room room;
 
   late int cityId;
+  late int? districtId;
+  late int? wardId;
 
-  late int districtId;
-  late int wardId;
+  TextEditingController place = TextEditingController();
+  LatLng? _latLng;
 
   String _selectedRoomType = 'Loại phòng';
   String _selectedFur = "Không";
 
   bool isSelected = true;
   bool isPicked = false;
+  bool isFur = false;
 
   late Future _getCities;
 
   final List<String> _items = ['Phòng trọ', 'Nhà ở', 'Căn hộ/chung cư'];
   final List<String> _furStatus = ["Có", "Không"];
-  List<File?> selectedImages = [];
+  List<File> selectedImages = [];
+  List<String> imageUrls = [];
+
 
   final picker = ImagePicker();
+  late final listImages;
+  late List<String> listImage;
 
   City? selectedCity = null;
   District? selectedDistrict = null;
   Ward? selectedWard = null;
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> signInAnonymously() async {
+    final UserCredential userCredential = await _auth.signInAnonymously();
+    // final User user = userCredential.user!;
+    // ...
+  }
 
   StreamController<City> cityController = StreamController<City>.broadcast();
   StreamController<District> districtController =
@@ -58,6 +87,7 @@ class _PostPageState extends State<PostPage> {
     if (selectedCity == null) {}
     if (!cityController.isClosed) cityController.sink.add(city);
     selectedCity = city;
+    cityId = city.code;
     selectedDistrict = null;
     selectedWard = null;
 
@@ -77,6 +107,7 @@ class _PostPageState extends State<PostPage> {
   void _selectedDistrict(District district) {
     districtController.sink.add(district);
     selectedDistrict = district;
+    districtId = district.code;
     selectedWard = null;
 
     wardController.sink.add(
@@ -87,7 +118,10 @@ class _PostPageState extends State<PostPage> {
   void _selectedWard(Ward ward) {
     wardController.sink.add(ward);
     selectedWard = ward;
+    wardId = ward.code;
   }
+
+  List<XFile> listXfile = [];
 
   Future getImages() async {
     final pickedFile = await picker.pickMultiImage();
@@ -97,7 +131,11 @@ class _PostPageState extends State<PostPage> {
       () {
         if (xfilePick.isNotEmpty) {
           for (var i = 0; i < xfilePick.length; i++) {
+            listXfile.add(XFile(xfilePick[i].path));
             selectedImages.add(File(xfilePick[i].path));
+            // // vi rang add vo cai listXFile ni han lam loi cai imagepicker he
+
+            // co cai ham add ni la han ko hien anh minh vua them
           }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -107,11 +145,47 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
+
+
+  FirebaseStorage storage = FirebaseStorage.instance;
+  String downloadUrl = "";
+
+
+
+  Future<List<String>> _getImageUrls() async {
+
+    for (File imageFile in selectedImages) {
+      String imageName = DateTime.now().millisecondsSinceEpoch.toString();
+      firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
+          .ref()
+          .child('Room')
+          .child('images');
+      firebase_storage.UploadTask uploadTask = ref.putFile(File(imageFile!.path));
+      await uploadTask;
+      String imageUrl = await ref.getDownloadURL();
+      imageUrls.add(imageUrl);
+    }
+    print(imageUrls);
+    return imageUrls;
+  }
+
+  Future<LatLng> getLatLngFromAddress(String address) async {
+    // Get the location coordinates from the address
+    List<Location> locations =
+        await GeocodingPlatform.instance.locationFromAddress(address);
+
+    // Extract the latitude and longitude from the location
+    LatLng latLng = LatLng(locations.first.latitude, locations.first.longitude);
+    _latLng = latLng;
+    return latLng;
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _getCities = context.read<ProvinceViewModel>().getCities();
+    signInAnonymously();
   }
 
   @override
@@ -160,7 +234,6 @@ class _PostPageState extends State<PostPage> {
               SizedBox(
                 height: 10.h,
               ),
-
               _sizeInput(context),
               SizedBox(
                 height: 10.h,
@@ -170,7 +243,9 @@ class _PostPageState extends State<PostPage> {
                 height: 10.h,
               ),
               _titleText(context, "Tiêu đề tin đăng và mô tả chi tiết"),
-              SizedBox(height: 10.h,),
+              SizedBox(
+                height: 10.h,
+              ),
               _titleInput(context),
               SizedBox(
                 height: 10.h,
@@ -873,6 +948,7 @@ class _PostPageState extends State<PostPage> {
     return Padding(
       padding: EdgeInsets.only(left: 12.w, right: 12.w),
       child: TextFormField(
+        controller: roadInput,
         decoration: InputDecoration(
             constraints: BoxConstraints(
               minWidth: 50.h,
@@ -913,7 +989,7 @@ class _PostPageState extends State<PostPage> {
                 children: [
                   Icon(Icons.add_a_photo, size: 40.w, color: Colors.black),
                   Text(
-                    "Đăng từ 3 đến 12 hình",
+                    "Nhấn vào đây để đăng hình",
                     style: TextStyle(fontSize: 12.sp),
                   )
                 ],
@@ -1037,6 +1113,11 @@ class _PostPageState extends State<PostPage> {
                               onTap: () {
                                 setState(() {
                                   _selectedFur = _furStatus[index];
+                                  if (_selectedFur == "Có") {
+                                    isFur = true;
+                                  } else {
+                                    isFur = false;
+                                  }
                                 });
                                 Navigator.of(context).pop();
                               });
@@ -1091,11 +1172,11 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
-  Widget _titleInput(BuildContext context){
+  Widget _titleInput(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(left: 12.w, right: 12.w),
       child: TextFormField(
-
+        controller: titleInput,
         // style: TextStyle(fontSize: 12.w),
         decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
@@ -1118,13 +1199,13 @@ class _PostPageState extends State<PostPage> {
         ),
       ),
     );
-
   }
 
   Widget _sizeInput(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(left: 12.w, right: 12.w),
       child: TextFormField(
+        controller: sizeInput,
         keyboardType: TextInputType.number,
         // style: TextStyle(fontSize: 12.w),
         decoration: InputDecoration(
@@ -1150,10 +1231,11 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
-  Widget _priceInput(BuildContext context){
+  Widget _priceInput(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(left: 12.w, right: 12.w),
       child: TextFormField(
+        controller: priceInput,
         keyboardType: TextInputType.number,
         // style: TextStyle(fontSize: 12.w),
         decoration: InputDecoration(
@@ -1177,7 +1259,6 @@ class _PostPageState extends State<PostPage> {
         ),
       ),
     );
-
   }
 
   Widget _detailDecribe(BuildContext context) {
@@ -1187,6 +1268,7 @@ class _PostPageState extends State<PostPage> {
         // width: 360.w,
         // height: 300.h,
         child: TextFormField(
+          controller: decribeInput,
           maxLines: 5,
           decoration: InputDecoration(
             // contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 50.h),
@@ -1227,8 +1309,56 @@ class _PostPageState extends State<PostPage> {
               fixedSize: Size(360.w, 40.h),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.w))),
-          onPressed: () {
-            _roomViewModel.addRoom(room);
+          onPressed: () async {
+            // print(imageUrls);
+            // uploadImages();
+            // print(downloadUrl);
+            // pickAndUploadImages(selectedImages);
+
+            await getLatLngFromAddress(
+                "${selectedCity!.name}, ${selectedDistrict!.name}, ${selectedWard!.name}, ${roadInput.text.toString()}");
+            print(_latLng);
+            if (_latLng == null) {
+              await getLatLngFromAddress(
+                  "${selectedCity!.name}, ${selectedDistrict!.name}, ${selectedWard!.name}");
+              print(
+                  "${selectedCity!.name}, ${selectedDistrict!.name}, ${selectedWard!.name}");
+              print(_latLng);
+            }
+
+            if (_latLng == null) {
+              await getLatLngFromAddress(
+                  "${selectedCity!.name}, ${selectedDistrict!.name}");
+              print("${selectedCity!.name}, ${selectedDistrict!.name}");
+              print(_latLng);
+            }
+
+            if (_latLng == null) {
+              await getLatLngFromAddress("${selectedCity!.name}");
+              print("${selectedCity!.name}");
+              print(_latLng);
+            }
+            print(selectedImages);
+            await _getImageUrls();
+            // await _getImageUrls();
+            // print (imageUrls);
+            room = Room(
+                cityId: cityId,
+                districtId: districtId,
+                wardId: wardId,
+                name: titleInput.text.toString(),
+                address: roadInput.text.toString(),
+                price: double.parse(priceInput.text.toString()),
+                roomType: _selectedRoomType,
+                capacity: double.parse(sizeInput.text.toString()),
+                images: imageUrls,
+                image: "imageUrls[0]",
+                status: true,
+                description: decribeInput.text.toString(),
+                furniture: isFur,
+                longitude: _latLng!.latitude,
+                latitude: _latLng!.longitude);
+            _roomViewModel.addRoom(room );
           },
           child: Text(
             "Đăng tin",

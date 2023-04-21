@@ -5,7 +5,10 @@ import 'package:tro_tot_app/view_models.dart/auth_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/province_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tro_tot_app/views/gg_map_test.dart';
+import 'package:tro_tot_app/views/map_predict.dart';
 import 'package:tro_tot_app/views/post_page.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,10 +30,10 @@ class MyApp extends StatelessWidget {
         // designSize: const Size(1080, 1920),
         designSize: const Size(360, 640),
         builder: (BuildContext context, Widget? child) {
-          return const MaterialApp(
+          return  MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Login Demo',
-            home: PostPage(),
+            home:PostPage(),
           );
         },
       ),

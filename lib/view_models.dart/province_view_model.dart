@@ -14,8 +14,5 @@ class ProvinceViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<void> getDistricts(String name) async {
-  //   _districts = (await _provinceServices.getDistricts(name));
-  //   notifyListeners();
-  // }
+
 }

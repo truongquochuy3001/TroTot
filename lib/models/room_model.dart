@@ -1,13 +1,13 @@
 class Room {
   final String? id;
-  final int cityId;
-  final int districtId;
-  final int wardId;
+  final int? cityId;
+  final int? districtId;
+  final int? wardId;
   final String name;
   final String address;
-  final int price;
+  final double price;
   final String roomType;
-  final int capacity;
+  final double capacity;
   final List<String> images;
   final String image;
   final DateTime? postingDate;
@@ -19,9 +19,9 @@ class Room {
 
   Room({
     this.id,
-    required this.cityId,
-    required this.districtId,
-    required this.wardId,
+     this.cityId,
+     this.districtId,
+     this.wardId,
     required this.name,
     required this.address,
     required this.price,
