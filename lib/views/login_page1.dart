@@ -1,8 +1,10 @@
+
+
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:tro_tot_app/view_models.dart/auth_view_model.dart';
-import 'package:tro_tot_app/views/home_page.dart';
+
 import 'package:tro_tot_app/views/list_room_page.dart';
 
 class LoginPage extends StatelessWidget {
@@ -41,6 +43,8 @@ class LoginPage extends StatelessWidget {
                 child: Text('Login'),
                 onPressed: () async {
                   var result = await auth.signIn(email, password);
+
+                  print(result);
                   if (!result) {
                     // Handle login failure
                   } else {

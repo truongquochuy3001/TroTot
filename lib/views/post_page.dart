@@ -162,7 +162,10 @@ class _PostPageState extends State<PostPage> {
           .ref()
           .child('Room')
           .child(imageName);
+
       firebase_storage.UploadTask uploadTask = ref.putFile(File(imageFile.path));
+
+
       await uploadTask;
       String imageUrl = await ref.getDownloadURL();
       imageUrls.add(imageUrl);
@@ -194,11 +197,9 @@ class _PostPageState extends State<PostPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-          child: Text(
-            "Đăng tin",
-            style: TextStyle(color: Colors.white, fontSize: 18.sp),
-          ),
+        title: Text(
+          "Đăng tin",
+          style: TextStyle(color: Colors.white, fontSize: 20.sp),
         ),
       ),
       body: SafeArea(
@@ -1041,9 +1042,11 @@ class _PostPageState extends State<PostPage> {
                   itemBuilder: (context, index) {
                     if (selectedImages[index] != null) {
                       return Stack(
+
                         children: [
+
                           Container(
-                            padding: EdgeInsets.only(left: 6.w, right: 6.w),
+                            margin: EdgeInsets.only(left: 3.w, right: 3.w),
                             width: 80.w,
                             height: 80.h,
 
@@ -1058,8 +1061,10 @@ class _PostPageState extends State<PostPage> {
                             // ),
 
                             child: Image.file(
-                              selectedImages[index],
-                              fit: BoxFit.fill,
+
+                              selectedImages[index]!,
+                              fit: BoxFit.cover ,
+
                             ),
                           ),
                           Positioned(
@@ -1365,8 +1370,8 @@ class _PostPageState extends State<PostPage> {
                 status: true,
                 description: decribeInput.text.toString(),
                 furniture: isFur,
-                longitude: _latLng!.latitude,
-                latitude: _latLng!.longitude);
+                longitude: _latLng!.longitude,
+                latitude: _latLng!.latitude);
             _roomViewModel.addRoom(room );
             Navigator.pop(context);
           },

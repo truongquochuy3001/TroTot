@@ -5,11 +5,10 @@ import 'package:tro_tot_app/view_models.dart/auth_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/province_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:tro_tot_app/views/gg_map_test.dart';
-import 'package:tro_tot_app/views/home_page.dart';
 import 'package:tro_tot_app/views/list_room_page.dart';
-import 'package:tro_tot_app/views/map_predict.dart';
-import 'package:tro_tot_app/views/post_page.dart';
+
+import 'package:tro_tot_app/views/login_page1.dart';
+
 
 
 void main() async {
@@ -32,7 +31,7 @@ class MyApp extends StatelessWidget {
         // designSize: const Size(1080, 1920),
         designSize: const Size(360, 640),
         builder: (BuildContext context, Widget? child) {
-          return  MaterialApp(
+          return  const MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'Login Demo',
             home:ListRoomPage(),

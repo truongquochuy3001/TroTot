@@ -6,4 +6,6 @@ abstract class IRoomServices {
   Future<Room?> getRoom(String id);
 
   void addRoom(Room room);
+
+  Future<List<Room>> searchRoom(String searchKey);
 }
