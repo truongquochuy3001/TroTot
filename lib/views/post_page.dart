@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:path/path.dart' as p;
+
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 
@@ -161,8 +161,8 @@ class _PostPageState extends State<PostPage> {
       firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
           .ref()
           .child('Room')
-          .child('images');
-      firebase_storage.UploadTask uploadTask = ref.putFile(File(imageFile!.path));
+          .child(imageName);
+      firebase_storage.UploadTask uploadTask = ref.putFile(File(imageFile.path));
       await uploadTask;
       String imageUrl = await ref.getDownloadURL();
       imageUrls.add(imageUrl);
@@ -1058,7 +1058,7 @@ class _PostPageState extends State<PostPage> {
                             // ),
 
                             child: Image.file(
-                              selectedImages[index]!,
+                              selectedImages[index],
                               fit: BoxFit.fill,
                             ),
                           ),
