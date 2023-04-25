@@ -406,7 +406,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                 // markers: Set<Marker>.of(Marker(markerId: markerId)),
                 mapToolbarEnabled: true,
                 initialCameraPosition: CameraPosition(
-                    zoom: 13,
+                    zoom: 15,
                     target: LatLng(roomData.latitude, roomData.longitude))),
           )
         ],

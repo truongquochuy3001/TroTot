@@ -11,8 +11,10 @@ class RoomViewModel extends ChangeNotifier {
 
   final RoomServices _roomServices = RoomServices();
   List<Room> _rooms = [];
+  List<Room> _searchRoom =[];
 
   List<Room> get rooms => _rooms;
+  List<Room> get searchRooms => _searchRoom;
 
   Future<Room?> getRoom(String id) async {
     return await _roomServices.getRoom(id);
@@ -25,6 +27,11 @@ class RoomViewModel extends ChangeNotifier {
 
   void addRoom(Room room) async {
     _roomServices.addRoom(room);
+    notifyListeners();
+  }
+
+  Future<void> searchRoom(String searchKey) async {
+    _searchRoom  = await _roomServices.searchRoom( searchKey);
     notifyListeners();
   }
 }

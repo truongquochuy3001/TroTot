@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:provider/provider.dart';
 import 'package:tro_tot_app/models/room_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
-import 'package:tro_tot_app/views/login_page1.dart';
+import 'package:tro_tot_app/views/login_page.dart';
+
 import 'package:tro_tot_app/views/post_page.dart';
-import 'package:tro_tot_app/views/profile_page.dart';
 
 import 'package:tro_tot_app/views/room_detail.dart';
 
@@ -19,31 +19,43 @@ class ListRoomPage extends StatefulWidget {
 }
 
 class _ListRoomPageState extends State<ListRoomPage> {
-  RoomViewModel room1 = RoomViewModel();
+  late RoomViewModel room1;
+
   late Future _getRooms;
+   late Future  _getSearchRooms;
   bool isClickSearch = false;
+  TextEditingController? searchKey;
 
   int _selectedIndex = 0;
-
-  final List<Widget> _widgetOptions = <Widget>[    ListRoomPage(),    LoginPage(),    PostPage(),    ProfilePage(),  ];
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      if (index ==0){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ListRoomPage(),));
+      if (index == 0) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ListRoomPage(),
+            ));
+      } else if (index == 1) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PostPage(),
+            ));
+      } else if (index == 2) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PostPage(),
+            ));
+      } else {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LoginScreen(),
+            ));
       }
-
-      else if (index == 1){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => PostPage(),));
-      }
-      else if (index == 2){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => PostPage(),));
-      }
-      else {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage(),));
-      }
-
     });
   }
 
@@ -51,7 +63,9 @@ class _ListRoomPageState extends State<ListRoomPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     _getRooms = context.read<RoomViewModel>().getAllRoom();
+    // _getSearchRooms = context.read<RoomViewModel>().searchRoom("yh");
   }
 
   @override
@@ -62,7 +76,8 @@ class _ListRoomPageState extends State<ListRoomPage> {
           backgroundColor: const Color.fromARGB(255, 245, 245, 250),
           body: SafeArea(
             child: FutureBuilder(
-              future: _getRooms,
+              // future: _getSearchRooms,
+              future: searchKey?.text == null ? _getRooms : _getSearchRooms,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
@@ -71,6 +86,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
                 } else if (snapshot.hasError) {
                   return Text("Lỗi: ${snapshot.error}");
                 } else {
+                  print("${searchKey?.text} aaaaaaaa");
                   return SingleChildScrollView(
                     child: Column(
                       children: [
@@ -81,7 +97,9 @@ class _ListRoomPageState extends State<ListRoomPage> {
                         ),
                         Container(
                             margin: EdgeInsets.only(left: 16.w, right: 16.w),
-                            child: _listRoom(context, value.rooms)),
+                            child:
+                            searchKey ==null ?
+                            _listRoom(context, value.rooms): _listRoom(context, value.searchRooms)),
                       ],
                     ),
                   );
@@ -90,17 +108,38 @@ class _ListRoomPageState extends State<ListRoomPage> {
             ),
           ),
           bottomNavigationBar: BottomNavigationBar(
-
             currentIndex: _selectedIndex,
             selectedItemColor: Colors.blue,
             onTap: _onItemTapped,
             elevation: 0,
             type: BottomNavigationBarType.fixed,
             items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home_filled, color: Colors.blue,), label: "Trang chủ", ),
-              BottomNavigationBarItem(icon: Icon(Icons.article_outlined, color: Colors.blue,), label: "Quản lý tin"),
-              BottomNavigationBarItem(icon: Icon(Icons.post_add_outlined, color: Colors.blue,), label: "Đăng tin", ),
-              BottomNavigationBarItem(icon: Icon(Icons.account_circle_outlined, color: Colors.blue,), label: "Tài khoản"),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.home_filled,
+                  color: Colors.blue,
+                ),
+                label: "Trang chủ",
+              ),
+              BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.article_outlined,
+                    color: Colors.blue,
+                  ),
+                  label: "Quản lý tin"),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.post_add_outlined,
+                  color: Colors.blue,
+                ),
+                label: "Đăng tin",
+              ),
+              BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.account_circle_outlined,
+                    color: Colors.blue,
+                  ),
+                  label: "Tài khoản"),
             ],
           ),
         );
@@ -117,13 +156,6 @@ class _ListRoomPageState extends State<ListRoomPage> {
       width: 360.w,
       child: Row(
         children: [
-          IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.keyboard_arrow_left,
-                size: 24.w,
-                color: Colors.white,
-              )),
           Expanded(
             child: GestureDetector(
               onTap: () {
@@ -135,7 +167,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
                 );
               },
               child: Text(
-                "Thừa Thiên Huế ",
+                "Nhấn vào đây để search",
                 style: TextStyle(
                     fontSize: 18.sp,
                     color: Colors.white,
@@ -174,10 +206,24 @@ class _ListRoomPageState extends State<ListRoomPage> {
             )),
         elevation: 0,
         titleSpacing: 1.w,
-        title: TextField(
+        title: TextFormField(
+          controller: searchKey,
           style: const TextStyle(
             color: Colors.black,
           ),
+          onChanged: (value) {
+            searchKey =
+                value.isNotEmpty ? TextEditingController(text: value) : null;
+          },
+          onEditingComplete: () {
+            setState(() {
+              _getSearchRooms =
+                  context.read<RoomViewModel>().searchRoom(searchKey!.text);
+              Navigator.pop(context, searchKey?.text);
+              print("aaa");
+              print(searchKey?.text);
+            });
+          },
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,

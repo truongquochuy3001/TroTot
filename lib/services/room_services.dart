@@ -27,4 +27,18 @@ class RoomServices implements IRoomServices {
     final roomId = snapshot.id;
     await snapshot.update({'id' : roomId});
   }
+
+  @override
+  Future<List<Room>> searchRoom(String searchKey) async{
+    // TODO: implement searchRoom
+    // final searchKeys = searchKey.split(' ');
+    print(searchKey);
+    final snapshot = await FirebaseFirestore.instance.collection('Room').where('name', isGreaterThanOrEqualTo: searchKey)
+        .where('name', isLessThan: searchKey + 'z').get();
+    final List<Room> rooms =
+    snapshot.docs.map((e) => Room.fromJson(e.data())).toList();
+    print(rooms.first.name);
+    print(rooms.first.address);
+    return rooms;
+  }
 }

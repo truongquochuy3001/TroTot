@@ -1,8 +1,10 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
+
 import 'package:tro_tot_app/view_models.dart/auth_view_model.dart';
 import 'package:tro_tot_app/views/list_room_page.dart';
+import 'package:tro_tot_app/views/register_page.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -30,7 +32,9 @@ class _LoginScreenState extends State<LoginScreen> {
               color: Colors.black,
               size: 20.w,
             ),
-            onPressed: () {}),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -140,11 +144,12 @@ class _LoginScreenState extends State<LoginScreen> {
             )),
         onPressed: () async {
           print("aa");
+          bool emailValidate = EmailValidator.validate(email.text.toString());
 
-          bool result = false;
-           result = await authViewModel.signIn(email.text, password.text) ;
+          bool result = await authViewModel.signIn(email.text, password.text) ;
+          print("???");
           print(result);
-          if (result) {
+          if (result && emailValidate) {
             // print("dung");
             Navigator.push(
               context,
@@ -164,7 +169,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _createAccount(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterSreen(),));
+      },
       child: Text(
         "Create a new account",
         style: TextStyle(
