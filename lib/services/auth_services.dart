@@ -25,7 +25,7 @@ class AuthServices implements IAuthServices {
   Future<bool> signUp(String email, String password) async {
     try {
       UserCredential credential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -40,6 +40,19 @@ class AuthServices implements IAuthServices {
     } catch (e) {
       print(e);
       return false; // return false if any other error occurs
+    }
+  }
+
+  @override
+  Future<bool> checkAuth() async {
+    // TODO: implement checkAuth
+    if (FirebaseAuth.instance.currentUser?.uid == null) {
+// not logged
+      return false;
+    } else {
+// logged
+    print(FirebaseAuth.instance.currentUser!.email);
+      return true;
     }
   }
 }

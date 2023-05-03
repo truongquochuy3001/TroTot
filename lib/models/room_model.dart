@@ -1,3 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geohash/geohash.dart';
+
 class Room {
   final String? id;
   final int? cityId;
@@ -16,6 +19,8 @@ class Room {
   final bool furniture;
   final double longitude;
   final double latitude;
+  final double? deposit;
+  final String geohash;
 
   Room({
     this.id,
@@ -29,13 +34,15 @@ class Room {
     required this.size,
     required this.images,
     required this.image,
-    this.postingDate,
+    required this.postingDate,
     required this.status,
     required this.description,
     required this.furniture,
     required this.longitude,
     required this.latitude,
-  });
+    this.deposit,
+
+  }): geohash = Geohash.encode(latitude, longitude);
 
   factory Room.fromJson(Map<String, dynamic> json) {
     return Room(
@@ -50,12 +57,14 @@ class Room {
       size: json['size'],
       images: List<String>.from(json['images']),
       image: json['image'],
-      postingDate: json['postingDate'],
+      postingDate: (json['postingDate'] as Timestamp?)?.toDate(),
       status: json['status'],
       description: json['description'],
       furniture: json['furniture'],
       longitude: json['longitude'],
       latitude: json['latitude'],
+      deposit: json['deposit'],
+
     );
   }
 
@@ -71,12 +80,15 @@ class Room {
       'size': size,
       'images': images,
       'image': image,
-      'postingDate': postingDate,
+      'postingDate': postingDate != null ? Timestamp.fromDate(postingDate!) : null,
       'status': status,
       'description': description,
       'furniture': furniture,
       'longitude': longitude,
       'latitude': latitude,
+
+      'deposit' : deposit,
+      'geohash' : geohash,
     };
     if (id != null) {
       data['id'] = id;

@@ -1,16 +1,15 @@
     <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.tro_tot_app">
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+        <!-- Permissions options for the `location` group -->
+        <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+        <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+        <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
    <application
         android:label="tro_tot_app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="AIzaSyDc7PnOq3Hxzq6dxeUVaY8WGLHIePl0swY"/>
+               android:value="AIzaSyAL7M2Av95H-dCLtQTMxAv5B-KzMiJcO9Y"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

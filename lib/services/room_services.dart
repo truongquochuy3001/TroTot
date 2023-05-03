@@ -13,32 +13,79 @@ class RoomServices implements IRoomServices {
 
   @override
   Future<List<Room>> getRooms() async {
-    final snapshot = await FirebaseFirestore.instance.collection('Room').get();
+    final snapshot = await FirebaseFirestore.instance
+        .collection('Room')
+        .orderBy('postingDate', descending: true)
+        .get();
     final List<Room> rooms =
         snapshot.docs.map((e) => Room.fromJson(e.data())).toList();
     return rooms;
   }
 
   @override
-  void addRoom(Room room) async {
+  Future<void> addRoom(Room room, String geohash) async {
     // TODO: implement addRoom
 
-    final snapshot = await FirebaseFirestore.instance.collection('Room').add(room.toJson());
+    final snapshot =
+        await FirebaseFirestore.instance.collection('Room').add(room.toJson());
     final roomId = snapshot.id;
-    await snapshot.update({'id' : roomId});
+    await snapshot.update({'id': roomId});
   }
 
   @override
-  Future<List<Room>> searchRoom(String searchKey) async{
+  Future<List<Room>> searchRoom(String searchKey) async {
     // TODO: implement searchRoom
     // final searchKeys = searchKey.split(' ');
     print(searchKey);
-    final snapshot = await FirebaseFirestore.instance.collection('Room').where('name', isGreaterThanOrEqualTo: searchKey)
-        .where('name', isLessThan: searchKey + 'z').get();
+    final snapshot = await FirebaseFirestore.instance
+        .collection('Room')
+        .where('name', isGreaterThanOrEqualTo: searchKey)
+        .where('name', isLessThanOrEqualTo: searchKey + '\uf8ff')
+        .get();
     final List<Room> rooms =
-    snapshot.docs.map((e) => Room.fromJson(e.data())).toList();
-    print(rooms.first.name);
-    print(rooms.first.address);
+        snapshot.docs.map((e) => Room.fromJson(e.data())).toList();
+
+    return rooms;
+  }
+
+  @override
+  Future<void> searchRoomLocal(String searchKey) {
+    // TODO: implement searchRoomLocal
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<Room>> sortRoom(
+      double startPrice,
+      double endPrice,
+      int? cityId,
+      int? districtId,
+      int? wardId,
+      bool latestNew,
+      bool lowPriceFirst,
+      ) async {
+    // TODO: implement sortRoom
+    final collectionReference = FirebaseFirestore.instance.collection('Room');
+    Query query = collectionReference;
+    if (cityId != null && districtId != null && wardId != null) {
+      query = query
+          .where('cityId', isEqualTo: cityId)
+          .where('districtId', isEqualTo: districtId)
+          .where('wardId', isEqualTo: wardId);
+
+      if (latestNew) {
+        query = query.orderBy('postingDate', descending: true);
+      }
+
+      if (lowPriceFirst) {
+        query = query.orderBy('price', descending: false);
+      }
+
+
+    }
+    final QuerySnapshot querySnapshot = await query.get();
+    final List<Room> rooms = querySnapshot.docs.map((doc) => Room.fromJson(doc.data() as Map<String, dynamic>)).toList();
+
     return rooms;
   }
 }

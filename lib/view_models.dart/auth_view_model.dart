@@ -16,4 +16,8 @@ class AuthViewModel extends ChangeNotifier {
     return await _authServices.signUp(email, password);
   }
 
+  Future<bool> checkAuth() async{
+    return  await _authServices.checkAuth();
+  }
+
 }
