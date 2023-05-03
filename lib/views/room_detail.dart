@@ -1,7 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
+import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +10,7 @@ import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
 
 class RoomDetailPage extends StatefulWidget {
   final String id;
+
   const RoomDetailPage({super.key, required this.id});
 
   @override
@@ -17,17 +18,24 @@ class RoomDetailPage extends StatefulWidget {
 }
 
 class _RoomDetailPageState extends State<RoomDetailPage> {
+  bool _isMyLocationEnabled = false;
+  late GoogleMapController _mapController;
+
+
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     print(widget.id);
     getRoom = context.read<RoomViewModel>().getRoom(widget.id);
+
   }
 
   late Future getRoom;
 
   var _currentPageCount = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,7 +84,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                       SizedBox(
                         height: 10.h,
                       ),
-                      _roomDetail(context),
+                      _roomDetail(context, roomData),
                       SizedBox(
                         height: 10.h,
                       ),
@@ -193,7 +201,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                         fontWeight: FontWeight.w600),
                     children: [
                       TextSpan(
-                        text: roomData.price.toString(),
+                        text: " đ",
                         style: TextStyle(color: Colors.grey, fontSize: 12.sp),
                       ),
                     ],
@@ -264,7 +272,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
     );
   }
 
-  Widget _roomDetail(BuildContext context) {
+  Widget _roomDetail(BuildContext context, Room roomData) {
     return Container(
       padding: EdgeInsets.only(left: 12.w, right: 12.w),
       width: 360.w,
@@ -290,13 +298,13 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                 ),
                 RichText(
                   text: TextSpan(
-                      text: "Dien tich : ",
+                      text: "Diện tích : ",
                       style: TextStyle(fontSize: 12.sp, color: Colors.black),
                       children: [
                         TextSpan(
-                            text: "25 m2",
+                            text: roomData.size.toString(),
                             style:
-                                TextStyle(fontSize: 12.sp, color: Colors.black))
+                            TextStyle(fontSize: 12.sp, color: Colors.black))
                       ]),
                 )
               ],
@@ -319,14 +327,18 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                 ),
                 RichText(
                   text: TextSpan(
-                      text: "So tien coc :",
-                      style: TextStyle(fontSize: 12.sp, color: Colors.black),
-                      children: [
-                        TextSpan(
-                            text: "3.000.000 d",
-                            style:
-                                TextStyle(fontSize: 12.sp, color: Colors.black))
-                      ]),
+                    text: "Số tiền cọc : ",
+                    style: TextStyle(fontSize: 12.sp, color: Colors.black),
+                    children: [
+                      roomData.deposit == null ?                       TextSpan(
+                          text: "0 đ",
+                          style:
+                          TextStyle(fontSize: 12.sp, color: Colors.black)) :
+                      TextSpan(
+                          text: "${roomData.deposit.toString()} đ",
+                          style:
+                          TextStyle(fontSize: 12.sp, color: Colors.black))
+                    ],),
                 )
               ],
             ),
@@ -395,9 +407,10 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
             //   fit: BoxFit.cover,
             // ),
             child: GoogleMap(
-
+                zoomGesturesEnabled: true,
                 zoomControlsEnabled: false,
                 myLocationEnabled: true,
+
                 markers: {
                   Marker(
                       markerId: MarkerId(''),
@@ -406,7 +419,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                 // markers: Set<Marker>.of(Marker(markerId: markerId)),
                 mapToolbarEnabled: true,
                 initialCameraPosition: CameraPosition(
-                    zoom: 15,
+                    zoom: 13,
                     target: LatLng(roomData.latitude, roomData.longitude))),
           )
         ],
@@ -436,7 +449,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                 Text(
                   "Khanh",
                   style:
-                      TextStyle(fontWeight: FontWeight.w700, fontSize: 12.sp),
+                  TextStyle(fontWeight: FontWeight.w700, fontSize: 12.sp),
                 ),
                 SizedBox(
                   height: 8.h,
@@ -593,10 +606,10 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                   ),
                   WidgetSpan(
                       child: Icon(
-                    Icons.keyboard_arrow_right,
-                    color: Colors.blue,
-                    size: 16.w,
-                  ))
+                        Icons.keyboard_arrow_right,
+                        color: Colors.blue,
+                        size: 16.w,
+                      ))
                 ],
               ),
             ),

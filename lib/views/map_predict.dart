@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:path/path.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
@@ -53,13 +54,7 @@ class _MapPredictState extends State<MapPredict> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            TextFormField(
-              controller: place,
-            ),
-          ],
-        ),
+        child: GoogleMap( initialCameraPosition: CameraPosition(target: LatLng(37.4219999, -122.0862462),)),
       ),
     );
   }

@@ -5,7 +5,11 @@ abstract class IRoomServices {
 
   Future<Room?> getRoom(String id);
 
-  void addRoom(Room room);
+  Future<void> addRoom(Room room, String geohash);
 
   Future<List<Room>> searchRoom(String searchKey);
+
+  Future<void> searchRoomLocal(String searchKey);
+
+  Future<List<Room>> sortRoom(double startPrice, double endPrice, int? cityId, int? districtId, int? wardId, bool latestNew, bool lowPriceFirst);
 }
