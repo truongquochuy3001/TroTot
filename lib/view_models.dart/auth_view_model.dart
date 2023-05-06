@@ -12,6 +12,10 @@ class AuthViewModel extends ChangeNotifier {
     return await _authServices.signIn(email, password);
   }
 
+  Future<void> signOut() async{
+      return await _authServices.signOut();
+  }
+
   Future<bool> signUp(String email, String password) async{
     return await _authServices.signUp(email, password);
   }

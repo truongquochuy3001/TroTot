@@ -3,6 +3,7 @@ import 'package:geohash/geohash.dart';
 
 class Room {
   final String? id;
+  final String userId;
   final int? cityId;
   final int? districtId;
   final int? wardId;
@@ -24,6 +25,7 @@ class Room {
 
   Room({
     this.id,
+    required this.userId,
     this.cityId,
     this.districtId,
     this.wardId,
@@ -41,12 +43,12 @@ class Room {
     required this.longitude,
     required this.latitude,
     this.deposit,
-
-  }): geohash = Geohash.encode(latitude, longitude);
+  }) : geohash = Geohash.encode(latitude, longitude);
 
   factory Room.fromJson(Map<String, dynamic> json) {
     return Room(
       id: json['id'],
+      userId: json['userId'],
       cityId: json['cityId'],
       districtId: json['districtId'],
       wardId: json['wardId'],
@@ -64,13 +66,13 @@ class Room {
       longitude: json['longitude'],
       latitude: json['latitude'],
       deposit: json['deposit'],
-
     );
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {
       'cityId': cityId,
+      'userId' : userId,
       'districtId': districtId,
       'wardId': wardId,
       'name': name,
@@ -80,15 +82,15 @@ class Room {
       'size': size,
       'images': images,
       'image': image,
-      'postingDate': postingDate != null ? Timestamp.fromDate(postingDate!) : null,
+      'postingDate':
+          postingDate != null ? Timestamp.fromDate(postingDate!) : null,
       'status': status,
       'description': description,
       'furniture': furniture,
       'longitude': longitude,
       'latitude': latitude,
-
-      'deposit' : deposit,
-      'geohash' : geohash,
+      'deposit': deposit,
+      'geohash': geohash,
     };
     if (id != null) {
       data['id'] = id;

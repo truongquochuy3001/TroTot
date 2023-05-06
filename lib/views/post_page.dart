@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:core';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_geo_hash/geohash.dart';
@@ -66,12 +67,9 @@ class _PostPageState extends State<PostPage> {
   final picker = ImagePicker();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // Future<void> signInAnonymously() async {
-  //   final UserCredential userCredential = await _auth.signInAnonymously();
-  //   // final User user = userCredential.user!;
-  //   // ...
-  // }
+
 
   StreamController<City> cityController = StreamController<City>.broadcast();
   StreamController<District> districtController =
@@ -1308,6 +1306,8 @@ class _PostPageState extends State<PostPage> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.w))),
           onPressed: () async {
+            String userId = _auth.currentUser!.uid.toString();
+            print(userId);
             await getLatLngFromAddress(
                 "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel.selectedDistrict!.name}, ${_provinceViewModel.selectedWard!.name}, ${roadInput.text.toString()}");
             print(_latLng);
@@ -1340,7 +1340,9 @@ class _PostPageState extends State<PostPage> {
             // print (imageUrls);
             if (depositInput.text.isEmpty){
               room = Room(
+
                 cityId: _provinceViewModel.cityId,
+                userId:  userId,
                 districtId: _provinceViewModel.districtId,
                 wardId: _provinceViewModel.wardId,
                 name: titleInput.text.toString(),
@@ -1363,6 +1365,7 @@ class _PostPageState extends State<PostPage> {
             else{
             room = Room(
               cityId: _provinceViewModel.cityId,
+              userId: userId,
               districtId: _provinceViewModel.districtId,
               wardId: _provinceViewModel.wardId,
               name: titleInput.text.toString(),

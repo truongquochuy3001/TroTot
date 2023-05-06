@@ -745,13 +745,16 @@ class _SortPageState extends State<SortPage> {
       padding:  EdgeInsets.only(left: 12.w, right: 12.w),
       child: ElevatedButton(
           style: ElevatedButton.styleFrom( fixedSize: Size(360.w, 40.h)) ,
-          onPressed: () {
+          onPressed: () async {
 
-            _roomViewModel.sortRoom(_startValue, _endValue, _provinceViewModel.cityId, _provinceViewModel.districtId, _provinceViewModel.wardId, latestNew, lowestPrice);
+            await  _roomViewModel.sortRoom(_startValue, _endValue, _provinceViewModel.cityId, _provinceViewModel.districtId, _provinceViewModel.wardId, latestNew, lowestPrice);
+
             print(_roomViewModel.sortRooms.length);
 
             setState(() {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ListRoomPage(),));
+              bool sort = true;
+
+              Navigator.pop(context, sort);
             });
       }, child: Text("Áp dụng", style: TextStyle(fontSize: 16.sp),)),
     );

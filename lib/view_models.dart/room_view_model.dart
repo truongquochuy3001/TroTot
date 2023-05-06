@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:tro_tot_app/models/room_model.dart';
 
-import '../models/province_model.dart';
+
 import '../services/room_services.dart';
 
 class RoomViewModel extends ChangeNotifier {
@@ -18,6 +18,7 @@ class RoomViewModel extends ChangeNotifier {
   List<Room> _searchRoom = [];
   List<Room> _sortRooms =[];
   List<Room> _searchRoomLocal = [];
+  List<Room> _userRooms = [];
   List<String> _searchHistory = [];
 
   List<Room> get rooms => _rooms;
@@ -27,6 +28,8 @@ class RoomViewModel extends ChangeNotifier {
   List<Room> get searchRoomsLocal => _searchRoomLocal;
 
   List<Room> get sortRooms => _sortRooms;
+
+  List<Room> get userRooms => _userRooms;
 
   List<String> get searchHistory => _searchHistory;
 
@@ -45,10 +48,6 @@ class RoomViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<void> searchRoom(String searchKey) async {
-  //   _searchRoom  = await _roomServices.searchRoom( searchKey);
-  //   notifyListeners();
-  // }
 
   // Lấy tất cả dữ liệu phòng trọ về rồi so sánh local
   Future<void> searchRoomLocal(String searchKey) async {
@@ -76,7 +75,7 @@ class RoomViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void sortRoom( double startPrice,
+  Future<void> sortRoom( double startPrice,
       double endPrice,
       int? cityId,
       int? districtId,
@@ -85,9 +84,11 @@ class RoomViewModel extends ChangeNotifier {
       bool lowPriceFirst,
       ) async{
     _sortRooms = await _roomServices.sortRoom(startPrice, endPrice, cityId, districtId, wardId, latestNew, lowPriceFirst);
+    notifyListeners();
   }
 
-
-
-
+  Future<void> getRoomsUser(String userId) async{
+    _userRooms = await _roomServices.getRoomsUser(userId);
+    notifyListeners();
+  }
 }

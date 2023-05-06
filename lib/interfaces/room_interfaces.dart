@@ -12,4 +12,6 @@ abstract class IRoomServices {
   Future<void> searchRoomLocal(String searchKey);
 
   Future<List<Room>> sortRoom(double startPrice, double endPrice, int? cityId, int? districtId, int? wardId, bool latestNew, bool lowPriceFirst);
+
+  Future<List<Room>> getRoomsUser(String userId);
 }
