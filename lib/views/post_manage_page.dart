@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
+import 'package:tro_tot_app/views/edit_post_page.dart';
 import 'package:tro_tot_app/views/room_detail.dart';
 
 import '../models/room_model.dart';
@@ -235,6 +236,20 @@ class _PostManagePageState extends State<PostManagePage> {
                 ),
                 Row(
                   children: [
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          elevation:  0,
+
+                        ),
+                        onPressed: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => EditPostPage(id : room.id!),));
+                        }, child: Text("Chỉnh sửa")),
+                    SizedBox(width: 5.w,),
+                    ElevatedButton(onPressed: (){}, child: Text("Ẩn tin")),
+                  ],
+                ),
+                Row(
+                  children: [
                     Icon(
                       Icons.account_circle_rounded,
                       size: 12.w,
@@ -255,6 +270,7 @@ class _PostManagePageState extends State<PostManagePage> {
                     SizedBox(
                       width: 6.w,
                     ),
+
                     Expanded(
                       child: Text(
                         room.address,

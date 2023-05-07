@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:core';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -21,14 +22,16 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 import 'list_room_page.dart';
 
-class PostPage extends StatefulWidget {
-  const PostPage({Key? key}) : super(key: key);
+class EditPostPage extends StatefulWidget {
+  final String id;
+
+  const EditPostPage({Key? key, required this.id}) : super(key: key);
 
   @override
-  State<PostPage> createState() => _PostPageState();
+  State<EditPostPage> createState() => _EditPostPageState();
 }
 
-class _PostPageState extends State<PostPage> {
+class _EditPostPageState extends State<EditPostPage> {
   RoomViewModel _roomViewModel = RoomViewModel();
 
   TextEditingController titleInput = TextEditingController();
@@ -48,12 +51,16 @@ class _PostPageState extends State<PostPage> {
   late final listImages;
   late List<String> listImage;
   late ProvinceViewModel _provinceViewModel;
+  late Future _getRoom;
 
   LatLng? _latLng;
 
-  String _selectedRoomType = 'Loại phòng';
-  String _selectedFur = "Không";
+  String _selectedRoomType = '';
+  String _selectedFur = "";
   String address = "Địa chỉ";
+  String city = "";
+  String district = "";
+  String ward = "";
 
   bool isSelected = true;
   bool isPicked = false;
@@ -68,8 +75,6 @@ class _PostPageState extends State<PostPage> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-
-
 
   StreamController<City> cityController = StreamController<City>.broadcast();
   StreamController<District> districtController =
@@ -117,6 +122,7 @@ class _PostPageState extends State<PostPage> {
       String imageUrl = await ref.getDownloadURL();
       imageUrls.add(imageUrl);
     }
+
     print(imageUrls);
     return imageUrls;
   }
@@ -139,6 +145,8 @@ class _PostPageState extends State<PostPage> {
     super.initState();
     _getCities = context.read<ProvinceViewModel>().getAllAddress();
     _provinceViewModel = context.read<ProvinceViewModel>();
+    _getRoom = context.read<RoomViewModel>().getRoom(widget.id);
+
     // signInAnonymously();
   }
 
@@ -147,73 +155,102 @@ class _PostPageState extends State<PostPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Đăng tin",
+          "Chỉnh sửa tin",
           style: TextStyle(color: Colors.white, fontSize: 20.sp),
         ),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 10.h,
-              ),
-              _roomTypeSelect(context),
-              SizedBox(
-                height: 10.h,
-              ),
-              _titleText(context, "Địa chỉ và hình ảnh"),
-              SizedBox(
-                height: 10.h,
-              ),
-              _addrSelect(context),
-              SizedBox(
-                height: 10.h,
-              ),
-              _upLoadPhoto(context),
-              SizedBox(
-                height: 10.h,
-              ),
-              _titleText(context, "Thông tin khác"),
-              SizedBox(
-                height: 10.h,
-              ),
-              _furnitureSelect(context),
-              SizedBox(
-                height: 10.h,
-              ),
-              _titleText(context, "Diện tích và giá"),
-              SizedBox(
-                height: 10.h,
-              ),
-              _sizeInput(context),
-              SizedBox(
-                height: 10.h,
-              ),
-              _priceInput(context),
-              SizedBox(
-                height: 10.h,
-              ),
-              _depositInput(context),
-              SizedBox(
-                height: 10.h,
-              ),
-              _titleText(context, "Tiêu đề tin đăng và mô tả chi tiết"),
-              SizedBox(
-                height: 10.h,
-              ),
-              _titleInput(context),
-              SizedBox(
-                height: 10.h,
-              ),
-              _detailDecribe(context),
-              SizedBox(height: 20.h),
-              _submitButton(context),
-              SizedBox(
-                height: 5.h,
-              ),
-            ],
-          ),
+        child: Consumer<RoomViewModel>(
+          builder: (context, value, child) {
+            return FutureBuilder(
+                future: _getRoom,
+                builder:
+                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Text('Lỗi: ${snapshot.error}');
+                  } else if (!snapshot.hasData) {
+                    return const Center(
+                        child: Text('Không tìm thấy phòng trọ!'));
+                  } else {
+                    final Room roomData = snapshot.data;
+                    sizeInput.text = roomData.size.toString();
+                    priceInput.text = roomData.price.toString();
+                    if (roomData.deposit != null) {
+                      depositInput.text = roomData.deposit.toString();
+                    }
+                    titleInput.text = roomData.name;
+                    decribeInput.text = roomData.description;
+                    if (roomData.cityId != null) {}
+
+                    return SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          _roomTypeSelect(context, roomData),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          _titleText(context, "Địa chỉ và hình ảnh"),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          _addrSelect(context, roomData),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          _upLoadPhoto(context, roomData),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          _titleText(context, "Thông tin khác"),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          _furnitureSelect(context, roomData),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          _titleText(context, "Diện tích và giá"),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          _sizeInput(context, roomData),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          _priceInput(context),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          _depositInput(context),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          _titleText(
+                              context, "Tiêu đề tin đăng và mô tả chi tiết"),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          _titleInput(context),
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          _detailDecribe(context),
+                          SizedBox(height: 20.h),
+                          _submitButton(context, roomData),
+                          SizedBox(
+                            height: 5.h,
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                });
+          },
         ),
       ),
     );
@@ -236,7 +273,7 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
-  Widget _roomTypeSelect(BuildContext context) {
+  Widget _roomTypeSelect(BuildContext context, Room roomData) {
     return GestureDetector(
       onTap: () {
         showModalBottomSheet(
@@ -251,7 +288,7 @@ class _PostPageState extends State<PostPage> {
                   alignment: Alignment.center,
                   width: 360.w,
                   height: 40.h,
-                  decoration: BoxDecoration(color: Colors.blue),
+                  decoration: const BoxDecoration(color: Colors.blue),
                   child: Text(
                     "Chọn loại phòng",
                     style: TextStyle(color: Colors.white, fontSize: 16.sp),
@@ -275,7 +312,7 @@ class _PostPageState extends State<PostPage> {
                                 Navigator.of(context).pop();
                               });
                         },
-                        separatorBuilder: (context, index) => Divider(),
+                        separatorBuilder: (context, index) => const Divider(),
                         itemCount: _items.length),
                   ),
                 )
@@ -310,7 +347,9 @@ class _PostPageState extends State<PostPage> {
                       color: const Color.fromARGB(255, 128, 128, 137)),
                 ),
                 Text(
-                  _selectedRoomType,
+                  _selectedRoomType == ''
+                      ? roomData.roomType.toString()
+                      : _selectedRoomType.toString(),
                   style: TextStyle(fontSize: 12.sp),
                 )
               ],
@@ -325,7 +364,7 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
-  Widget _addrSelect(BuildContext context) {
+  Widget _addrSelect(BuildContext context, Room roomData) {
     return GestureDetector(
       onTap: () {
         showModalBottomSheet(
@@ -354,15 +393,15 @@ class _PostPageState extends State<PostPage> {
                     SizedBox(
                       height: 10.h,
                     ),
-                    _citySelect(context),
+                    _citySelect(context, roomData),
                     SizedBox(
                       height: 10.h,
                     ),
-                    _districtSelect(context),
+                    _districtSelect(context, roomData),
                     SizedBox(
                       height: 10.h,
                     ),
-                    _wardSelect(context),
+                    _wardSelect(context, roomData),
                     SizedBox(
                       height: 10.h,
                     ),
@@ -430,9 +469,13 @@ class _PostPageState extends State<PostPage> {
                     color: const Color.fromARGB(255, 128, 128, 137)),
               ),
               Text(
-                _provinceViewModel.address == ""
-                    ? "Địa chỉ"
+                // _provinceViewModel.address == ""
+                //     ? "Địa chỉ"
+                //     : _provinceViewModel.address,
+                _provinceViewModel.address == ''
+                    ? roomData.address
                     : _provinceViewModel.address,
+
                 style: TextStyle(fontSize: 12.sp),
               ),
             ]),
@@ -440,18 +483,32 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
-  Widget _citySelect(BuildContext context) {
+  Widget _citySelect(BuildContext context, Room roomData) {
     return Consumer<ProvinceViewModel>(
       builder: (context, value, child) {
         return FutureBuilder(
           future: _getCities,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
             } else if (snapshot.hasError) {
               return Text("${snapshot.error}");
             } else {
               List<City> citiesData = value.GetCities;
+              List<District> districtsData = value.GetDistrict;
+              for (int i = 0 ; i<citiesData.length; i ++){
+                if(citiesData[i].code == roomData.cityId)
+                  {
+                    _provinceViewModel.selectedCity = citiesData[i];
+
+                  }
+              }
+              for (int i = 0 ; i<_provinceViewModel.selectedCity!.districts.length; i ++){
+                if ( _provinceViewModel.selectedCity!.districts[i].code == roomData.districtId){
+                  _provinceViewModel.selectedDistrict = _provinceViewModel.selectedCity!.districts[i];
+                }
+              }
+
               return GestureDetector(
                 onTap: () {
                   showModalBottomSheet(
@@ -462,7 +519,7 @@ class _PostPageState extends State<PostPage> {
                       return SizedBox(
                         height: 640.h,
                         child: SingleChildScrollView(
-                          physics: NeverScrollableScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           child: Column(
                             children: [
                               SizedBox(
@@ -483,7 +540,7 @@ class _PostPageState extends State<PostPage> {
                                   height: 640.h,
                                   child: ListView.separated(
                                     separatorBuilder: (context, index) {
-                                      return Divider();
+                                      return const Divider();
                                     },
                                     // shrinkWrap: true,
                                     // physics:
@@ -502,7 +559,7 @@ class _PostPageState extends State<PostPage> {
                                           padding: EdgeInsets.only(left: 12.w),
                                           child: Text(
                                             city.name,
-                                            style: TextStyle(),
+                                            style: const TextStyle(),
                                           ),
                                         ),
                                       );
@@ -534,7 +591,7 @@ class _PostPageState extends State<PostPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Chọn tỉnh, thành phố",
+                              _provinceViewModel.cityName == null ? roomData.city! : _provinceViewModel.cityName!,
                               style: TextStyle(
                                   fontSize: 14.sp,
                                   color:
@@ -586,10 +643,10 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
-  Widget _districtSelect(BuildContext context) {
+  Widget _districtSelect(BuildContext context, Room roomData) {
     return GestureDetector(
       onTap: () {
-        if (_provinceViewModel.selectedCity == null) {
+        if (roomData.city == null) {
           Fluttertoast.showToast(
             msg: "Vui lòng chọn tỉnh, thành phố trước",
             toastLength: Toast.LENGTH_SHORT,
@@ -605,7 +662,7 @@ class _PostPageState extends State<PostPage> {
 
           ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Vui long chon tinh, thanh pho')));
-          Text("a");
+          const Text("a");
         } else {
           showModalBottomSheet(
             isScrollControlled: true,
@@ -648,13 +705,13 @@ class _PostPageState extends State<PostPage> {
                                   padding: EdgeInsets.only(left: 12.w),
                                   child: Text(
                                     district.name,
-                                    style: TextStyle(),
+                                    style: const TextStyle(),
                                   ),
                                 ),
                               );
                             },
                             separatorBuilder: (context, index) {
-                              return Divider();
+                              return const Divider();
                             },
                             itemCount: _provinceViewModel
                                 .selectedCity!.districts.length),
@@ -687,7 +744,7 @@ class _PostPageState extends State<PostPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Chọn quận, huyện, thị xã",
+                   _provinceViewModel.districtName == null ? roomData.district! : _provinceViewModel.districtName!,
                     style: TextStyle(
                         fontSize: 14.sp,
                         color: const Color.fromARGB(255, 128, 128, 137)),
@@ -759,11 +816,11 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
-  Widget _wardSelect(BuildContext context) {
+  Widget _wardSelect(BuildContext context, Room roomData) {
     return GestureDetector(
       onTap: () {
-        if (_provinceViewModel.selectedCity == null &&
-            _provinceViewModel.selectedDistrict == null) {
+        if (roomData.city == null &&
+            roomData.district == null) {
           Fluttertoast.showToast(
             msg: "Vui lòng chọn tỉnh, thành phố và quận, huyện, thị xã",
             toastLength: Toast.LENGTH_SHORT,
@@ -773,7 +830,7 @@ class _PostPageState extends State<PostPage> {
             textColor: Colors.white,
             fontSize: 16.w,
           );
-        } else if (_provinceViewModel.selectedCity == null) {
+        } else if (roomData.city == null) {
           Fluttertoast.showToast(
             msg: "Vui lòng chọn tỉnh, thành phố trước",
             toastLength: Toast.LENGTH_SHORT,
@@ -783,7 +840,7 @@ class _PostPageState extends State<PostPage> {
             textColor: Colors.white,
             fontSize: 16.w,
           );
-        } else if (_provinceViewModel.selectedDistrict == null) {
+        } else if (roomData.district == null) {
           Fluttertoast.showToast(
             msg: "Vui lòng chọn quận, huyện, thị xã trước",
             toastLength: Toast.LENGTH_SHORT,
@@ -832,7 +889,7 @@ class _PostPageState extends State<PostPage> {
                                     child: Text(ward.name));
                               },
                               separatorBuilder: (context, index) {
-                                return Divider();
+                                return const Divider();
                               },
                               itemCount: _provinceViewModel
                                   .selectedDistrict!.wards.length),
@@ -865,7 +922,7 @@ class _PostPageState extends State<PostPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Chọn phường, xã, thị trấn",
+                    _provinceViewModel.wardName == null ? roomData.ward! : _provinceViewModel.wardName!,
                     style: TextStyle(
                         fontSize: 14.sp,
                         color: const Color.fromARGB(255, 128, 128, 137)),
@@ -920,7 +977,7 @@ class _PostPageState extends State<PostPage> {
               minWidth: 50.h,
               maxHeight: 360.w,
             ),
-            label: Text("Nhập đường"),
+            label: const Text("Nhập đường"),
             floatingLabelAlignment: FloatingLabelAlignment.start,
             border: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.blue, width: 1.w),
@@ -936,8 +993,8 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
-  Widget _upLoadPhoto(BuildContext context) {
-    return selectedImages.isEmpty
+  Widget _upLoadPhoto(BuildContext context, Room roomData) {
+    return roomData.images.isEmpty
         ? GestureDetector(
             onTap: () {
               getImages();
@@ -992,11 +1049,60 @@ class _PostPageState extends State<PostPage> {
                   width: 12.w,
                 ),
                 ListView.builder(
+                  scrollDirection: Axis.horizontal,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: selectedImages.length,
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
-                    if (selectedImages[index] != null) {
+                    if (selectedImages.isNotEmpty) {
+                      print(selectedImages[index]);
+                      return Stack(
+                        children: [
+                          Container(
+                              margin: EdgeInsets.only(left: 3.w, right: 3.w),
+                              width: 80.w,
+                              height: 80.h,
+
+                              // child: kIsWeb
+                              //     ? Image.network(
+                              //   selectedImages[index]!.path,
+                              //   fit: BoxFit.fill,
+                              // )
+                              //     : Image.file(
+                              //   selectedImages[index]!,
+                              //   fit: BoxFit.fill,
+                              // ),
+
+                              child: Image.file(selectedImages[index],
+                                  fit: BoxFit.cover)),
+                          Positioned(
+                              right: 5.w,
+                              top: 0,
+                              child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      roomData.images.removeAt(index);
+                                    });
+                                  },
+                                  child: Icon(
+                                    Icons.remove_circle,
+                                    color: Colors.red,
+                                    size: 16.w,
+                                  )))
+                        ],
+                      );
+                    } else {
+                      return Container();
+                    }
+                  },
+                ),
+                ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: roomData.images.length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    if (roomData.images[index].isNotEmpty) {
+                      print(roomData.images[index]);
                       return Stack(
                         children: [
                           Container(
@@ -1014,10 +1120,9 @@ class _PostPageState extends State<PostPage> {
                             //   fit: BoxFit.fill,
                             // ),
 
-                            child: Image.file(
-                              selectedImages[index]!,
-                              fit: BoxFit.cover,
-                            ),
+                            child: CachedNetworkImage(
+                                imageUrl: roomData.images[index],
+                                fit: BoxFit.cover),
                           ),
                           Positioned(
                               right: 5.w,
@@ -1025,7 +1130,7 @@ class _PostPageState extends State<PostPage> {
                               child: GestureDetector(
                                   onTap: () {
                                     setState(() {
-                                      selectedImages.removeAt(index);
+                                      roomData.images.removeAt(index);
                                     });
                                   },
                                   child: Icon(
@@ -1035,6 +1140,8 @@ class _PostPageState extends State<PostPage> {
                                   )))
                         ],
                       );
+                    } else {
+                      return Container();
                     }
                   },
                   scrollDirection: Axis.horizontal,
@@ -1044,7 +1151,7 @@ class _PostPageState extends State<PostPage> {
           );
   }
 
-  Widget _furnitureSelect(BuildContext context) {
+  Widget _furnitureSelect(BuildContext context, Room roomData) {
     return GestureDetector(
       onTap: () {
         showModalBottomSheet(
@@ -1059,7 +1166,7 @@ class _PostPageState extends State<PostPage> {
                   alignment: Alignment.center,
                   width: 360.w,
                   height: 40.h,
-                  decoration: BoxDecoration(color: Colors.blue),
+                  decoration: const BoxDecoration(color: Colors.blue),
                   child: Text(
                     "Nội thất",
                     style: TextStyle(color: Colors.white, fontSize: 16.sp),
@@ -1088,7 +1195,7 @@ class _PostPageState extends State<PostPage> {
                                 Navigator.of(context).pop();
                               });
                         },
-                        separatorBuilder: (context, index) => Divider(),
+                        separatorBuilder: (context, index) => const Divider(),
                         itemCount: _furStatus.length),
                   ),
                 )
@@ -1123,7 +1230,11 @@ class _PostPageState extends State<PostPage> {
                       color: const Color.fromARGB(255, 128, 128, 137)),
                 ),
                 Text(
-                  _selectedFur,
+                  _selectedFur == ""
+                      ? roomData.furniture == false
+                          ? "Không"
+                          : "Có"
+                      : _selectedFur,
                   style: TextStyle(fontSize: 12.sp),
                 )
               ],
@@ -1167,10 +1278,10 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
-  Widget _sizeInput(BuildContext context) {
+  Widget _sizeInput(BuildContext context, Room roomData) {
     return Padding(
       padding: EdgeInsets.only(left: 12.w, right: 12.w),
-      child: TextFormField(
+      child: TextField(
         controller: sizeInput,
         keyboardType: TextInputType.number,
         // style: TextStyle(fontSize: 12.w),
@@ -1274,7 +1385,7 @@ class _PostPageState extends State<PostPage> {
             // ),
             labelText: "Mô tả chi tiết",
 
-            labelStyle: TextStyle(),
+            labelStyle: const TextStyle(),
             hintText:
                 "vd: Phòng trọ 30m2 đường nguyễn A, Phường A, thành phố A, nội thất đầy đủ",
             hintMaxLines: 10,
@@ -1296,7 +1407,7 @@ class _PostPageState extends State<PostPage> {
     );
   }
 
-  Widget _submitButton(BuildContext context) {
+  Widget _submitButton(BuildContext context, Room roomData) {
     return Padding(
       padding: EdgeInsets.only(left: 12.w, right: 12.w),
       child: ElevatedButton(
@@ -1333,71 +1444,69 @@ class _PostPageState extends State<PostPage> {
               print("${_provinceViewModel.selectedCity!.name}");
               print(_latLng);
             }
-            String geohash = Geohash.encode(_latLng!.latitude, _latLng!.longitude, codeLength: 8);
+            String geohash = Geohash.encode(
+                _latLng!.latitude, _latLng!.longitude,
+                codeLength: 8);
             print(selectedImages);
             await _getImageUrls();
+            // nối chuỗi ảnh vừa thêm và ảnh có sẵn
+            imageUrls.addAll(roomData.images);
             // await _getImageUrls();
             // print (imageUrls);
-            if (depositInput.text.isEmpty){
+            if (depositInput.text.isEmpty) {
               room = Room(
-
-                cityId: _provinceViewModel.cityId,
-                userId:  userId,
-                districtId: _provinceViewModel.districtId,
-                wardId: _provinceViewModel.wardId,
-                name: titleInput.text.toString(),
-                address: _provinceViewModel.address,
-                price: double.parse(priceInput.text.toString()),
-                roomType: _selectedRoomType,
-                size: double.parse(sizeInput.text.toString()),
-                images: imageUrls,
-                image: imageUrls[0],
-                status: true,
-                description: decribeInput.text.toString(),
-                furniture: isFur,
-                longitude: _latLng!.longitude,
-                latitude: _latLng!.latitude,
-                postingDate: DateTime.now(),
-                road: _provinceViewModel.roadInput,
-                city: _provinceViewModel.cityName,
-                district: _provinceViewModel.districtName,
-                ward: _provinceViewModel.wardName,
-
-
-              );
+                  cityId: _provinceViewModel.cityId,
+                  userId: userId,
+                  districtId: _provinceViewModel.districtId,
+                  wardId: _provinceViewModel.wardId,
+                  name: titleInput.text.toString(),
+                  address: _provinceViewModel.address,
+                  price: double.parse(priceInput.text.toString()),
+                  roomType: _selectedRoomType,
+                  size: double.parse(sizeInput.text.toString()),
+                  images: imageUrls,
+                  image: imageUrls[0],
+                  status: true,
+                  description: decribeInput.text.toString(),
+                  furniture: isFur,
+                  longitude: _latLng!.longitude,
+                  latitude: _latLng!.latitude,
+                  postingDate: DateTime.now(),
+                  road: _provinceViewModel.roadInput,
+                  city: _provinceViewModel.selectedCity?.name,
+                  district: _provinceViewModel.selectedDistrict?.name,
+                  ward: _provinceViewModel.selectedWard?.name);
+            } else {
+              room = Room(
+                  cityId: _provinceViewModel.cityId,
+                  userId: userId,
+                  districtId: _provinceViewModel.districtId,
+                  wardId: _provinceViewModel.wardId,
+                  name: titleInput.text.toString(),
+                  address: _provinceViewModel.address,
+                  price: double.parse(priceInput.text.toString()),
+                  roomType: _selectedRoomType,
+                  size: double.parse(sizeInput.text.toString()),
+                  images: imageUrls,
+                  image: imageUrls[0],
+                  status: true,
+                  description: decribeInput.text.toString(),
+                  furniture: isFur,
+                  longitude: _latLng!.longitude,
+                  latitude: _latLng!.latitude,
+                  postingDate: DateTime.now(),
+                  deposit: double.parse(depositInput.text.toString()),
+                  road: _provinceViewModel.roadInput,
+                  city: _provinceViewModel.selectedCity?.name,
+                  district: _provinceViewModel.selectedDistrict?.name,
+                  ward: _provinceViewModel.selectedWard?.name);
             }
-            else{
-            room = Room(
-              cityId: _provinceViewModel.cityId,
-              userId: userId,
-              districtId: _provinceViewModel.districtId,
-              wardId: _provinceViewModel.wardId,
-              name: titleInput.text.toString(),
-              address: _provinceViewModel.address,
-              price: double.parse(priceInput.text.toString()),
-              roomType: _selectedRoomType,
-              size: double.parse(sizeInput.text.toString()),
-              images: imageUrls,
-              image: imageUrls[0],
-              status: true,
-              description: decribeInput.text.toString(),
-              furniture: isFur,
-              longitude: _latLng!.longitude,
-              latitude: _latLng!.latitude,
-              postingDate: DateTime.now(),
-              deposit: double.parse(depositInput.text.toString()),
-              road: _provinceViewModel.roadInput,
-              city: _provinceViewModel.cityName,
-              district: _provinceViewModel.districtName,
-              ward: _provinceViewModel.wardName,
-
-            );}
             await _roomViewModel.addRoom(room, geohash);
             setState(() {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ListRoomPage(),
+                    builder: (context) => const ListRoomPage(),
                   ));
             });
           },

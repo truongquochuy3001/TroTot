@@ -9,7 +9,7 @@ class ProvinceServices implements IProvinceServices {
 
 
   @override
-  Future<List<City>> getCities() async {
+  Future<List<City>> getAllAddress() async {
     final response =
         await http.get(Uri.parse('https://provinces.open-api.vn/api/?depth=3'));
     if (response.statusCode == 200) {
@@ -23,6 +23,45 @@ class ProvinceServices implements IProvinceServices {
   @override
   void selectedCity() {
     // TODO: implement selectedCity
+  }
+
+  @override
+  Future<City> getCityFromId(int id) async {
+    // TODO: implement getCityFromId
+    final response =
+        await http.get(Uri.parse('https://provinces.open-api.vn/api/p/$id'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(utf8.decode(response.bodyBytes)) ;
+      return data.map((json) => City.fromJson(json));
+    } else {
+      throw Exception('Failed to fetch cities');
+    }
+  }
+
+  @override
+  Future<District> getDistrictFromId(int id) async{
+    // TODO: implement getDistrictFromId
+    final response =
+        await http.get(Uri.parse('https://provinces.open-api.vn/api/d/$id'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(utf8.decode(response.bodyBytes)) ;
+      return data.map((json) => District.fromJson(json));
+    } else {
+      throw Exception('Failed to fetch cities');
+    }
+  }
+
+  @override
+  Future<Ward> getWardFromId(int id) async{
+    // TODO: implement getWardFromId
+    final response =
+        await http.get(Uri.parse('https://provinces.open-api.vn/api/w/$id'));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(utf8.decode(response.bodyBytes)) ;
+      return data.map((json) => District.fromJson(json));
+    } else {
+      throw Exception('Failed to fetch cities');
+    }
   }
 
 

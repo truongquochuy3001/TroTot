@@ -16,10 +16,16 @@ class ProvinceViewModel extends ChangeNotifier {
   List<District> get GetDistrict => _districts;
 
   City? selectedCity = null;
+  City? cityFromId = null;
   District? selectedDistrict = null;
+  District? districtFromId = null;
   Ward? selectedWard = null;
+  Ward? wardFromId = null;
 
   String? roadInput = null;
+  String? cityName = null;
+  String? districtName = null;
+  String? wardName = null;
   String address = "";
   String searchAddress = "";
 
@@ -40,8 +46,9 @@ class ProvinceViewModel extends ChangeNotifier {
   int? searchDistrictId;
   int? searchWardId;
 
-  Future<void> getCities() async {
-    _cities = await _provinceServices.getCities();
+  Future<void> getAllAddress() async {
+    _cities = await _provinceServices.getAllAddress();
+
     notifyListeners();
   }
 
@@ -49,6 +56,9 @@ class ProvinceViewModel extends ChangeNotifier {
     if (selectedCity == null) {}
     if (!cityController.isClosed) cityController.sink.add(city);
     selectedCity = city;
+    cityName = selectedCity!.name;
+    districtName = "Chọn quận, huyện";
+    wardName = "Chọn phường, xã, thị trấn";
     cityId = city.code;
     selectedDistrict = null;
     selectedWard = null;
@@ -73,6 +83,8 @@ class ProvinceViewModel extends ChangeNotifier {
   void districtSelect(District district) {
     districtController.sink.add(district);
     selectedDistrict = district;
+    districtName = selectedDistrict!.name;
+    wardName = "Chọn phuòng, xã, thị trấn";
     districtId = district.code;
     selectedWard = null;
 
@@ -88,6 +100,7 @@ class ProvinceViewModel extends ChangeNotifier {
   void wardSelect(Ward ward) {
     wardController.sink.add(ward);
     selectedWard = ward;
+    wardName = selectedWard!.name;
     wardId = ward.code;
   }
 
@@ -220,5 +233,18 @@ class ProvinceViewModel extends ChangeNotifier {
     if (selectedCity != null && selectedDistrict != null && selectedWard !=null){
       searchAddress = "$selectedCity, $selectedDistrict, $selectedWard";
     }
+  }
+
+  Future<City> getCityFromId(int id) async{
+    return await _provinceServices.getCityFromId(id);
+
+  }
+  Future<District> getDistrictFromId(int id) async{
+    return await _provinceServices.getDistrictFromId(id);
+
+  }
+  Future<Ward> getWardFromId(int id) async{
+    return await _provinceServices.getWardFromId(id);
+
   }
 }

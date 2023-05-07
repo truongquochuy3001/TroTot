@@ -57,7 +57,7 @@ class _SortPageState extends State<SortPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _getCities = context.read<ProvinceViewModel>().getCities();
+    _getCities = context.read<ProvinceViewModel>().getAllAddress();
     _provinceViewModel = context.read<ProvinceViewModel>();
     _roomViewModel = context.read<RoomViewModel>();
   }
