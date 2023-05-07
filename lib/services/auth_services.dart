@@ -55,4 +55,10 @@ class AuthServices implements IAuthServices {
       return true;
     }
   }
+
+  @override
+  Future<void> signOut()async  {
+    // TODO: implement signOut
+    await FirebaseAuth.instance.signOut();
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tro_tot_app/view_models.dart/auth_view_model.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -10,6 +11,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   bool _isSelect = true;
+  AuthViewModel _authViewModel = AuthViewModel();
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +26,14 @@ class _ProfilePageState extends State<ProfilePage> {
             fontSize: 20.sp,
           ),
         ),
+        actions: [
+          IconButton(
+              onPressed: () {
+                _authViewModel.signOut();
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.logout))
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(

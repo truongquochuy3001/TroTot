@@ -1,4 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
+import 'package:geohash/geohash.dart';
 import 'package:tro_tot_app/interfaces/room_interfaces.dart';
 import 'package:tro_tot_app/models/room_model.dart';
 
@@ -15,6 +18,7 @@ class RoomServices implements IRoomServices {
   Future<List<Room>> getRooms() async {
     final snapshot = await FirebaseFirestore.instance
         .collection('Room')
+        .where('status', isEqualTo: true)
         .orderBy('postingDate', descending: true)
         .get();
     final List<Room> rooms =
@@ -36,9 +40,9 @@ class RoomServices implements IRoomServices {
   Future<List<Room>> searchRoom(String searchKey) async {
     // TODO: implement searchRoom
     // final searchKeys = searchKey.split(' ');
-    print(searchKey);
+
     final snapshot = await FirebaseFirestore.instance
-        .collection('Room')
+        .collection('Room').where('status', isEqualTo: true)
         .where('name', isGreaterThanOrEqualTo: searchKey)
         .where('name', isLessThanOrEqualTo: searchKey + '\uf8ff')
         .get();
@@ -56,36 +60,65 @@ class RoomServices implements IRoomServices {
 
   @override
   Future<List<Room>> sortRoom(
-      double startPrice,
-      double endPrice,
-      int? cityId,
-      int? districtId,
-      int? wardId,
-      bool latestNew,
-      bool lowPriceFirst,
-      ) async {
+    double startPrice,
+    double endPrice,
+    int? cityId,
+    int? districtId,
+    int? wardId,
+    bool latestNew,
+    bool lowPriceFirst,
+  ) async {
     // TODO: implement sortRoom
     final collectionReference = FirebaseFirestore.instance.collection('Room');
     Query query = collectionReference;
+
     if (cityId != null && districtId != null && wardId != null) {
       query = query
           .where('cityId', isEqualTo: cityId)
           .where('districtId', isEqualTo: districtId)
           .where('wardId', isEqualTo: wardId);
-
-      if (latestNew) {
-        query = query.orderBy('postingDate', descending: true);
-      }
-
-      if (lowPriceFirst) {
-        query = query.orderBy('price', descending: false);
-      }
-
-
+    } else if (cityId != null && districtId != null) {
+      query = query
+          .where('cityId', isEqualTo: cityId)
+          .where('districtId', isEqualTo: districtId);
+    } else if (cityId != null) {
+      query = query.where('cityId', isEqualTo: cityId);
     }
-    final QuerySnapshot querySnapshot = await query.get();
-    final List<Room> rooms = querySnapshot.docs.map((doc) => Room.fromJson(doc.data() as Map<String, dynamic>)).toList();
 
+    query = query.where('price',
+        isGreaterThanOrEqualTo: startPrice, isLessThanOrEqualTo: endPrice);
+    if (lowPriceFirst == true) {
+      query = query.orderBy('price', descending: false);
+    } else {
+      query = query.orderBy('price');
+    }
+
+    if (latestNew == true) {
+      query = query.orderBy('postingDate', descending: true);
+    }
+
+    final QuerySnapshot querySnapshot = await query.get();
+    final List<Room> rooms = querySnapshot.docs
+        .map((doc) => Room.fromJson(doc.data() as Map<String, dynamic>))
+        .toList();
+    for (int i = 0; i < rooms.length; i++) {
+      print(rooms[i].name);
+    }
+
+    return rooms;
+  }
+
+  @override
+  Future<List<Room>> getRoomsUser(String userId) async {
+    // TODO: implement getRoomsUser
+    userId = FirebaseAuth.instance.currentUser!.uid;
+    final snapshot = await FirebaseFirestore.instance
+        .collection('Room')
+        .where('userId', isEqualTo: userId)
+        .orderBy('postingDate', descending: true)
+        .get();
+    final List<Room> rooms =
+        snapshot.docs.map((e) => Room.fromJson(e.data())).toList();
     return rooms;
   }
 }

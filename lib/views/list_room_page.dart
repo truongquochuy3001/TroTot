@@ -6,7 +6,9 @@ import 'package:provider/provider.dart';
 import 'package:tro_tot_app/models/room_model.dart';
 import 'package:tro_tot_app/view_models.dart/auth_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
+import 'package:tro_tot_app/views/location_page.dart';
 import 'package:tro_tot_app/views/login_page.dart';
+import 'package:tro_tot_app/views/post_manage_page.dart';
 
 import 'package:tro_tot_app/views/post_page.dart';
 import 'package:tro_tot_app/views/profile_page.dart';
@@ -28,57 +30,70 @@ class _ListRoomPageState extends State<ListRoomPage> {
 
   late Future _getRooms;
   late Future _getSearchRoomLocal;
+  late Future _getSortRooms;
   late RoomViewModel _roomViewModel;
   late AuthViewModel _authViewModel;
 
   bool isClickSearch = false;
-  bool sort =false;
+  bool sort = false;
   TextEditingController? searchKey;
 
   int _selectedIndex = 0;
 
   // Chuyển hướng trang ở BottomNavigationBar
-  void _onItemTapped(int index) async{
-
-      _selectedIndex = index;
-      if (index == 0) {
+  void _onItemTapped(int index) async {
+    _selectedIndex = index;
+    if (index == 0) {
+      _roomViewModel.sortRooms.clear();
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ListRoomPage(),
+          ));
+    } else if (index == 1) {
+      if (await _authViewModel.checkAuth()) {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ListRoomPage(),
+              builder: (context) => PostManagePage(),
             ));
-      } else if (index == 1)  {
-        if (await _authViewModel.checkAuth()){
+      } else {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LoginScreen(),
+            ));
+      }
+    } else if (index == 2) {
+      if (await _authViewModel.checkAuth()) {
         Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => PostPage(),
-            ));}
-        else {
-           Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(),));
-        }
-      } else if (index == 2) {
-        if (await _authViewModel.checkAuth()){
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PostPage(),
-              ));}
-        else {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(),));
-        }
+            ));
       } else {
-        if (await _authViewModel.checkAuth()){
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ProfilePage(),
-              ));}
-        else {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(),));
-        }
-      };
-
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LoginScreen(),
+            ));
+      }
+    } else {
+      if (await _authViewModel.checkAuth()) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfilePage(),
+            ));
+      } else {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LoginScreen(),
+            ));
+      }
+    }
+    ;
   }
 
   @override
@@ -101,9 +116,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
           body: SafeArea(
             child: FutureBuilder(
               // future: _getRooms,
-              future:
-
-              searchKey?.text == null ? _getRooms : _getSearchRoomLocal,
+              future: searchKey?.text == null ? _getRooms : _getSearchRoomLocal,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
@@ -122,11 +135,12 @@ class _ListRoomPageState extends State<ListRoomPage> {
                         ),
                         Container(
                             margin: EdgeInsets.only(left: 16.w, right: 16.w),
-                            child:
-                            sort == true ? _listRoom(context, _roomViewModel.sortRooms) :
-                            searchKey == null
-                                ? _listRoom(context, value.rooms)
-                                : _listRoom(context, value.searchRoomsLocal) ),
+                            child: _roomViewModel.sortRooms.isNotEmpty
+                                ? _listRoom(context, _roomViewModel.sortRooms)
+                                : searchKey == null
+                                    ? _listRoom(context, value.rooms)
+                                    : _listRoom(
+                                        context, value.searchRoomsLocal)),
                       ],
                     ),
                   );
@@ -339,12 +353,13 @@ class _ListRoomPageState extends State<ListRoomPage> {
               backgroundColor: const Color.fromARGB(255, 255, 255, 255),
             ),
             onPressed: () {
-              sort = true;
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const SortPage(),
-                  ));
+              setState(() {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SortPage(),
+                    ));
+              });
             },
             child: Row(
               children: [
@@ -372,7 +387,13 @@ class _ListRoomPageState extends State<ListRoomPage> {
                     side: BorderSide(
                         width: 1.w,
                         color: const Color.fromARGB(255, 26, 148, 255)))),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LocationPage(),
+                  ));
+            },
             child: Row(
               children: [
                 Icon(
