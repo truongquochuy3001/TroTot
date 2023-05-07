@@ -1419,8 +1419,10 @@ class _EditPostPageState extends State<EditPostPage> {
           onPressed: () async {
             String userId = _auth.currentUser!.uid.toString();
             print(userId);
+            await getLatLngFromAddress(roomData.address);
+            if(_latLng == null){
             await getLatLngFromAddress(
-                "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel.selectedDistrict!.name}, ${_provinceViewModel.selectedWard!.name}, ${roadInput.text.toString()}");
+                "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel.selectedDistrict!.name}, ${_provinceViewModel.selectedWard!.name}, ${roadInput.text.toString()}");}
             print(_latLng);
             if (_latLng == null) {
               await getLatLngFromAddress(
@@ -1501,7 +1503,7 @@ class _EditPostPageState extends State<EditPostPage> {
                   district: _provinceViewModel.selectedDistrict?.name,
                   ward: _provinceViewModel.selectedWard?.name);
             }
-            await _roomViewModel.addRoom(room, geohash);
+            await _roomViewModel.updateRoom(widget.id ,room, geohash);
             setState(() {
               Navigator.pushReplacement(
                   context,

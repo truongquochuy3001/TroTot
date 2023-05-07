@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
+import 'package:geohash/geohash.dart';
 import 'package:tro_tot_app/models/room_model.dart';
 
 
@@ -89,6 +90,11 @@ class RoomViewModel extends ChangeNotifier {
 
   Future<void> getRoomsUser(String userId) async{
     _userRooms = await _roomServices.getRoomsUser(userId);
+    notifyListeners();
+  }
+
+  Future<void> updateRoom(String id, Room room, String geohash) async{
+    await _roomServices.updateRoom(id, room, geohash);
     notifyListeners();
   }
 }
