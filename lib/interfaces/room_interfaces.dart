@@ -7,6 +7,8 @@ abstract class IRoomServices {
 
   Future<void> addRoom(Room room, String geohash);
 
+  Future<void> updateRoom( String id,Room room, String geohash);
+
   Future<List<Room>> searchRoom(String searchKey);
 
   Future<void> searchRoomLocal(String searchKey);

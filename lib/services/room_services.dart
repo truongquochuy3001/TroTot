@@ -42,7 +42,8 @@ class RoomServices implements IRoomServices {
     // final searchKeys = searchKey.split(' ');
 
     final snapshot = await FirebaseFirestore.instance
-        .collection('Room').where('status', isEqualTo: true)
+        .collection('Room')
+        .where('status', isEqualTo: true)
         .where('name', isGreaterThanOrEqualTo: searchKey)
         .where('name', isLessThanOrEqualTo: searchKey + '\uf8ff')
         .get();
@@ -120,5 +121,36 @@ class RoomServices implements IRoomServices {
     final List<Room> rooms =
         snapshot.docs.map((e) => Room.fromJson(e.data())).toList();
     return rooms;
+  }
+
+  @override
+  Future<void> updateRoom(String id, Room room, String geohash) async {
+    // TODO: implement updateRoom
+    final snapshot =
+        await FirebaseFirestore.instance.collection('Room').doc(id);
+    await snapshot.update({
+      'cityId': room.cityId,
+      'districtId': room.districtId,
+      'wardId': room.wardId,
+      'name': room.name,
+      'address': room.address,
+      'price': room.price,
+      'roomType': room.roomType,
+      'size': room.size,
+      'images': room.images,
+      'image': room.image,
+      'postingDate': room.postingDate,
+      'status': room.status,
+      'description': room.description,
+      'furniture': room.furniture,
+      'longitude': room.longitude,
+      'latitude': room.latitude,
+      'deposit': room.deposit,
+      'road': room.road,
+      'city': room.city,
+      'district': room.district,
+      'ward': room.ward,
+      'geohash': geohash,
+    });
   }
 }
