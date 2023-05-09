@@ -9,7 +9,7 @@ class RoomServices implements IRoomServices {
   @override
   Future<Room?> getRoom(String id) async {
     final snapshot =
-        await FirebaseFirestore.instance.collection('Room').doc(id).get();
+    await FirebaseFirestore.instance.collection('Room').doc(id).get();
     if (!snapshot.exists) return null;
     return Room.fromJson(snapshot.data() as Map<String, dynamic>);
   }
@@ -22,7 +22,7 @@ class RoomServices implements IRoomServices {
         .orderBy('postingDate', descending: true)
         .get();
     final List<Room> rooms =
-        snapshot.docs.map((e) => Room.fromJson(e.data())).toList();
+    snapshot.docs.map((e) => Room.fromJson(e.data())).toList();
     return rooms;
   }
 
@@ -31,8 +31,9 @@ class RoomServices implements IRoomServices {
     // TODO: implement addRoom
 
     final snapshot =
-        await FirebaseFirestore.instance.collection('Room').add(room.toJson());
+    await FirebaseFirestore.instance.collection('Room').add(room.toJson());
     final roomId = snapshot.id;
+
     await snapshot.update({'id': roomId});
   }
 
@@ -48,7 +49,7 @@ class RoomServices implements IRoomServices {
         .where('name', isLessThanOrEqualTo: searchKey + '\uf8ff')
         .get();
     final List<Room> rooms =
-        snapshot.docs.map((e) => Room.fromJson(e.data())).toList();
+    snapshot.docs.map((e) => Room.fromJson(e.data())).toList();
 
     return rooms;
   }
@@ -60,15 +61,13 @@ class RoomServices implements IRoomServices {
   }
 
   @override
-  Future<List<Room>> sortRoom(
-    double startPrice,
-    double endPrice,
-    int? cityId,
-    int? districtId,
-    int? wardId,
-    bool latestNew,
-    bool lowPriceFirst,
-  ) async {
+  Future<List<Room>> sortRoom(double startPrice,
+      double endPrice,
+      int? cityId,
+      int? districtId,
+      int? wardId,
+      bool latestNew,
+      bool lowPriceFirst,) async {
     // TODO: implement sortRoom
     final collectionReference = FirebaseFirestore.instance.collection('Room');
     Query query = collectionReference;
@@ -115,11 +114,25 @@ class RoomServices implements IRoomServices {
     userId = FirebaseAuth.instance.currentUser!.uid;
     final snapshot = await FirebaseFirestore.instance
         .collection('Room')
-        .where('userId', isEqualTo: userId)
+        .where('userId', isEqualTo: userId).where('status', isEqualTo: true)
         .orderBy('postingDate', descending: true)
         .get();
     final List<Room> rooms =
-        snapshot.docs.map((e) => Room.fromJson(e.data())).toList();
+    snapshot.docs.map((e) => Room.fromJson(e.data())).toList();
+    return rooms;
+  }
+
+  @override
+  Future<List<Room>> getRoomUserHide(String userId) async {
+    // TODO: implement getRoomsUser
+    userId = FirebaseAuth.instance.currentUser!.uid;
+    final snapshot = await FirebaseFirestore.instance
+        .collection('Room')
+        .where('userId', isEqualTo: userId).where('status', isEqualTo: false)
+        .orderBy('postingDate', descending: true)
+        .get();
+    final List<Room> rooms =
+    snapshot.docs.map((e) => Room.fromJson(e.data())).toList();
     return rooms;
   }
 
@@ -127,7 +140,7 @@ class RoomServices implements IRoomServices {
   Future<void> updateRoom(String id, Room room, String geohash) async {
     // TODO: implement updateRoom
     final snapshot =
-        await FirebaseFirestore.instance.collection('Room').doc(id);
+    await FirebaseFirestore.instance.collection('Room').doc(id);
     await snapshot.update({
       'cityId': room.cityId,
       'districtId': room.districtId,
@@ -152,5 +165,27 @@ class RoomServices implements IRoomServices {
       'ward': room.ward,
       'geohash': geohash,
     });
+  }
+
+  @override
+  Future<void> hideRoom(String id, bool hide) async {
+    final snapshot =
+    await FirebaseFirestore.instance.collection('Room').doc(id);
+    if (hide == true) {
+      await snapshot.update({
+        'status': false
+      });
+    }
+    else
+    {
+      await snapshot.update({
+        'status': true
+      });}
+  }
+
+  Future<void> deleteRoom(String id) async{
+    final snapshot =
+    await FirebaseFirestore.instance.collection('Room').doc(id);
+   await snapshot.delete();
   }
 }

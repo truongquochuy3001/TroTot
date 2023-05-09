@@ -1,8 +1,10 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tro_tot_app/models/user_model.dart';
 
 import 'package:tro_tot_app/view_models.dart/auth_view_model.dart';
+import 'package:tro_tot_app/view_models.dart/user_view_model.dart';
 import 'package:tro_tot_app/views/list_room_page.dart';
 import 'package:tro_tot_app/views/login_page.dart';
 
@@ -16,12 +18,12 @@ class RegisterSreen extends StatefulWidget {
 class _RegisterSreenState extends State<RegisterSreen> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  TextEditingController userName = TextEditingController();
   AuthViewModel authViewModel = AuthViewModel();
+  UserViewModel userViewModel = UserViewModel();
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -46,16 +48,24 @@ class _RegisterSreenState extends State<RegisterSreen> {
                 SizedBox(
                   height: 40.h,
                 ),
-                _titleText(context, "Create account",
-                    "Enter your Email and Password"),
+                _titleText(
+                    context, "Create account", "Enter your Email and Password"),
                 SizedBox(
                   height: 80.h,
+                ),
+                _inputLabel(context, "UserName"),
+                SizedBox(
+                  height: 4.h,
+                ),
+                _userNameinput(context),
+                SizedBox(
+                  height: 20.h,
                 ),
                 _inputLabel(context, "Email"),
                 SizedBox(
                   height: 4.h,
                 ),
-                _userNameInput(context),
+                _emailInput(context),
                 SizedBox(
                   height: 20.h,
                 ),
@@ -71,7 +81,6 @@ class _RegisterSreenState extends State<RegisterSreen> {
                 SizedBox(
                   height: 40.h,
                 ),
-
               ],
             ),
           ),
@@ -115,12 +124,10 @@ class _RegisterSreenState extends State<RegisterSreen> {
     );
   }
 
-  Widget _userNameInput(BuildContext context) {
+  Widget _emailInput(BuildContext context) {
     return TextField(
       controller: email,
-      onChanged: (value) {
-
-      },
+      onChanged: (value) {},
     );
   }
 
@@ -128,9 +135,15 @@ class _RegisterSreenState extends State<RegisterSreen> {
     return TextField(
       controller: password,
       obscureText: true,
-      onChanged: (value) {
+      onChanged: (value) {},
+    );
+  }
 
-      },
+  Widget _userNameinput(BuildContext context) {
+    return TextField(
+      controller: userName,
+
+      onChanged: (value) {},
     );
   }
 
@@ -143,10 +156,13 @@ class _RegisterSreenState extends State<RegisterSreen> {
               borderRadius: BorderRadius.circular(20.w),
             )),
         onPressed: () async {
-          print("aa");
+
           bool emailValidate = EmailValidator.validate(email.text.toString());
 
-          bool result = await authViewModel.signUp(email.text, password.text) ;
+          bool result = await authViewModel.signUp(email.text, password.text);
+          UserInfor user = UserInfor(name: userName.text);
+          await userViewModel.addUser(user);
+
           print("???");
           print(result);
           if (result && emailValidate) {
@@ -167,16 +183,16 @@ class _RegisterSreenState extends State<RegisterSreen> {
         ));
   }
 
-  // Widget _createAccount(BuildContext context) {
-  //   return GestureDetector(
-  //     onTap: () {},
-  //     child: Text(
-  //       "Create a new account",
-  //       style: TextStyle(
-  //         fontSize: 14.sp,
-  //         color: const Color.fromARGB(255, 107, 107, 107),
-  //       ),
-  //     ),
-  //   );
-  // }
+// Widget _createAccount(BuildContext context) {
+//   return GestureDetector(
+//     onTap: () {},
+//     child: Text(
+//       "Create a new account",
+//       style: TextStyle(
+//         fontSize: 14.sp,
+//         color: const Color.fromARGB(255, 107, 107, 107),
+//       ),
+//     ),
+//   );
+// }
 }

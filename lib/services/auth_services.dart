@@ -4,7 +4,7 @@ import 'package:tro_tot_app/interfaces/auth_interfaces.dart';
 class AuthServices implements IAuthServices {
   @override
   Future<bool> signIn(String email, String password) async {
-    bool result;
+
     try {
       UserCredential credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);

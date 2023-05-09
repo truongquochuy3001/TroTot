@@ -1,8 +1,11 @@
 import 'package:email_validator/email_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 import 'package:tro_tot_app/view_models.dart/auth_view_model.dart';
+import 'package:tro_tot_app/view_models.dart/user_view_model.dart';
 import 'package:tro_tot_app/views/list_room_page.dart';
 import 'package:tro_tot_app/views/register_page.dart';
 
@@ -17,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   AuthViewModel authViewModel = AuthViewModel();
+
 
   @override
   Widget build(BuildContext context) {
@@ -135,36 +139,40 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _loginButton(BuildContext context) {
-    return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.black,
-            fixedSize: Size(150.w, 40.h),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.w),
-            )),
-        onPressed: () async {
-          print("aa");
-          bool emailValidate = EmailValidator.validate(email.text.toString());
+    return Consumer<UserViewModel>(
+      builder: (context, value, child) => ElevatedButton(
+          style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.black,
+              fixedSize: Size(150.w, 40.h),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.w),
+              )),
+          onPressed: () async {
+            print("aa");
+            bool emailValidate = EmailValidator.validate(email.text.toString());
 
-          bool result = await authViewModel.signIn(email.text, password.text) ;
-          print("???");
-          print(result);
-          if (result && emailValidate) {
-            // print("dung");
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ListRoomPage(),
-              ),
-            );
-          } else {
-            const Text("Sai thong tin");
-          }
-        },
-        child: Text(
-          "LOGIN",
-          style: TextStyle(color: Colors.white, fontSize: 22.sp),
-        ));
+            bool result = await authViewModel.signIn(email.text, password.text) ;
+
+            print("???");
+            print(result);
+            if (result && emailValidate) {
+              // print("dung");
+              value.getUser(FirebaseAuth.instance.currentUser!.uid);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ListRoomPage(),
+                ),
+              );
+            } else {
+              const Text("Sai thong tin");
+            }
+          },
+          child: Text(
+            "LOGIN",
+            style: TextStyle(color: Colors.white, fontSize: 22.sp),
+          )),
+    );
   }
 
   Widget _createAccount(BuildContext context) {

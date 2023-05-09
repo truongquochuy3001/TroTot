@@ -65,6 +65,7 @@ class _EditPostPageState extends State<EditPostPage> {
   bool isSelected = true;
   bool isPicked = false;
   bool isFur = false;
+  bool isLoading = false;
 
   final List<String> _items = ['Phòng trọ', 'Nhà ở', 'Căn hộ/chung cư'];
   final List<String> _furStatus = ["Có", "Không"];
@@ -159,7 +160,9 @@ class _EditPostPageState extends State<EditPostPage> {
           style: TextStyle(color: Colors.white, fontSize: 20.sp),
         ),
       ),
-      body: SafeArea(
+      body:
+          // isLoading == true ? const Center(child: CircularProgressIndicator(),) :
+          SafeArea(
         child: Consumer<RoomViewModel>(
           builder: (context, value, child) {
             return FutureBuilder(
@@ -182,6 +185,9 @@ class _EditPostPageState extends State<EditPostPage> {
                     }
                     titleInput.text = roomData.name;
                     decribeInput.text = roomData.description;
+                    if (roomData.road != null) {
+                      roadInput.text = roomData.road!;
+                    }
                     if (roomData.cityId != null) {}
 
                     return SingleChildScrollView(
@@ -274,6 +280,7 @@ class _EditPostPageState extends State<EditPostPage> {
   }
 
   Widget _roomTypeSelect(BuildContext context, Room roomData) {
+    _selectedRoomType = roomData.roomType;
     return GestureDetector(
       onTap: () {
         showModalBottomSheet(
@@ -495,20 +502,34 @@ class _EditPostPageState extends State<EditPostPage> {
               return Text("${snapshot.error}");
             } else {
               List<City> citiesData = value.GetCities;
-              List<District> districtsData = value.GetDistrict;
-              for (int i = 0 ; i<citiesData.length; i ++){
-                if(citiesData[i].code == roomData.cityId)
-                  {
-                    _provinceViewModel.selectedCity = citiesData[i];
 
-                  }
-              }
-              for (int i = 0 ; i<_provinceViewModel.selectedCity!.districts.length; i ++){
-                if ( _provinceViewModel.selectedCity!.districts[i].code == roomData.districtId){
-                  _provinceViewModel.selectedDistrict = _provinceViewModel.selectedCity!.districts[i];
+              for (int i = 0; i < citiesData.length; i++) {
+                if (citiesData[i].code == roomData.cityId) {
+                  _provinceViewModel.selectedCity = citiesData[i];
                 }
               }
-
+              if (_provinceViewModel.selectedCity != null) {
+                for (int i = 0;
+                    i < _provinceViewModel.selectedCity!.districts.length;
+                    i++) {
+                  if (_provinceViewModel.selectedCity!.districts[i].code ==
+                      roomData.districtId) {
+                    _provinceViewModel.selectedDistrict =
+                        _provinceViewModel.selectedCity!.districts[i];
+                  }
+                }
+              }
+              if (_provinceViewModel.selectedDistrict != null) {
+                for (int i = 0;
+                    i < _provinceViewModel.selectedDistrict!.wards.length;
+                    i++) {
+                  if (_provinceViewModel.selectedDistrict!.wards[i].code ==
+                      roomData.wardId) {
+                    _provinceViewModel.selectedWard =
+                        _provinceViewModel.selectedDistrict!.wards[i];
+                  }
+                }
+              }
               return GestureDetector(
                 onTap: () {
                   showModalBottomSheet(
@@ -591,7 +612,9 @@ class _EditPostPageState extends State<EditPostPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              _provinceViewModel.cityName == null ? roomData.city! : _provinceViewModel.cityName!,
+                              _provinceViewModel.cityName == null
+                                  ? roomData.city!
+                                  : _provinceViewModel.cityName!,
                               style: TextStyle(
                                   fontSize: 14.sp,
                                   color:
@@ -744,7 +767,9 @@ class _EditPostPageState extends State<EditPostPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                   _provinceViewModel.districtName == null ? roomData.district! : _provinceViewModel.districtName!,
+                    _provinceViewModel.districtName == null
+                        ? roomData.district!
+                        : _provinceViewModel.districtName!,
                     style: TextStyle(
                         fontSize: 14.sp,
                         color: const Color.fromARGB(255, 128, 128, 137)),
@@ -819,8 +844,7 @@ class _EditPostPageState extends State<EditPostPage> {
   Widget _wardSelect(BuildContext context, Room roomData) {
     return GestureDetector(
       onTap: () {
-        if (roomData.city == null &&
-            roomData.district == null) {
+        if (roomData.city == null && roomData.district == null) {
           Fluttertoast.showToast(
             msg: "Vui lòng chọn tỉnh, thành phố và quận, huyện, thị xã",
             toastLength: Toast.LENGTH_SHORT,
@@ -922,7 +946,9 @@ class _EditPostPageState extends State<EditPostPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    _provinceViewModel.wardName == null ? roomData.ward! : _provinceViewModel.wardName!,
+                    _provinceViewModel.wardName == null
+                        ? roomData.ward!
+                        : _provinceViewModel.wardName!,
                     style: TextStyle(
                         fontSize: 14.sp,
                         color: const Color.fromARGB(255, 128, 128, 137)),
@@ -1417,12 +1443,16 @@ class _EditPostPageState extends State<EditPostPage> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.w))),
           onPressed: () async {
+            setState(() {
+              isLoading = true;
+            });
             String userId = _auth.currentUser!.uid.toString();
             print(userId);
-            await getLatLngFromAddress(roomData.address);
-            if(_latLng == null){
-            await getLatLngFromAddress(
-                "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel.selectedDistrict!.name}, ${_provinceViewModel.selectedWard!.name}, ${roadInput.text.toString()}");}
+            _latLng = LatLng(roomData.latitude, roomData.longitude);
+            if (_latLng == null) {
+              await getLatLngFromAddress(
+                  "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel.selectedDistrict!.name}, ${_provinceViewModel.selectedWard!.name}, ${roadInput.text.toString()}");
+            }
             print(_latLng);
             if (_latLng == null) {
               await getLatLngFromAddress(
@@ -1457,54 +1487,81 @@ class _EditPostPageState extends State<EditPostPage> {
             // print (imageUrls);
             if (depositInput.text.isEmpty) {
               room = Room(
-                  cityId: _provinceViewModel.cityId,
-                  userId: userId,
-                  districtId: _provinceViewModel.districtId,
-                  wardId: _provinceViewModel.wardId,
-                  name: titleInput.text.toString(),
-                  address: _provinceViewModel.address,
-                  price: double.parse(priceInput.text.toString()),
-                  roomType: _selectedRoomType,
-                  size: double.parse(sizeInput.text.toString()),
-                  images: imageUrls,
-                  image: imageUrls[0],
-                  status: true,
-                  description: decribeInput.text.toString(),
-                  furniture: isFur,
-                  longitude: _latLng!.longitude,
-                  latitude: _latLng!.latitude,
-                  postingDate: DateTime.now(),
-                  road: _provinceViewModel.roadInput,
-                  city: _provinceViewModel.selectedCity?.name,
-                  district: _provinceViewModel.selectedDistrict?.name,
-                  ward: _provinceViewModel.selectedWard?.name);
+                cityId: _provinceViewModel.cityId == null
+                    ? roomData.cityId
+                    : _provinceViewModel.cityId,
+                userId: userId,
+                districtId: _provinceViewModel.cityId == null
+                    ? roomData.districtId
+                    : _provinceViewModel.cityId,
+                wardId: _provinceViewModel.cityId == null
+                    ? roomData.wardId
+                    : _provinceViewModel.cityId,
+                name: titleInput.text.toString(),
+                address: _provinceViewModel.address,
+                price: double.parse(priceInput.text.toString()),
+                roomType: _selectedRoomType,
+                size: double.parse(sizeInput.text.toString()),
+                images: imageUrls,
+                image: imageUrls[0],
+                status: true,
+                description: decribeInput.text.toString(),
+                furniture: isFur,
+                longitude: _latLng!.longitude,
+                latitude: _latLng!.latitude,
+                postingDate: DateTime.now(),
+                road: _provinceViewModel.roadInput,
+                city: _provinceViewModel.selectedCity?.name == null
+                    ? roomData.city
+                    : _provinceViewModel.selectedCity?.name,
+                district: _provinceViewModel.selectedDistrict?.name == null
+                    ? roomData.district
+                    : _provinceViewModel.selectedDistrict?.name,
+                ward: _provinceViewModel.selectedWard?.name == null
+                    ? roomData.ward
+                    : _provinceViewModel.selectedWard?.name,
+              );
             } else {
               room = Room(
-                  cityId: _provinceViewModel.cityId,
-                  userId: userId,
-                  districtId: _provinceViewModel.districtId,
-                  wardId: _provinceViewModel.wardId,
-                  name: titleInput.text.toString(),
-                  address: _provinceViewModel.address,
-                  price: double.parse(priceInput.text.toString()),
-                  roomType: _selectedRoomType,
-                  size: double.parse(sizeInput.text.toString()),
-                  images: imageUrls,
-                  image: imageUrls[0],
-                  status: true,
-                  description: decribeInput.text.toString(),
-                  furniture: isFur,
-                  longitude: _latLng!.longitude,
-                  latitude: _latLng!.latitude,
-                  postingDate: DateTime.now(),
-                  deposit: double.parse(depositInput.text.toString()),
-                  road: _provinceViewModel.roadInput,
-                  city: _provinceViewModel.selectedCity?.name,
-                  district: _provinceViewModel.selectedDistrict?.name,
-                  ward: _provinceViewModel.selectedWard?.name);
+                cityId: _provinceViewModel.cityId == null
+                    ? roomData.cityId
+                    : _provinceViewModel.cityId,
+                userId: userId,
+                districtId: _provinceViewModel.cityId == null
+                    ? roomData.districtId
+                    : _provinceViewModel.cityId,
+                wardId: _provinceViewModel.cityId == null
+                    ? roomData.wardId
+                    : _provinceViewModel.cityId,
+                name: titleInput.text.toString(),
+                address: _provinceViewModel.address,
+                price: double.parse(priceInput.text.toString()),
+                roomType: _selectedRoomType,
+                size: double.parse(sizeInput.text.toString()),
+                images: imageUrls,
+                image: imageUrls[0],
+                status: true,
+                description: decribeInput.text.toString(),
+                furniture: isFur,
+                longitude: _latLng!.longitude,
+                latitude: _latLng!.latitude,
+                postingDate: DateTime.now(),
+                deposit: double.parse(depositInput.text.toString()),
+                road: _provinceViewModel.roadInput,
+                city: _provinceViewModel.selectedCity?.name == null
+                    ? roomData.city
+                    : _provinceViewModel.selectedCity?.name,
+                district: _provinceViewModel.selectedDistrict?.name == null
+                    ? roomData.district
+                    : _provinceViewModel.selectedDistrict?.name,
+                ward: _provinceViewModel.selectedWard?.name == null
+                    ? roomData.ward
+                    : _provinceViewModel.selectedWard?.name,
+              );
             }
-            await _roomViewModel.updateRoom(widget.id ,room, geohash);
+            await _roomViewModel.updateRoom(widget.id, room, geohash);
             setState(() {
+              isLoading = false;
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(

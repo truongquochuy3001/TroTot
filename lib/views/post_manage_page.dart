@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:tro_tot_app/views/edit_post_page.dart';
+import 'package:tro_tot_app/views/list_room_page.dart';
 import 'package:tro_tot_app/views/room_detail.dart';
 
 import '../models/room_model.dart';
@@ -17,9 +20,11 @@ class PostManagePage extends StatefulWidget {
 }
 
 class _PostManagePageState extends State<PostManagePage> {
-  late Future userRooms;
-  late RoomViewModel _roomViewModel;
+  late Future _getRoomsDisplay;
+  late Future _getRoomsHide;
+  late RoomViewModel _getRoomUser;
   bool isSelected = true;
+  bool isHide = false;
   String userId = FirebaseAuth.instance.currentUser!.uid;
   DateTime now = DateTime.now();
 
@@ -27,110 +32,119 @@ class _PostManagePageState extends State<PostManagePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    userRooms = context.read<RoomViewModel>().getRoomsUser(userId);
-    _roomViewModel = context.read<RoomViewModel>();
+    _getRoomUser = context.read<RoomViewModel>();
+    _getRoomsDisplay = context.read<RoomViewModel>().getRoomsUser(userId);
+    _getRoomsHide = context.read<RoomViewModel>().getRoomUserHide(userId);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        title: Text(
-          "Quản lý tin của bạn",
-          style: TextStyle(fontSize: 20.sp),
+        appBar: AppBar(
+          elevation: 0,
+          leading: BackButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ListRoomPage(),
+                  ));
+            },
+          ),
+          title: Text(
+            "Quản lý tin của bạn",
+            style: TextStyle(fontSize: 20.sp),
+          ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              width: 360.w,
-              height: 40.h,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isSelected = true;
-                        });
-                      },
-                      child: Text(
-                        "Đang hiển thị",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 16.sp),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                width: 360.w,
+                height: 40.h,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isSelected = true;
+                          });
+                        },
+                        child: Text(
+                          "Đang hiển thị",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 16.sp),
+                        ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isSelected = false;
-                        });
-                      },
-                      child: Text(
-                        "Đã ẩn",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 16.sp),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isSelected = false;
+                          });
+                        },
+                        child: Text(
+                          "Đã ẩn",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 16.sp),
+                        ),
                       ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(
-              width: 360.w,
-              child: AnimatedAlign(
-                alignment:
-                    isSelected ? Alignment.centerLeft : Alignment.centerRight,
-                duration: Duration(milliseconds: 300),
-                child: Container(
-                  color: Colors.blue,
-                  width: 180.w,
-                  height: 1.h,
+                    )
+                  ],
                 ),
               ),
-            ),
-            _listPost(context),
-          ],
-        ),
-      ),
-    );
+              SizedBox(
+                width: 360.w,
+                child: AnimatedAlign(
+                  alignment:
+                      isSelected ? Alignment.centerLeft : Alignment.centerRight,
+                  duration: const Duration(milliseconds: 300),
+                  child: Container(
+                    color: Colors.blue,
+                    width: 180.w,
+                    height: 1.h,
+                  ),
+                ),
+              ),
+              _listPost(context),
+            ],
+          ),
+        ));
   }
 
   Widget _listPost(BuildContext context) {
-    return FutureBuilder(
-      future: userRooms,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting){
-          return Center(child: CircularProgressIndicator(),);
-        }
-        else if (snapshot.hasError){
-          return Text("${snapshot.error}");
-        }
-        else{
+    return Consumer<RoomViewModel>(
+      builder: (context, value, child) {
+        return FutureBuilder(
+          future: isSelected ? _getRoomsDisplay : _getRoomsHide,
+          builder: (context, snapshot) {
+            List<Room> rooms = isSelected ? value.userRooms : value.userRoomsHide;
 
-        return ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: _roomViewModel.userRooms.length,
-          itemBuilder: (context, index) {
-            Room room = _roomViewModel.userRooms[index];
-            return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => RoomDetailPage(id: room.id!),
-                      ));
-                },
-                child: _roomInfor(context, room));
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount:
+
+                  rooms.length,
+              itemBuilder: (context, index) {
+                Room room = rooms[index];
+
+                return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RoomDetailPage(id: room.id!),
+                          ));
+                    },
+                    child: _roomInfor(context, room));
+              },
+            );
             ;
           },
-
-        );}
+        );
       },
     );
   }
@@ -234,20 +248,61 @@ class _PostManagePageState extends State<PostManagePage> {
                     ],
                   ),
                 ),
-                Row(
-                  children: [
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          elevation:  0,
+                isSelected == true
+                    ? Row(
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          EditPostPage(id: room.id!),
+                                    ));
+                              },
+                              icon:const  Icon(
+                                Icons.edit,
+                                color: Colors.blue,
+                              )),
+                          SizedBox(
+                            width: 5.w,
+                          ),
+                          IconButton(
+                              onPressed: () async {
+                                setState(() {
+                                  isHide = true;
+                                });
 
-                        ),
-                        onPressed: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => EditPostPage(id : room.id!),));
-                        }, child: Text("Chỉnh sửa")),
-                    SizedBox(width: 5.w,),
-                    ElevatedButton(onPressed: (){}, child: Text("Ẩn tin")),
-                  ],
-                ),
+                                await _getRoomUser.hideRoom(room.id!, isHide);
+                                setState(() {});
+                              },
+                              icon: const Icon(
+                                Icons.remove_red_eye_outlined,
+                                color: Colors.grey,
+                              )),
+                          SizedBox(
+                            width: 5.w,
+                          ),
+                          IconButton(
+                              onPressed: () {
+                                _getRoomUser.deleteRoom(room.id!);
+                              },
+                              icon:const Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              )),
+                        ],
+                      )
+                    : ElevatedButton(
+                        onPressed: () async {
+                          setState(() {
+                            isHide = false;
+                          });
+
+                          await _getRoomUser.displayRoom(room.id!);
+                          setState(() {});
+                        },
+                        child: Text("Hiện tin")),
                 Row(
                   children: [
                     Icon(
@@ -270,7 +325,6 @@ class _PostManagePageState extends State<PostManagePage> {
                     SizedBox(
                       width: 6.w,
                     ),
-
                     Expanded(
                       child: Text(
                         room.address,
@@ -290,5 +344,4 @@ class _PostManagePageState extends State<PostManagePage> {
       ),
     );
   }
-
 }
