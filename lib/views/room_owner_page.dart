@@ -10,14 +10,15 @@ import 'package:tro_tot_app/view_models.dart/user_view_model.dart';
 import '../models/room_model.dart';
 import '../models/user_model.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+class RoomOwnerPage extends StatefulWidget {
+  final String id;
+  const RoomOwnerPage({Key? key, required this.id}) : super(key: key);
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<RoomOwnerPage> createState() => _RoomOwnerPageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _RoomOwnerPageState extends State<RoomOwnerPage> {
   bool _isSelect = true;
   AuthViewModel _authViewModel = AuthViewModel();
   String userId = "";
@@ -35,10 +36,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
     _getRoomUser = context.read<RoomViewModel>();
     _getUser = context.read<UserViewModel>();
-    if (_getUser.user != null){
-      _getRoomsDisplay = context.read<RoomViewModel>().getRoomsUser(_getUser.user!.id!);
-      _getRoomsHide = context.read<RoomViewModel>().getRoomUserHide(_getUser.user!.id!);
-    }
+
+      _getRoomsDisplay = context.read<RoomViewModel>().getRoomsUser(widget.id);
+      // _getRoomsHide = context.read<RoomViewModel>().getRoomUserHide(_getUser.user!.id!);
+
     // _getUserInfor = context.read<UserViewModel>().getUser(userId);
     // _getRoomsDisplay = context.read<RoomViewModel>().getRoomsUser(userId);
     // _getRoomsHide = context.read<RoomViewModel>().getRoomUserHide(userId);
@@ -47,7 +48,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
 
-   return  Scaffold(
+    return  Scaffold(
       backgroundColor: const Color.fromARGB(255, 245, 245, 250),
       appBar: AppBar(
         elevation: 0,
@@ -59,24 +60,24 @@ class _ProfilePageState extends State<ProfilePage> {
             fontSize: 20.sp,
           ),
         ),
-        actions: [
-          Consumer<UserViewModel>(
-            builder: (context, value, child) =>  IconButton(
-                onPressed: () {
-                  value.user = null;
-                  _authViewModel.signOut();
-                  Navigator.pop(context);
-                },
-                icon: Icon(Icons.logout)),
-          )
-        ],
+        // actions: [
+        //   Consumer<UserViewModel>(
+        //     builder: (context, value, child) =>  IconButton(
+        //         onPressed: () {
+        //           value.user = null;
+        //           _authViewModel.signOut();
+        //           Navigator.pop(context);
+        //         },
+        //         icon: const Icon(Icons.logout)),
+        //   )
+        // ],
       ),
       body: Consumer<UserViewModel>(
         builder: (context, value, child) {
           return SingleChildScrollView(
             child: Column(
               children: [
-                _userInfor(context, value.user!),
+                _userInfor(context, value.roomOwner!),
                 SizedBox(
                   height: 10.h,
                 ),
@@ -120,22 +121,22 @@ class _ProfilePageState extends State<ProfilePage> {
                 minRadius: 32.w,
                 backgroundImage: AssetImage("assets/images/avatar.jpg"),
               ),
-              // Positioned(
-              //     bottom: -10.w,
-              //     right: -10.w,
-              //     child: ElevatedButton(
-              //       style: ElevatedButton.styleFrom(
-              //         elevation: 0,
-              //         minimumSize: Size(20.w, 20.w),
-              //         backgroundColor: Colors.grey,
-              //         shape: CircleBorder(),
-              //       ),
-              //       onPressed: () {},
-              //       child: Icon(
-              //         Icons.camera_alt_rounded,
-              //         size: 12.w,
-              //       ),
-              //     ))
+              Positioned(
+                  bottom: -10.w,
+                  right: -10.w,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      minimumSize: Size(20.w, 20.w),
+                      backgroundColor: Colors.grey,
+                      shape: CircleBorder(),
+                    ),
+                    onPressed: () {},
+                    child: Icon(
+                      Icons.camera_alt_rounded,
+                      size: 12.w,
+                    ),
+                  ))
             ],
           ),
         ),
@@ -151,56 +152,57 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.blue, width: 1.w),
-                          borderRadius: BorderRadius.circular(8.w))),
-                  onPressed: () {},
-                  child: Text(
-                    "Chỉnh sửa thông tin",
-                    style: TextStyle(color: Colors.black, fontSize: 12.sp),
-                  ),
-                ),
-                SizedBox(
-                  width: 12.w,
-                ),
-              ],
-            ),
+            SizedBox(height: 30.h,),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.end,
+            //   children: [
+            //     ElevatedButton(
+            //       style: ElevatedButton.styleFrom(
+            //           elevation: 0,
+            //           backgroundColor: Colors.white,
+            //           shape: RoundedRectangleBorder(
+            //               side: BorderSide(color: Colors.blue, width: 1.w),
+            //               borderRadius: BorderRadius.circular(8.w))),
+            //       onPressed: () {},
+            //       child: Text(
+            //         "Chỉnh sửa thông tin",
+            //         style: TextStyle(color: Colors.black, fontSize: 12.sp),
+            //       ),
+            //     ),
+            //     SizedBox(
+            //       width: 12.w,
+            //     ),
+            //   ],
+            // ),
             Text(
-              _getUser.user!.name,
+              _getUser.roomOwner!.name,
               style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700),
             ),
             SizedBox(
               height: 8.h,
             ),
-            Text(
-              "Chưa có đánh giá",
-              style: TextStyle(fontSize: 12.sp),
-            ),
+            // Text(
+            //   "Chưa có đánh giá",
+            //   style: TextStyle(fontSize: 12.sp),
+            // ),
             SizedBox(
               height: 8.h,
             ),
             SizedBox(
               width: 360.w,
               height: 20.h,
-              child: Row(
-                children: [
-                  Text("Người theo dõi: " + "0",
-                      style: TextStyle(fontSize: 10.sp)),
-                  const VerticalDivider(
-                    color: Colors.black,
-                    thickness: 1,
-                  ),
-                  Text("Đang theo dõi :" + "0",
-                      style: TextStyle(fontSize: 10.sp)),
-                ],
-              ),
+              // child: Row(
+              //   children: [
+              //     Text("Người theo dõi: " + "0",
+              //         style: TextStyle(fontSize: 10.sp)),
+              //     const VerticalDivider(
+              //       color: Colors.black,
+              //       thickness: 1,
+              //     ),
+              //     Text("Đang theo dõi :" + "0",
+              //         style: TextStyle(fontSize: 10.sp)),
+              //   ],
+              // ),
             ),
             SizedBox(
               height: 8.h,
@@ -256,10 +258,10 @@ class _ProfilePageState extends State<ProfilePage> {
     return Consumer<RoomViewModel>(
       builder: (context, value, child) {
         return FutureBuilder(
-          future: _isSelect ? _getRoomsDisplay : _getRoomsHide,
+          future: _getRoomsDisplay,
           builder: (context, snapshot) {
             List<Room> rooms =
-                _isSelect ? _getRoomUser.userRooms : _getRoomUser.userRoomsHide;
+             _getRoomUser.userRooms ;
 
             return Container(
               width: 360.w,
@@ -287,41 +289,41 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                             )),
                       ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _isSelect = false;
-                            });
-                          },
-                          child: Center(
-                            child: Text(
-                              "Đã đóng",
-                              style: TextStyle(
-                                  fontSize: 14.sp, fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                        ),
-                      ),
+                      // Expanded(
+                      //   child: GestureDetector(
+                      //     onTap: () {
+                      //       setState(() {
+                      //         _isSelect = false;
+                      //       });
+                      //     },
+                      //     child: Center(
+                      //       child: Text(
+                      //         "Đã đóng",
+                      //         style: TextStyle(
+                      //             fontSize: 14.sp, fontWeight: FontWeight.w700),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                   SizedBox(
                     height: 4.h,
                   ),
-                  SizedBox(
-                    width: 360.w,
-                    child: AnimatedAlign(
-                      alignment: _isSelect
-                          ? Alignment.centerLeft
-                          : Alignment.centerRight,
-                      duration: const Duration(milliseconds: 300),
-                      child: Container(
-                        color: Colors.blue,
-                        width: 180.w,
-                        height: 1.h,
-                      ),
-                    ),
-                  ),
+                  // SizedBox(
+                  //   width: 360.w,
+                  //   child: AnimatedAlign(
+                  //     alignment: _isSelect
+                  //         ? Alignment.centerLeft
+                  //         : Alignment.centerRight,
+                  //     duration: const Duration(milliseconds: 300),
+                  //     child: Container(
+                  //       color: Colors.blue,
+                  //       width: 180.w,
+                  //       height: 1.h,
+                  //     ),
+                  //   ),
+                  // ),
                   ListView.builder(
                     itemCount: rooms.length,
                     shrinkWrap: true,

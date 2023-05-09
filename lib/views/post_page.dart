@@ -51,13 +51,22 @@ class _PostPageState extends State<PostPage> {
 
   LatLng? _latLng;
 
-  String _selectedRoomType = 'Loại phòng';
+  String _selectedRoomType = '';
   String _selectedFur = "Không";
   String address = "Địa chỉ";
 
   bool isSelected = true;
   bool isPicked = false;
   bool isFur = false;
+  bool isLoading = false;
+
+  bool roomTypeError = false;
+  bool addrError = false;
+  bool imagesError = false;
+  bool sizeError = false;
+  bool priceError = false;
+  bool titleError = false;
+  bool decribeError =false;
 
   final List<String> _items = ['Phòng trọ', 'Nhà ở', 'Căn hộ/chung cư'];
   final List<String> _furStatus = ["Có", "Không"];
@@ -151,7 +160,9 @@ class _PostPageState extends State<PostPage> {
           style: TextStyle(color: Colors.white, fontSize: 20.sp),
         ),
       ),
-      body: SafeArea(
+      body:
+      isLoading == true ? const  Center(child: CircularProgressIndicator()) :
+      SafeArea(
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -159,6 +170,7 @@ class _PostPageState extends State<PostPage> {
                 height: 10.h,
               ),
               _roomTypeSelect(context),
+              roomTypeError ?  const Text("Vui lòng chọn loại phòng", style: TextStyle(color: Colors.red),) : const SizedBox(),
               SizedBox(
                 height: 10.h,
               ),
@@ -167,10 +179,12 @@ class _PostPageState extends State<PostPage> {
                 height: 10.h,
               ),
               _addrSelect(context),
+              addrError ? const Text("Vui lòng chọn địa chỉ", style: TextStyle(color: Colors.red),) : const SizedBox(),
               SizedBox(
                 height: 10.h,
               ),
               _upLoadPhoto(context),
+              imagesError ? const Text("Vui lòng chọn ít nhất 1 ảnh", style: TextStyle(color: Colors.red),) : const SizedBox(),
               SizedBox(
                 height: 10.h,
               ),
@@ -179,18 +193,22 @@ class _PostPageState extends State<PostPage> {
                 height: 10.h,
               ),
               _furnitureSelect(context),
+
               SizedBox(
                 height: 10.h,
               ),
               _titleText(context, "Diện tích và giá"),
+
               SizedBox(
                 height: 10.h,
               ),
               _sizeInput(context),
+              imagesError ? const Text("Vui lòng nhập diện tích", style: TextStyle(color: Colors.red),) : const SizedBox(),
               SizedBox(
                 height: 10.h,
               ),
               _priceInput(context),
+              imagesError ? const Text("Vui lòng nhập giá", style: TextStyle(color: Colors.red),) : const SizedBox(),
               SizedBox(
                 height: 10.h,
               ),
@@ -203,10 +221,12 @@ class _PostPageState extends State<PostPage> {
                 height: 10.h,
               ),
               _titleInput(context),
+              imagesError ? const Text("Vui lòng nhập tiêu đề", style: TextStyle(color: Colors.red),) : const SizedBox(),
               SizedBox(
                 height: 10.h,
               ),
               _detailDecribe(context),
+              imagesError ? const Text("Vui lòng nhập mô tả", style: TextStyle(color: Colors.red),) : const SizedBox(),
               SizedBox(height: 20.h),
               _submitButton(context),
               SizedBox(
@@ -310,7 +330,7 @@ class _PostPageState extends State<PostPage> {
                       color: const Color.fromARGB(255, 128, 128, 137)),
                 ),
                 Text(
-                  _selectedRoomType,
+                  _selectedRoomType == '' ? "Chọn loại phòng" : _selectedRoomType,
                   style: TextStyle(fontSize: 12.sp),
                 )
               ],
@@ -1306,24 +1326,36 @@ class _PostPageState extends State<PostPage> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.w))),
           onPressed: () async {
+            setState(() {
+              isLoading = true;
+            });
+
             String userId = _auth.currentUser!.uid.toString();
             print(userId);
             await getLatLngFromAddress(
-                "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel.selectedDistrict!.name}, ${_provinceViewModel.selectedWard!.name}, ${roadInput.text.toString()}");
+                "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel
+                    .selectedDistrict!.name}, ${_provinceViewModel.selectedWard!
+                    .name}, ${roadInput.text.toString()}");
             print(_latLng);
             if (_latLng == null) {
               await getLatLngFromAddress(
-                  "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel.selectedDistrict!.name}, ${_provinceViewModel.selectedWard!.name}");
+                  "${_provinceViewModel.selectedCity!
+                      .name}, ${_provinceViewModel.selectedDistrict!
+                      .name}, ${_provinceViewModel.selectedWard!.name}");
               print(
-                  "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel.selectedDistrict!.name}, ${_provinceViewModel.selectedWard!.name}");
+                  "${_provinceViewModel.selectedCity!
+                      .name}, ${_provinceViewModel.selectedDistrict!
+                      .name}, ${_provinceViewModel.selectedWard!.name}");
               print(_latLng);
             }
 
             if (_latLng == null) {
               await getLatLngFromAddress(
-                  "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel.selectedDistrict!.name}");
+                  "${_provinceViewModel.selectedCity!
+                      .name}, ${_provinceViewModel.selectedDistrict!.name}");
               print(
-                  "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel.selectedDistrict!.name}");
+                  "${_provinceViewModel.selectedCity!
+                      .name}, ${_provinceViewModel.selectedDistrict!.name}");
               print(_latLng);
             }
 
@@ -1333,9 +1365,40 @@ class _PostPageState extends State<PostPage> {
               print("${_provinceViewModel.selectedCity!.name}");
               print(_latLng);
             }
-            String geohash = Geohash.encode(_latLng!.latitude, _latLng!.longitude, codeLength: 8);
+            String geohash = Geohash.encode(
+                _latLng!.latitude, _latLng!.longitude, codeLength: 8);
             print(selectedImages);
             await _getImageUrls();
+
+            if (_selectedRoomType == '') {
+              setState(() {
+                roomTypeError = true;
+                isLoading = false;
+              });
+
+            }
+            if (_provinceViewModel.address == "") {
+              addrError = true;
+              isLoading = false;
+            }
+            if (imageUrls.isEmpty) {
+              imagesError = true;
+              isLoading = false;
+            }
+            if (priceInput.text.isEmpty)
+          {
+            priceError =true;
+            isLoading = false;
+          }
+            if (titleInput.text.isEmpty){
+              titleError = true;
+              isLoading = false;
+            }
+            if (decribeInput.text.isEmpty){
+              decribeError = true;
+              isLoading = false;
+            }
+
             // await _getImageUrls();
             // print (imageUrls);
             if (depositInput.text.isEmpty){
@@ -1393,13 +1456,16 @@ class _PostPageState extends State<PostPage> {
 
             );}
             await _roomViewModel.addRoom(room, geohash);
+
             setState(() {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ListRoomPage(),
-                  ));
+              isLoading = false;
+
             });
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ListRoomPage(),
+                ));
           },
           child: Text(
             "Đăng tin",

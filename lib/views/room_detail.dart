@@ -7,6 +7,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tro_tot_app/models/room_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
+import 'package:tro_tot_app/view_models.dart/user_view_model.dart';
+import 'package:tro_tot_app/views/room_owner_page.dart';
 
 class RoomDetailPage extends StatefulWidget {
   final String id;
@@ -20,8 +22,8 @@ class RoomDetailPage extends StatefulWidget {
 class _RoomDetailPageState extends State<RoomDetailPage> {
   bool _isMyLocationEnabled = false;
   late GoogleMapController _mapController;
-
-
+  String userId = "";
+  late RoomViewModel roomProvider;
 
   @override
   void initState() {
@@ -29,7 +31,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
     super.initState();
     print(widget.id);
     getRoom = context.read<RoomViewModel>().getRoom(widget.id);
-
+    roomProvider = context.read<RoomViewModel>();
   }
 
   late Future getRoom;
@@ -41,6 +43,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
     return Scaffold(
         backgroundColor: const Color.fromARGB(255, 245, 245, 250),
         appBar: AppBar(
+          foregroundColor: Colors.blue,
           centerTitle: true,
           elevation: 0,
           backgroundColor: Colors.white,
@@ -96,7 +99,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                       SizedBox(
                         height: 10.h,
                       ),
-                      _userInfor(context),
+                      _userInfor(context, roomData),
                       SizedBox(
                         height: 10.h,
                       ),
@@ -104,7 +107,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                       SizedBox(
                         height: 10.h,
                       ),
-                      _otherPost(context),
+                      _otherPost(context, roomData),
                       SizedBox(
                         height: 10.h,
                       ),
@@ -185,7 +188,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
         children: [
           _titleText(context, roomData.name),
           SizedBox(
-            height: 5.h,
+            height: 20.h,
           ),
           Padding(
             padding: EdgeInsets.only(left: 12.w, right: 12.w),
@@ -207,26 +210,29 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                     ],
                   ),
                 ),
-                SizedBox(
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.favorite_outline,
-                        color: Colors.blue,
-                        size: 12.w,
-                      ),
-                      SizedBox(
-                        width: 8.w,
-                      ),
-                      Text(
-                        "Lưu",
-                        style: TextStyle(fontSize: 12.sp),
-                      )
-                    ],
-                  ),
-                ),
+                // SizedBox(
+                //   child: Row(
+                //     children: [
+                //       Icon(
+                //         Icons.favorite_outline,
+                //         color: Colors.blue,
+                //         size: 12.w,
+                //       ),
+                //       SizedBox(
+                //         width: 8.w,
+                //       ),
+                //       Text(
+                //         "Lưu",
+                //         style: TextStyle(fontSize: 12.sp),
+                //       )
+                //     ],
+                //   ),
+                // ),
               ],
             ),
+          ),
+          SizedBox(
+            height: 5.h,
           ),
           Padding(
             padding: EdgeInsets.only(left: 12.w, right: 12.w),
@@ -304,7 +310,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                         TextSpan(
                             text: roomData.size.toString(),
                             style:
-                            TextStyle(fontSize: 12.sp, color: Colors.black))
+                                TextStyle(fontSize: 12.sp, color: Colors.black))
                       ]),
                 )
               ],
@@ -330,15 +336,17 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                     text: "Số tiền cọc : ",
                     style: TextStyle(fontSize: 12.sp, color: Colors.black),
                     children: [
-                      roomData.deposit == null ?                       TextSpan(
-                          text: "0 đ",
-                          style:
-                          TextStyle(fontSize: 12.sp, color: Colors.black)) :
-                      TextSpan(
-                          text: "${roomData.deposit.toString()} đ",
-                          style:
-                          TextStyle(fontSize: 12.sp, color: Colors.black))
-                    ],),
+                      roomData.deposit == null
+                          ? TextSpan(
+                              text: "0 đ",
+                              style: TextStyle(
+                                  fontSize: 12.sp, color: Colors.black))
+                          : TextSpan(
+                              text: "${roomData.deposit.toString()} đ",
+                              style: TextStyle(
+                                  fontSize: 12.sp, color: Colors.black))
+                    ],
+                  ),
                 )
               ],
             ),
@@ -410,7 +418,6 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                 zoomGesturesEnabled: true,
                 zoomControlsEnabled: false,
                 myLocationEnabled: true,
-
                 markers: {
                   Marker(
                       markerId: MarkerId(''),
@@ -427,7 +434,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
     );
   }
 
-  Widget _userInfor(BuildContext context) {
+  Widget _userInfor(BuildContext context, Room roomData) {
     return Container(
       padding: EdgeInsets.only(left: 20.w, right: 20.w),
       width: 360.w,
@@ -449,7 +456,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                 Text(
                   "Khanh",
                   style:
-                  TextStyle(fontWeight: FontWeight.w700, fontSize: 12.sp),
+                      TextStyle(fontWeight: FontWeight.w700, fontSize: 12.sp),
                 ),
                 SizedBox(
                   height: 8.h,
@@ -470,48 +477,56 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                     )
                   ],
                 ),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.brightness_1,
-                      color: Colors.grey,
-                      size: 16.w,
-                    ),
-                    SizedBox(
-                      width: 8.w,
-                    ),
-                    Text(
-                      "Hoat dong 30 phut truoc",
-                      style: TextStyle(color: Colors.grey, fontSize: 12.sp),
-                    )
-                  ],
-                )
+                // Row(
+                //   children: [
+                //     Icon(
+                //       Icons.brightness_1,
+                //       color: Colors.grey,
+                //       size: 16.w,
+                //     ),
+                //     SizedBox(
+                //       width: 8.w,
+                //     ),
+                //     Text(
+                //       "Hoat dong 30 phut truoc",
+                //       style: TextStyle(color: Colors.grey, fontSize: 12.sp),
+                //     )
+                //   ],
+                // )
               ],
             ),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              minimumSize: Size.zero,
-              padding: EdgeInsets.all(8.w),
-              elevation: 0,
-              backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(26.w),
-                  side: BorderSide(width: 2.w, color: Colors.blue)),
-            ),
-            onPressed: () {},
-            child: Row(
-              children: [
-                Text(
-                  "Xem trang",
-                  style: TextStyle(color: Colors.blue, fontSize: 12.sp),
-                ),
-                Icon(
-                  Icons.keyboard_arrow_right,
-                  color: Colors.blue,
-                  size: 16.w,
-                )
-              ],
+          Consumer<UserViewModel>(
+            builder: (context, value, child) =>  ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size.zero,
+                padding: EdgeInsets.all(8.w),
+                elevation: 0,
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(26.w),
+                    side: BorderSide(width: 2.w, color: Colors.blue)),
+              ),
+              onPressed: () async {
+                print("bbb");
+                print(roomData.userId);
+                await value.getRoomOwner(roomData.userId);
+                print(value.roomOwner!.name);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => RoomOwnerPage(id : roomData.userId),));
+              },
+              child: Row(
+                children: [
+                  Text(
+                    "Xem trang",
+                    style: TextStyle(color: Colors.blue, fontSize: 12.sp),
+                  ),
+                  Icon(
+                    Icons.keyboard_arrow_right,
+                    color: Colors.blue,
+                    size: 16.w,
+                  )
+                ],
+              ),
             ),
           )
         ],
@@ -568,99 +583,111 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
     );
   }
 
-  Widget _otherPost(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(left: 20.w, right: 20.w),
-      width: 360.w,
-      height: 220.h,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _titleText(context, "Tin rao khác của ABC"),
-          SizedBox(
-            height: 15.h,
-          ),
-          Expanded(
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                _otherRoomDetail(context),
-                _otherRoomDetail(context),
-                _otherRoomDetail(context),
-                _otherRoomDetail(context),
-                _otherRoomDetail(context),
-              ],
-            ),
-          ),
-          Center(
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: "Xem tất cả",
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  WidgetSpan(
-                      child: Icon(
-                        Icons.keyboard_arrow_right,
-                        color: Colors.blue,
-                        size: 16.w,
-                      ))
-                ],
+  Widget _otherPost(BuildContext context, Room roomData) {
+    Future getOtherRoom = roomProvider.getRoomsUser(roomData.userId);
+
+    return FutureBuilder(
+      future: roomProvider.getRoomsUser(roomData.userId),
+      builder: (context, snapshot) {
+        List<Room> rooms = roomProvider.userRooms;
+        return Container(
+          padding: EdgeInsets.only(left: 20.w, right: 20.w),
+          width: 360.w,
+          height: 220.h,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _titleText(context, "Tin rao khác"),
+              SizedBox(
+                height: 15.h,
               ),
-            ),
+              Expanded(
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: rooms.length,
+                  itemBuilder: (context, index) {
+                    Room room = rooms[index];
+                    return _otherRoomDetail(context, room);
+                  },
+                ),
+              ),
+              // Center(
+              //   child: RichText(
+              //     text: TextSpan(
+              //       children: [
+              //         TextSpan(
+              //           text: "Xem tất cả",
+              //           style: TextStyle(
+              //             color: Colors.blue,
+              //             fontSize: 12.sp,
+              //             fontWeight: FontWeight.bold,
+              //           ),
+              //         ),
+              //         WidgetSpan(
+              //             child: Icon(
+              //               Icons.keyboard_arrow_right,
+              //               color: Colors.blue,
+              //               size: 16.w,
+              //             ))
+              //       ],
+              //     ),
+              //   ),
+              // ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
+
     );
   }
 
-  Widget _otherRoomDetail(BuildContext context) {
-    return Container(
-      width: 120.w,
-      // height: 100.h,
-      // decoration: BoxDecoration(
-      //     border: Border.all(
-      //       width: 2.w,
-      //     ),
-      //     borderRadius: BorderRadius.circular(12)),
-      margin: EdgeInsets.all(8.w),
-      padding: EdgeInsets.all(8.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: double.infinity,
-            height: 70.h,
-            child: Image.asset(
-              "assets/images/image.jpg",
-              fit: BoxFit.fill,
+  Widget _otherRoomDetail(BuildContext context, Room room) {
+    return GestureDetector(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => RoomDetailPage(id: room.id!),));
+      },
+      child: Container(
+        width: 120.w,
+        // height: 100.h,
+        // decoration: BoxDecoration(
+        //     border: Border.all(
+        //       width: 2.w,
+        //     ),
+        //     borderRadius: BorderRadius.circular(12)),
+        margin: EdgeInsets.all(8.w),
+        padding: EdgeInsets.all(8.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: 70.h,
+              child:  Image.network(
+                room.image,
+                fit: BoxFit.scaleDown,
+              ),
             ),
-          ),
-          Text(
-            "Cho thue tro gan DHH",
-            style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w500),
-          ),
-          Text(
-            "30 m2",
-            style: TextStyle(fontSize: 12.sp, color: Colors.grey),
-          ),
-          Text(
-            "700.000d/thang",
-            style: TextStyle(
-                color: Colors.blue,
-                fontWeight: FontWeight.w700,
-                fontSize: 12.sp),
-          ),
-          Text(
-            "Tp.Hue",
-            style: TextStyle(fontSize: 12.sp, color: Colors.grey),
-          ),
-        ],
+            Text(
+              room.name,
+              style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w500),
+            ),
+            Text(
+              "${room.size.toString()} m2",
+              style: TextStyle(fontSize: 12.sp, color: Colors.grey),
+            ),
+            Text(
+              "${room.price.toString()} đ/tháng",
+              style: TextStyle(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12.sp),
+            ),
+            Text(
+              room.address,
+              style: TextStyle(fontSize: 12.sp, color: Colors.grey, overflow: TextOverflow.ellipsis),
+            ),
+          ],
+        ),
       ),
     );
     ;

@@ -20,6 +20,7 @@ class RoomViewModel extends ChangeNotifier {
   List<Room> _sortRooms =[];
   List<Room> _searchRoomLocal = [];
   List<Room> _userRooms = [];
+  List<Room> _userRoomsHide = [];
   List<String> _searchHistory = [];
 
   List<Room> get rooms => _rooms;
@@ -32,8 +33,12 @@ class RoomViewModel extends ChangeNotifier {
 
   List<Room> get userRooms => _userRooms;
 
+  List<Room> get userRoomsHide => _userRoomsHide;
+
   List<String> get searchHistory => _searchHistory;
 
+  StreamController<List<Room>> roomUserDiplayController = StreamController<List<Room>>.broadcast();
+  StreamController<List<Room>> roomUserHideController = StreamController<List<Room>>.broadcast();
 
   Future<Room?> getRoom(String id) async {
     return await _roomServices.getRoom(id);
@@ -90,11 +95,40 @@ class RoomViewModel extends ChangeNotifier {
 
   Future<void> getRoomsUser(String userId) async{
     _userRooms = await _roomServices.getRoomsUser(userId);
+
+    roomUserDiplayController.add(_userRooms);
+    notifyListeners();
+  }
+
+  Future<void> getRoomUserHide(String userId) async{
+    _userRoomsHide = await _roomServices.getRoomUserHide(userId);
+
+    roomUserHideController.add(_userRoomsHide);
     notifyListeners();
   }
 
   Future<void> updateRoom(String id, Room room, String geohash) async{
     await _roomServices.updateRoom(id, room, geohash);
+    notifyListeners();
+  }
+
+  Future<void> hideRoom(String id, bool hide) async {
+    await _roomServices.hideRoom(id, hide);
+    _userRoomsHide.add(_userRooms.where((element) => element.id == id).first);
+    _userRooms.removeWhere((element) => element.id == id);
+
+    notifyListeners();
+  }
+
+  Future<void> displayRoom(String id)async {
+    await _roomServices.hideRoom(id, false);
+    _userRooms.add(_userRoomsHide.where((element) => element.id == id).first);
+    _userRoomsHide.removeWhere((element) => element.id == id);
+    notifyListeners();
+  }
+
+  Future<void> deleteRoom(String id ) async {
+    await _roomServices.deleteRoom(id);
     notifyListeners();
   }
 }

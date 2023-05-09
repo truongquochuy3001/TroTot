@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:tro_tot_app/models/room_model.dart';
 import 'package:tro_tot_app/view_models.dart/auth_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
+import 'package:tro_tot_app/view_models.dart/user_view_model.dart';
 import 'package:tro_tot_app/views/location_page.dart';
 import 'package:tro_tot_app/views/login_page.dart';
 import 'package:tro_tot_app/views/post_manage_page.dart';
@@ -15,6 +17,8 @@ import 'package:tro_tot_app/views/profile_page.dart';
 
 import 'package:tro_tot_app/views/room_detail.dart';
 import 'package:tro_tot_app/views/sort_page.dart';
+
+import '../models/user_model.dart';
 
 class ListRoomPage extends StatefulWidget {
   const ListRoomPage({super.key});
@@ -34,6 +38,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
   late RoomViewModel _roomViewModel;
   late AuthViewModel _authViewModel;
 
+
   bool isClickSearch = false;
   bool sort = false;
   TextEditingController? searchKey;
@@ -41,7 +46,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
   int _selectedIndex = 0;
 
   // Chuyển hướng trang ở BottomNavigationBar
-  void _onItemTapped(int index) async {
+   _onItemTapped(int index, UserViewModel user) async {
     _selectedIndex = index;
     if (index == 0) {
       _roomViewModel.sortRooms.clear();
@@ -51,7 +56,9 @@ class _ListRoomPageState extends State<ListRoomPage> {
             builder: (context) => ListRoomPage(),
           ));
     } else if (index == 1) {
-      if (await _authViewModel.checkAuth()) {
+      print("a");
+      if (user.user != null) {
+
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -65,7 +72,8 @@ class _ListRoomPageState extends State<ListRoomPage> {
             ));
       }
     } else if (index == 2) {
-      if (await _authViewModel.checkAuth()) {
+      if (user.user != null) {
+
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -79,7 +87,8 @@ class _ListRoomPageState extends State<ListRoomPage> {
             ));
       }
     } else {
-      if (await _authViewModel.checkAuth()) {
+      if (user.user != null) {
+
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -148,40 +157,45 @@ class _ListRoomPageState extends State<ListRoomPage> {
               },
             ),
           ),
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _selectedIndex,
-            selectedItemColor: Colors.blue,
-            onTap: _onItemTapped,
-            elevation: 0,
-            type: BottomNavigationBarType.fixed,
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.home_filled,
-                  color: Colors.blue,
-                ),
-                label: "Trang chủ",
-              ),
-              BottomNavigationBarItem(
+          bottomNavigationBar: Consumer<UserViewModel>(
+            builder: (context, user, child) => BottomNavigationBar(
+              currentIndex: _selectedIndex,
+              selectedItemColor: Colors.blue,
+              onTap: (value) {
+
+                _onItemTapped(value, user);
+              },
+              elevation: 0,
+              type: BottomNavigationBarType.fixed,
+              items: const [
+                BottomNavigationBarItem(
                   icon: Icon(
-                    Icons.article_outlined,
+                    Icons.home_filled,
                     color: Colors.blue,
                   ),
-                  label: "Quản lý tin"),
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.post_add_outlined,
-                  color: Colors.blue,
+                  label: "Trang chủ",
                 ),
-                label: "Đăng tin",
-              ),
-              BottomNavigationBarItem(
+                BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.article_outlined,
+                      color: Colors.blue,
+                    ),
+                    label: "Quản lý tin"),
+                BottomNavigationBarItem(
                   icon: Icon(
-                    Icons.account_circle_outlined,
+                    Icons.post_add_outlined,
                     color: Colors.blue,
                   ),
-                  label: "Tài khoản"),
-            ],
+                  label: "Đăng tin",
+                ),
+                BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.account_circle_outlined,
+                      color: Colors.blue,
+                    ),
+                    label: "Tài khoản"),
+              ],
+            ),
           ),
         );
       },
