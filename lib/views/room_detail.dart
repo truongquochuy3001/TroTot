@@ -435,101 +435,113 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
   }
 
   Widget _userInfor(BuildContext context, Room roomData) {
-    return Container(
-      padding: EdgeInsets.only(left: 20.w, right: 20.w),
-      width: 360.w,
-      // color: Colors.grey,
-      child: Row(
-        children: [
-          CircleAvatar(
-            backgroundImage: AssetImage(
-              "assets/images/avatar.png",
+    return Consumer<UserViewModel>(
+      builder: (context, value, child) => Container(
+        padding: EdgeInsets.only(left: 20.w, right: 20.w),
+        width: 360.w,
+        // color: Colors.grey,
+        child: Row(
+          children: [
+            value.user!.avatar == null ?
+            const CircleAvatar(
+            foregroundImage: AssetImage("assets/images/avatar.jpg"),
+
+             
+            ) :
+            CircleAvatar(
+              foregroundImage: NetworkImage(value.user!.avatar!),
+            )
+            ,
+            SizedBox(
+              width: 15.w,
             ),
-          ),
-          SizedBox(
-            width: 15.w,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Khanh",
-                  style:
-                      TextStyle(fontWeight: FontWeight.w700, fontSize: 12.sp),
-                ),
-                SizedBox(
-                  height: 8.h,
-                ),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.account_circle_outlined,
-                      size: 12.w,
-                      color: Colors.grey,
-                    ),
-                    SizedBox(
-                      width: 8.w,
-                    ),
-                    Text(
-                      "Cá nhân",
-                      style: TextStyle(color: Colors.grey, fontSize: 12.sp),
-                    )
-                  ],
-                ),
-                // Row(
-                //   children: [
-                //     Icon(
-                //       Icons.brightness_1,
-                //       color: Colors.grey,
-                //       size: 16.w,
-                //     ),
-                //     SizedBox(
-                //       width: 8.w,
-                //     ),
-                //     Text(
-                //       "Hoat dong 30 phut truoc",
-                //       style: TextStyle(color: Colors.grey, fontSize: 12.sp),
-                //     )
-                //   ],
-                // )
-              ],
-            ),
-          ),
-          Consumer<UserViewModel>(
-            builder: (context, value, child) =>  ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size.zero,
-                padding: EdgeInsets.all(8.w),
-                elevation: 0,
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(26.w),
-                    side: BorderSide(width: 2.w, color: Colors.blue)),
-              ),
-              onPressed: () async {
-                print("bbb");
-                print(roomData.userId);
-                await value.getRoomOwner(roomData.userId);
-                print(value.roomOwner!.name);
-                Navigator.push(context, MaterialPageRoute(builder: (context) => RoomOwnerPage(id : roomData.userId),));
-              },
-              child: Row(
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Xem trang",
-                    style: TextStyle(color: Colors.blue, fontSize: 12.sp),
+                    value.user!.name,
+                    style:
+                        TextStyle(fontWeight: FontWeight.w700, fontSize: 14.sp),
                   ),
-                  Icon(
-                    Icons.keyboard_arrow_right,
-                    color: Colors.blue,
-                    size: 16.w,
-                  )
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.account_circle_outlined,
+                        size: 12.w,
+                        color: Colors.grey,
+                      ),
+                      SizedBox(
+                        width: 8.w,
+                      ),
+                      Text(
+                        "Cá nhân",
+                        style: TextStyle(color: Colors.grey, fontSize: 12.sp),
+                      )
+                    ],
+                  ),
+                  // Row(
+                  //   children: [
+                  //     Icon(
+                  //       Icons.brightness_1,
+                  //       color: Colors.grey,
+                  //       size: 16.w,
+                  //     ),
+                  //     SizedBox(
+                  //       width: 8.w,
+                  //     ),
+                  //     Text(
+                  //       "Hoat dong 30 phut truoc",
+                  //       style: TextStyle(color: Colors.grey, fontSize: 12.sp),
+                  //     )
+                  //   ],
+                  // )
                 ],
               ),
             ),
-          )
-        ],
+            Consumer<UserViewModel>(
+              builder: (context, value, child) => ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size.zero,
+                  padding: EdgeInsets.all(8.w),
+                  elevation: 0,
+                  backgroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(26.w),
+                      side: BorderSide(width: 2.w, color: Colors.blue)),
+                ),
+                onPressed: () async {
+                  print("bbb");
+                  print(roomData.userId);
+                  await value.getRoomOwner(roomData.userId);
+                  print(value.roomOwner!.name);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            RoomOwnerPage(id: roomData.userId),
+                      ));
+                },
+                child: Row(
+                  children: [
+                    Text(
+                      "Xem trang",
+                      style: TextStyle(color: Colors.blue, fontSize: 12.sp),
+                    ),
+                    Icon(
+                      Icons.keyboard_arrow_right,
+                      color: Colors.blue,
+                      size: 16.w,
+                    )
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -637,14 +649,17 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
           ),
         );
       },
-
     );
   }
 
   Widget _otherRoomDetail(BuildContext context, Room room) {
     return GestureDetector(
-      onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => RoomDetailPage(id: room.id!),));
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RoomDetailPage(id: room.id!),
+            ));
       },
       child: Container(
         width: 120.w,
@@ -662,7 +677,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
             SizedBox(
               width: double.infinity,
               height: 70.h,
-              child:  Image.network(
+              child: Image.network(
                 room.image,
                 fit: BoxFit.scaleDown,
               ),
@@ -684,7 +699,10 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
             ),
             Text(
               room.address,
-              style: TextStyle(fontSize: 12.sp, color: Colors.grey, overflow: TextOverflow.ellipsis),
+              style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Colors.grey,
+                  overflow: TextOverflow.ellipsis),
             ),
           ],
         ),

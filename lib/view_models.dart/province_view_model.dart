@@ -13,21 +13,26 @@ class ProvinceViewModel extends ChangeNotifier {
   List<District> _districts = [];
 
   List<City> get GetCities => _cities;
+
   List<District> get GetDistrict => _districts;
 
-  City? selectedCity = null;
-  City? cityFromId = null;
-  District? selectedDistrict = null;
-  District? districtFromId = null;
-  Ward? selectedWard = null;
-  Ward? wardFromId = null;
+  City? selectedCity ;
+  City? cityFromId ;
+  City? userCity ;
+  District? selectedDistrict ;
+  District? districtFromId ;
+  District? userDistrict;
+  Ward? selectedWard ;
+  Ward? wardFromId ;
+  Ward? userWard;
 
-  String? roadInput = null;
-  String? cityName = null;
-  String? districtName = null;
-  String? wardName = null;
+  String? roadInput ;
+  String? cityName ;
+  String? districtName ;
+  String? wardName ;
   String address = "";
   String searchAddress = "";
+
 
   // int cityId = 0;
   // int districtId = 0;
@@ -35,12 +40,16 @@ class ProvinceViewModel extends ChangeNotifier {
 
   StreamController<City> cityController = StreamController<City>.broadcast();
   StreamController<District> districtController =
-  StreamController<District>.broadcast();
+      StreamController<District>.broadcast();
   StreamController<Ward> wardController = StreamController<Ward>.broadcast();
 
-   int? cityId;
-   int? districtId ;
-   int? wardId;
+  int? cityId;
+  int? districtId;
+  int? wardId;
+
+  int? userCityId;
+  int? userDistrictId;
+  int? userWardId;
 
   int? searchCityId;
   int? searchDistrictId;
@@ -56,6 +65,7 @@ class ProvinceViewModel extends ChangeNotifier {
     if (selectedCity == null) {}
     if (!cityController.isClosed) cityController.sink.add(city);
     selectedCity = city;
+    
     cityName = selectedCity!.name;
     districtName = "Chọn quận, huyện";
     wardName = "Chọn phường, xã, thị trấn";
@@ -72,11 +82,7 @@ class ProvinceViewModel extends ChangeNotifier {
         wards: []));
 
     wardController.sink.add(
-      Ward(name: "",
-          code: 0,
-          divisionType: "",
-          codename: "0",
-          districtCode: 0),
+      Ward(name: "", code: 0, divisionType: "", codename: "0", districtCode: 0),
     );
   }
 
@@ -89,11 +95,7 @@ class ProvinceViewModel extends ChangeNotifier {
     selectedWard = null;
 
     wardController.sink.add(
-      Ward(name: "",
-          code: 0,
-          divisionType: "",
-          codename: "0",
-          districtCode: 0),
+      Ward(name: "", code: 0, divisionType: "", codename: "0", districtCode: 0),
     );
   }
 
@@ -111,14 +113,13 @@ class ProvinceViewModel extends ChangeNotifier {
         selectedWard != null &&
         roadInput == null) {
       address =
-      "${selectedCity!.name}, ${selectedDistrict!.name}, ${selectedWard!.name}";
+          "${selectedCity!.name}, ${selectedDistrict!.name}, ${selectedWard!.name}";
     } else if (selectedCity != null &&
         selectedDistrict != null &&
         selectedWard != null &&
         roadInput != null) {
       address =
-      "${selectedCity!.name}, ${selectedDistrict!.name}, ${selectedWard!
-          .name}, $roadInput";
+          "${selectedCity!.name}, ${selectedDistrict!.name}, ${selectedWard!.name}, $roadInput";
     } else {
       if (selectedCity == null &&
           selectedDistrict == null &&
@@ -196,7 +197,8 @@ class ProvinceViewModel extends ChangeNotifier {
         timeInSecForIosWeb: 1,
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        fontSize: 16.w,);
+        fontSize: 16.w,
+      );
       return false;
     }
     return true;
@@ -212,10 +214,10 @@ class ProvinceViewModel extends ChangeNotifier {
         timeInSecForIosWeb: 1,
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        fontSize: 16.w,);
+        fontSize: 16.w,
+      );
       return false;
-    }
-    else if (selectedDistrict == null) {
+    } else if (selectedDistrict == null) {
       Fluttertoast.showToast(
         msg: "Vui lòng chọn quận, huyện, thị xã",
         toastLength: Toast.LENGTH_SHORT,
@@ -223,28 +225,30 @@ class ProvinceViewModel extends ChangeNotifier {
         timeInSecForIosWeb: 1,
         backgroundColor: Colors.red,
         textColor: Colors.white,
-        fontSize: 16.w,);
+        fontSize: 16.w,
+      );
       return false;
     }
     return true;
   }
 
   void addSearchAddress() {
-    if (selectedCity != null && selectedDistrict != null && selectedWard !=null){
+    if (selectedCity != null &&
+        selectedDistrict != null &&
+        selectedWard != null) {
       searchAddress = "$selectedCity, $selectedDistrict, $selectedWard";
     }
   }
 
-  Future<City> getCityFromId(int id) async{
+  Future<City> getCityFromId(int id) async {
     return await _provinceServices.getCityFromId(id);
-
   }
-  Future<District> getDistrictFromId(int id) async{
+
+  Future<District> getDistrictFromId(int id) async {
     return await _provinceServices.getDistrictFromId(id);
-
   }
-  Future<Ward> getWardFromId(int id) async{
-    return await _provinceServices.getWardFromId(id);
 
+  Future<Ward> getWardFromId(int id) async {
+    return await _provinceServices.getWardFromId(id);
   }
 }

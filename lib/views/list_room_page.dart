@@ -88,7 +88,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
       }
     } else {
       if (user.user != null) {
-
+        // print(user.user!.id);
         Navigator.push(
             context,
             MaterialPageRoute(
