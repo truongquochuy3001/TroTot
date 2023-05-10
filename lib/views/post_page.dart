@@ -459,7 +459,6 @@ class _PostPageState extends State<PostPage> {
       ),
     );
   }
-
   Widget _citySelect(BuildContext context) {
     return Consumer<ProvinceViewModel>(
       builder: (context, value, child) {
@@ -558,7 +557,7 @@ class _PostPageState extends State<PostPage> {
                               style: TextStyle(
                                   fontSize: 14.sp,
                                   color:
-                                      const Color.fromARGB(255, 128, 128, 137)),
+                                  const Color.fromARGB(255, 128, 128, 137)),
                             ),
                             Icon(
                               Icons.arrow_drop_down,
@@ -586,7 +585,7 @@ class _PostPageState extends State<PostPage> {
                               style: TextStyle(
                                   fontSize: 14.sp,
                                   color:
-                                      const Color.fromARGB(255, 128, 128, 137)),
+                                  const Color.fromARGB(255, 128, 128, 137)),
                             ),
                             Icon(
                               Icons.arrow_drop_down,
@@ -605,6 +604,7 @@ class _PostPageState extends State<PostPage> {
       },
     );
   }
+
 
   Widget _districtSelect(BuildContext context) {
     return GestureDetector(

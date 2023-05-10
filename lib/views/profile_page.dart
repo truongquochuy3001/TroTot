@@ -4,8 +4,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
 import 'package:tro_tot_app/view_models.dart/auth_view_model.dart';
+import 'package:tro_tot_app/view_models.dart/province_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/user_view_model.dart';
+import 'package:tro_tot_app/views/edit_profile.dart';
 
 import '../models/room_model.dart';
 import '../models/user_model.dart';
@@ -23,6 +25,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String userId = "";
   late RoomViewModel _getRoomUser;
   late UserViewModel _getUser;
+
   // late Future _getUserInfor;
   late Future _getRoomsDisplay;
   late Future _getRoomsHide;
@@ -35,9 +38,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
     _getRoomUser = context.read<RoomViewModel>();
     _getUser = context.read<UserViewModel>();
-    if (_getUser.user != null){
-      _getRoomsDisplay = context.read<RoomViewModel>().getRoomsUser(_getUser.user!.id!);
-      _getRoomsHide = context.read<RoomViewModel>().getRoomUserHide(_getUser.user!.id!);
+    if (_getUser.user != null) {
+      _getRoomsDisplay =
+          context.read<RoomViewModel>().getRoomsUser(_getUser.user!.id!);
+      _getRoomsHide =
+          context.read<RoomViewModel>().getRoomUserHide(_getUser.user!.id!);
     }
     // _getUserInfor = context.read<UserViewModel>().getUser(userId);
     // _getRoomsDisplay = context.read<RoomViewModel>().getRoomsUser(userId);
@@ -46,8 +51,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    print(_getUser.user!.userID);
 
-   return  Scaffold(
+    return Scaffold(
       backgroundColor: const Color.fromARGB(255, 245, 245, 250),
       appBar: AppBar(
         elevation: 0,
@@ -61,7 +67,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         actions: [
           Consumer<UserViewModel>(
-            builder: (context, value, child) =>  IconButton(
+            builder: (context, value, child) => IconButton(
                 onPressed: () {
                   value.user = null;
                   _authViewModel.signOut();
@@ -76,6 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
           return SingleChildScrollView(
             child: Column(
               children: [
+                SizedBox(height: 10.h),
                 _userInfor(context, value.user!),
                 SizedBox(
                   height: 10.h,
@@ -85,61 +92,38 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           );
         },
-
       ),
     );
   }
 
   Widget _userInfor(BuildContext context, UserInfor user) {
-    return Stack(
-      children: [
-        Container(
-          color: Colors.white,
-          width: 360.w,
-          height: 350.h,
-          child: Column(
+    return Container(
+      color: Colors.white,
+      width: 360.w,
+      height: 350.h,
+      child: Column(
+        children: [
+          Stack(
             children: [
-              Container(
-                width: 360.w,
-                height: 80.h,
-                color: Colors.grey,
-              ),
               SizedBox(
-                height: 12.h,
+                width: 100.w,
+                height: 100.w,
+                child: (user.avatar == null || user.avatar == "")
+                    ? CircleAvatar(
+                        minRadius: 32.w,
+                        backgroundImage:
+                            const AssetImage("assets/images/avatar.jpg"),
+                      )
+                    : CircleAvatar(
+                        minRadius: 32.w,
+                        backgroundImage: NetworkImage(user.avatar!),
+                      ),
               ),
-              _userInforDetail(context, user),
             ],
           ),
-        ),
-        Positioned(
-          left: 14.w,
-          top: 50.h,
-          child: Stack(
-            children: [
-              CircleAvatar(
-                minRadius: 32.w,
-                backgroundImage: AssetImage("assets/images/avatar.jpg"),
-              ),
-              // Positioned(
-              //     bottom: -10.w,
-              //     right: -10.w,
-              //     child: ElevatedButton(
-              //       style: ElevatedButton.styleFrom(
-              //         elevation: 0,
-              //         minimumSize: Size(20.w, 20.w),
-              //         backgroundColor: Colors.grey,
-              //         shape: CircleBorder(),
-              //       ),
-              //       onPressed: () {},
-              //       child: Icon(
-              //         Icons.camera_alt_rounded,
-              //         size: 12.w,
-              //       ),
-              //     ))
-            ],
-          ),
-        ),
-      ],
+          _userInforDetail(context, user),
+        ],
+      ),
     );
   }
 
@@ -151,56 +135,55 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.blue, width: 1.w),
-                          borderRadius: BorderRadius.circular(8.w))),
-                  onPressed: () {},
-                  child: Text(
-                    "Chỉnh sửa thông tin",
-                    style: TextStyle(color: Colors.black, fontSize: 12.sp),
+            Consumer<UserViewModel>(
+              builder: (context, value, child) => Consumer<ProvinceViewModel>(
+                builder: (context, value2, child) => Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        alignment: Alignment.center,
+                        elevation: 0,
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.blue, width: 1.w),
+                            borderRadius: BorderRadius.circular(8.w))),
+                    onPressed: () {
+                      value2.selectedCity = null;
+                      value2.selectedDistrict = null;
+                      value2.selectedWard = null;
+                      value2.cityName = null;
+                      value2.districtName = null;
+                      value2.wardName = null;
+                      value2.cityId = null;
+                      value2.districtId = null;
+                      value2.wardId = null;
+                      value2.address = "";
+                      value2.roadInput = null;
+                      print(_getUser.user!.userID);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditProfilePage(),
+                          ));
+                    },
+                    child: Text(
+                      "Chỉnh sửa thông tin",
+                      style: TextStyle(color: Colors.black, fontSize: 12.sp),
+                    ),
                   ),
                 ),
-                SizedBox(
-                  width: 12.w,
-                ),
-              ],
-            ),
-            Text(
-              _getUser.user!.name,
-              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700),
-            ),
-            SizedBox(
-              height: 8.h,
-            ),
-            Text(
-              "Chưa có đánh giá",
-              style: TextStyle(fontSize: 12.sp),
-            ),
-            SizedBox(
-              height: 8.h,
-            ),
-            SizedBox(
-              width: 360.w,
-              height: 20.h,
-              child: Row(
-                children: [
-                  Text("Người theo dõi: " + "0",
-                      style: TextStyle(fontSize: 10.sp)),
-                  const VerticalDivider(
-                    color: Colors.black,
-                    thickness: 1,
-                  ),
-                  Text("Đang theo dõi :" + "0",
-                      style: TextStyle(fontSize: 10.sp)),
-                ],
               ),
+            ),
+            SizedBox(
+              height: 10.w,
+            ),
+            Center(
+              child: Text(
+                _getUser.user!.name,
+                style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w700),
+              ),
+            ),
+            SizedBox(
+              height: 8.h,
             ),
             SizedBox(
               height: 8.h,
