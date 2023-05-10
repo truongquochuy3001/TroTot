@@ -327,7 +327,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget _addrSelect(BuildContext context) {
     return Consumer<UserViewModel>(
       builder: (context, userData, child) {
-        roadInput.text = userData.user!.road!;
+        if (userData.user!.road == "" || userData.user!.road == null) {}
+        else {roadInput.text = userData.user!.road!;}
         return Consumer<ProvinceViewModel>(
           builder: (context, value, child) {
             value.roadInput = roadInput.text;
@@ -444,7 +445,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           ),
                           Text(
                             value.address == ""
-                                ? value2.user!.address!
+                                ? value2.user!.address == null ? "Địa chỉ" : value2.user!.address!
                                 : value.address,
                             style: TextStyle(
                                 fontSize: 12.sp,
@@ -473,28 +474,29 @@ class _EditProfilePageState extends State<EditProfilePage> {
               return Text("${snapshot.error}");
             } else {
               List<City> citiesData = value.GetCities;
+              if (value.selectedCity != null && value.selectedDistrict != null && value.selectedWard != null)
+                {for (int i = 0; i < citiesData.length; i++) {
+                  if (citiesData[i].code == userData.cityId) {
+                    value.selectedCity = citiesData[i];
+                  }
+                }
+                if (value.selectedCity != null) {
+                  for (int i = 0; i < value.selectedCity!.districts.length; i++) {
+                    if (value.selectedCity!.districts[i].code ==
+                        userData.districtId) {
+                      value.selectedDistrict = value.selectedCity!.districts[i];
+                    }
+                  }
+                }
+                if (value.selectedDistrict != null) {
+                  for (int i = 0; i < value.selectedDistrict!.wards.length; i++) {
+                    if (value.selectedDistrict!.wards[i].code ==
+                        userData.wardId) {
+                      value.selectedWard = value.selectedDistrict!.wards[i];
+                    }
+                  }
+                }}
 
-              for (int i = 0; i < citiesData.length; i++) {
-                if (citiesData[i].code == userData.cityId) {
-                  value.selectedCity = citiesData[i];
-                }
-              }
-              if (value.selectedCity != null) {
-                for (int i = 0; i < value.selectedCity!.districts.length; i++) {
-                  if (value.selectedCity!.districts[i].code ==
-                      userData.districtId) {
-                    value.selectedDistrict = value.selectedCity!.districts[i];
-                  }
-                }
-              }
-              if (value.selectedDistrict != null) {
-                for (int i = 0; i < value.selectedDistrict!.wards.length; i++) {
-                  if (value.selectedDistrict!.wards[i].code ==
-                      userData.wardId) {
-                    value.selectedWard = value.selectedDistrict!.wards[i];
-                  }
-                }
-              }
               return GestureDetector(
                 onTap: () {
                   showModalBottomSheet(
