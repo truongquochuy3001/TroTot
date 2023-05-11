@@ -66,7 +66,7 @@ class _PostPageState extends State<PostPage> {
   bool sizeError = false;
   bool priceError = false;
   bool titleError = false;
-  bool decribeError =false;
+  bool decribeError = false;
 
   final List<String> _items = ['Phòng trọ', 'Nhà ở', 'Căn hộ/chung cư'];
   final List<String> _furStatus = ["Có", "Không"];
@@ -77,8 +77,6 @@ class _PostPageState extends State<PostPage> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-
-
 
   StreamController<City> cityController = StreamController<City>.broadcast();
   StreamController<District> districtController =
@@ -160,82 +158,115 @@ class _PostPageState extends State<PostPage> {
           style: TextStyle(color: Colors.white, fontSize: 20.sp),
         ),
       ),
-      body:
-      isLoading == true ? const  Center(child: CircularProgressIndicator()) :
-      SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 10.h,
+      body: isLoading == true
+          ? const Center(child: CircularProgressIndicator())
+          : SafeArea(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _roomTypeSelect(context),
+                    roomTypeError
+                        ? const Text(
+                            "Vui lòng chọn loại phòng",
+                            style: TextStyle(color: Colors.red),
+                          )
+                        : const SizedBox(),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _titleText(context, "Địa chỉ và hình ảnh"),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _addrSelect(context),
+                    addrError
+                        ? const Text(
+                            "Vui lòng chọn địa chỉ",
+                            style: TextStyle(color: Colors.red),
+                          )
+                        : const SizedBox(),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _upLoadPhoto(context),
+                    imagesError
+                        ? const Text(
+                            "Vui lòng chọn ít nhất 1 ảnh",
+                            style: TextStyle(color: Colors.red),
+                          )
+                        : const SizedBox(),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _titleText(context, "Thông tin khác"),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _furnitureSelect(context),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _titleText(context, "Diện tích và giá"),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _sizeInput(context),
+                    imagesError
+                        ? const Text(
+                            "Vui lòng nhập diện tích",
+                            style: TextStyle(color: Colors.red),
+                          )
+                        : const SizedBox(),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _priceInput(context),
+                    imagesError
+                        ? const Text(
+                            "Vui lòng nhập giá",
+                            style: TextStyle(color: Colors.red),
+                          )
+                        : const SizedBox(),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _depositInput(context),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _titleText(context, "Tiêu đề tin đăng và mô tả chi tiết"),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _titleInput(context),
+                    imagesError
+                        ? const Text(
+                            "Vui lòng nhập tiêu đề",
+                            style: TextStyle(color: Colors.red),
+                          )
+                        : const SizedBox(),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _detailDecribe(context),
+                    imagesError
+                        ? const Text(
+                            "Vui lòng nhập mô tả",
+                            style: TextStyle(color: Colors.red),
+                          )
+                        : const SizedBox(),
+                    SizedBox(height: 20.h),
+                    _submitButton(context),
+                    SizedBox(
+                      height: 5.h,
+                    ),
+                  ],
+                ),
               ),
-              _roomTypeSelect(context),
-              roomTypeError ?  const Text("Vui lòng chọn loại phòng", style: TextStyle(color: Colors.red),) : const SizedBox(),
-              SizedBox(
-                height: 10.h,
-              ),
-              _titleText(context, "Địa chỉ và hình ảnh"),
-              SizedBox(
-                height: 10.h,
-              ),
-              _addrSelect(context),
-              addrError ? const Text("Vui lòng chọn địa chỉ", style: TextStyle(color: Colors.red),) : const SizedBox(),
-              SizedBox(
-                height: 10.h,
-              ),
-              _upLoadPhoto(context),
-              imagesError ? const Text("Vui lòng chọn ít nhất 1 ảnh", style: TextStyle(color: Colors.red),) : const SizedBox(),
-              SizedBox(
-                height: 10.h,
-              ),
-              _titleText(context, "Thông tin khác"),
-              SizedBox(
-                height: 10.h,
-              ),
-              _furnitureSelect(context),
-
-              SizedBox(
-                height: 10.h,
-              ),
-              _titleText(context, "Diện tích và giá"),
-
-              SizedBox(
-                height: 10.h,
-              ),
-              _sizeInput(context),
-              imagesError ? const Text("Vui lòng nhập diện tích", style: TextStyle(color: Colors.red),) : const SizedBox(),
-              SizedBox(
-                height: 10.h,
-              ),
-              _priceInput(context),
-              imagesError ? const Text("Vui lòng nhập giá", style: TextStyle(color: Colors.red),) : const SizedBox(),
-              SizedBox(
-                height: 10.h,
-              ),
-              _depositInput(context),
-              SizedBox(
-                height: 10.h,
-              ),
-              _titleText(context, "Tiêu đề tin đăng và mô tả chi tiết"),
-              SizedBox(
-                height: 10.h,
-              ),
-              _titleInput(context),
-              imagesError ? const Text("Vui lòng nhập tiêu đề", style: TextStyle(color: Colors.red),) : const SizedBox(),
-              SizedBox(
-                height: 10.h,
-              ),
-              _detailDecribe(context),
-              imagesError ? const Text("Vui lòng nhập mô tả", style: TextStyle(color: Colors.red),) : const SizedBox(),
-              SizedBox(height: 20.h),
-              _submitButton(context),
-              SizedBox(
-                height: 5.h,
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 
@@ -330,7 +361,9 @@ class _PostPageState extends State<PostPage> {
                       color: const Color.fromARGB(255, 128, 128, 137)),
                 ),
                 Text(
-                  _selectedRoomType == '' ? "Chọn loại phòng" : _selectedRoomType,
+                  _selectedRoomType == ''
+                      ? "Chọn loại phòng"
+                      : _selectedRoomType,
                   style: TextStyle(fontSize: 12.sp),
                 )
               ],
@@ -459,6 +492,7 @@ class _PostPageState extends State<PostPage> {
       ),
     );
   }
+
   Widget _citySelect(BuildContext context) {
     return Consumer<ProvinceViewModel>(
       builder: (context, value, child) {
@@ -557,7 +591,7 @@ class _PostPageState extends State<PostPage> {
                               style: TextStyle(
                                   fontSize: 14.sp,
                                   color:
-                                  const Color.fromARGB(255, 128, 128, 137)),
+                                      const Color.fromARGB(255, 128, 128, 137)),
                             ),
                             Icon(
                               Icons.arrow_drop_down,
@@ -585,7 +619,7 @@ class _PostPageState extends State<PostPage> {
                               style: TextStyle(
                                   fontSize: 14.sp,
                                   color:
-                                  const Color.fromARGB(255, 128, 128, 137)),
+                                      const Color.fromARGB(255, 128, 128, 137)),
                             ),
                             Icon(
                               Icons.arrow_drop_down,
@@ -604,7 +638,6 @@ class _PostPageState extends State<PostPage> {
       },
     );
   }
-
 
   Widget _districtSelect(BuildContext context) {
     return GestureDetector(
@@ -1329,53 +1362,12 @@ class _PostPageState extends State<PostPage> {
             setState(() {
               isLoading = true;
             });
-
-            String userId = _auth.currentUser!.uid.toString();
-            print(userId);
-            await getLatLngFromAddress(
-                "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel
-                    .selectedDistrict!.name}, ${_provinceViewModel.selectedWard!
-                    .name}, ${roadInput.text.toString()}");
-            print(_latLng);
-            if (_latLng == null) {
-              await getLatLngFromAddress(
-                  "${_provinceViewModel.selectedCity!
-                      .name}, ${_provinceViewModel.selectedDistrict!
-                      .name}, ${_provinceViewModel.selectedWard!.name}");
-              print(
-                  "${_provinceViewModel.selectedCity!
-                      .name}, ${_provinceViewModel.selectedDistrict!
-                      .name}, ${_provinceViewModel.selectedWard!.name}");
-              print(_latLng);
-            }
-
-            if (_latLng == null) {
-              await getLatLngFromAddress(
-                  "${_provinceViewModel.selectedCity!
-                      .name}, ${_provinceViewModel.selectedDistrict!.name}");
-              print(
-                  "${_provinceViewModel.selectedCity!
-                      .name}, ${_provinceViewModel.selectedDistrict!.name}");
-              print(_latLng);
-            }
-
-            if (_latLng == null) {
-              await getLatLngFromAddress(
-                  "${_provinceViewModel.selectedCity!.name}");
-              print("${_provinceViewModel.selectedCity!.name}");
-              print(_latLng);
-            }
-            String geohash = Geohash.encode(
-                _latLng!.latitude, _latLng!.longitude, codeLength: 8);
-            print(selectedImages);
             await _getImageUrls();
-
             if (_selectedRoomType == '') {
               setState(() {
                 roomTypeError = true;
                 isLoading = false;
               });
-
             }
             if (_provinceViewModel.address == "") {
               addrError = true;
@@ -1385,87 +1377,124 @@ class _PostPageState extends State<PostPage> {
               imagesError = true;
               isLoading = false;
             }
-            if (priceInput.text.isEmpty)
-          {
-            priceError =true;
-            isLoading = false;
-          }
-            if (titleInput.text.isEmpty){
+            if (priceInput.text.isEmpty) {
+              priceError = true;
+              isLoading = false;
+            }
+            if (titleInput.text.isEmpty) {
               titleError = true;
               isLoading = false;
             }
-            if (decribeInput.text.isEmpty){
+            if (decribeInput.text.isEmpty) {
               decribeError = true;
               isLoading = false;
             }
 
-            // await _getImageUrls();
-            // print (imageUrls);
-            if (depositInput.text.isEmpty){
-              room = Room(
+            String userId = _auth.currentUser!.uid.toString();
+            print(userId);
+            if (_provinceViewModel.address.isNotEmpty) {
+              await getLatLngFromAddress(
+                  "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel.selectedDistrict!.name}, ${_provinceViewModel.selectedWard!.name}, ${roadInput.text.toString()}");
+              print(_latLng);
+              if (_latLng == null) {
+                await getLatLngFromAddress(
+                    "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel.selectedDistrict!.name}, ${_provinceViewModel.selectedWard!.name}");
+                print(
+                    "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel.selectedDistrict!.name}, ${_provinceViewModel.selectedWard!.name}");
+                print(_latLng);
+              }
 
-                cityId: _provinceViewModel.cityId,
-                userId:  userId,
-                districtId: _provinceViewModel.districtId,
-                wardId: _provinceViewModel.wardId,
-                name: titleInput.text.toString(),
-                address: _provinceViewModel.address,
-                price: double.parse(priceInput.text.toString()),
-                roomType: _selectedRoomType,
-                size: double.parse(sizeInput.text.toString()),
-                images: imageUrls,
-                image: imageUrls[0],
-                status: true,
-                description: decribeInput.text.toString(),
-                furniture: isFur,
-                longitude: _latLng!.longitude,
-                latitude: _latLng!.latitude,
-                postingDate: DateTime.now(),
-                road: _provinceViewModel.roadInput,
-                city: _provinceViewModel.cityName,
-                district: _provinceViewModel.districtName,
-                ward: _provinceViewModel.wardName,
+              if (_latLng == null) {
+                await getLatLngFromAddress(
+                    "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel.selectedDistrict!.name}");
+                print(
+                    "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel.selectedDistrict!.name}");
+                print(_latLng);
+              }
+
+              if (_latLng == null) {
+                await getLatLngFromAddress(
+                    "${_provinceViewModel.selectedCity!.name}");
+                print("${_provinceViewModel.selectedCity!.name}");
+                print(_latLng);
+              }
+              String geohash = Geohash.encode(
+                  _latLng!.latitude, _latLng!.longitude,
+                  codeLength: 8);
 
 
-              );
+
+
+
+              // await _getImageUrls();
+              // print (imageUrls);
+              if (depositInput.text.isEmpty) {
+                room = Room(
+                  cityId: _provinceViewModel.cityId,
+                  userId: userId,
+                  districtId: _provinceViewModel.districtId,
+                  wardId: _provinceViewModel.wardId,
+                  name: titleInput.text.toString(),
+                  address: _provinceViewModel.address,
+                  price: double.parse(priceInput.text.toString()),
+                  roomType: _selectedRoomType,
+                  size: double.parse(sizeInput.text.toString()),
+                  images: imageUrls,
+                  image: imageUrls[0],
+                  status: true,
+                  description: decribeInput.text.toString(),
+                  furniture: isFur,
+                  longitude: _latLng!.longitude,
+                  latitude: _latLng!.latitude,
+                  postingDate: DateTime.now(),
+                  road: _provinceViewModel.roadInput,
+                  city: _provinceViewModel.cityName,
+                  district: _provinceViewModel.districtName,
+                  ward: _provinceViewModel.wardName,
+                );
+              } else {
+                room = Room(
+                  cityId: _provinceViewModel.cityId,
+                  userId: userId,
+                  districtId: _provinceViewModel.districtId,
+                  wardId: _provinceViewModel.wardId,
+                  name: titleInput.text.toString(),
+                  address: _provinceViewModel.address,
+                  price: double.parse(priceInput.text.toString()),
+                  roomType: _selectedRoomType,
+                  size: double.parse(sizeInput.text.toString()),
+                  images: imageUrls,
+                  image: imageUrls[0],
+                  status: true,
+                  description: decribeInput.text.toString(),
+                  furniture: isFur,
+                  longitude: _latLng!.longitude,
+                  latitude: _latLng!.latitude,
+                  postingDate: DateTime.now(),
+                  deposit: double.parse(depositInput.text.toString()),
+                  road: _provinceViewModel.roadInput,
+                  city: _provinceViewModel.cityName,
+                  district: _provinceViewModel.districtName,
+                  ward: _provinceViewModel.wardName,
+                );
+              }
+              await _roomViewModel.addRoom(room, geohash);
+
+              setState(() {
+                isLoading = false;
+              });
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ListRoomPage(),
+                  ));
             }
-            else{
-            room = Room(
-              cityId: _provinceViewModel.cityId,
-              userId: userId,
-              districtId: _provinceViewModel.districtId,
-              wardId: _provinceViewModel.wardId,
-              name: titleInput.text.toString(),
-              address: _provinceViewModel.address,
-              price: double.parse(priceInput.text.toString()),
-              roomType: _selectedRoomType,
-              size: double.parse(sizeInput.text.toString()),
-              images: imageUrls,
-              image: imageUrls[0],
-              status: true,
-              description: decribeInput.text.toString(),
-              furniture: isFur,
-              longitude: _latLng!.longitude,
-              latitude: _latLng!.latitude,
-              postingDate: DateTime.now(),
-              deposit: double.parse(depositInput.text.toString()),
-              road: _provinceViewModel.roadInput,
-              city: _provinceViewModel.cityName,
-              district: _provinceViewModel.districtName,
-              ward: _provinceViewModel.wardName,
+            else {
+              setState(() {
+                isLoading = false ;
+              });
+            }
 
-            );}
-            await _roomViewModel.addRoom(room, geohash);
-
-            setState(() {
-              isLoading = false;
-
-            });
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ListRoomPage(),
-                ));
           },
           child: Text(
             "Đăng tin",

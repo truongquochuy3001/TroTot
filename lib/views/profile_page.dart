@@ -7,6 +7,7 @@ import 'package:tro_tot_app/view_models.dart/auth_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/province_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/user_view_model.dart';
+import 'package:tro_tot_app/views/change_pass_page.dart';
 import 'package:tro_tot_app/views/edit_profile.dart';
 
 import '../models/room_model.dart';
@@ -74,7 +75,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   Navigator.pop(context);
                 },
                 icon: Icon(Icons.logout)),
-          )
+          ),
+          // Consumer<UserViewModel>(builder: (context, value, child) => IconButton(onPressed: (){
+          //
+          //     Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePassScreen(),));
+          // }, icon: Icon(Icons.password)),)
         ],
       ),
       body: Consumer<UserViewModel>(
@@ -158,7 +163,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       value2.wardId = null;
                       value2.address = "";
                       value2.roadInput = null;
-                      print(_getUser.user!.userID);
+
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -173,8 +178,23 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
-            SizedBox(
-              height: 10.w,
+
+
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    alignment: Alignment.center,
+                    elevation: 0,
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.blue, width: 1.w),
+                        borderRadius: BorderRadius.circular(8.w))),
+                onPressed: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangePassScreen(),));
+              }, child: Text(
+                "Đổi mật khẩu",
+                style: TextStyle(color: Colors.red, fontSize: 12.sp),
+              ), ),
             ),
             Center(
               child: Text(

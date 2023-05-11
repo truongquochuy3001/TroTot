@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:tro_tot_app/models/user_model.dart';
 
 import 'package:tro_tot_app/view_models.dart/auth_view_model.dart';
@@ -18,9 +19,20 @@ class RegisterSreen extends StatefulWidget {
 class _RegisterSreenState extends State<RegisterSreen> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  TextEditingController passwordDup = TextEditingController();
   TextEditingController userName = TextEditingController();
   AuthViewModel authViewModel = AuthViewModel();
   UserViewModel userViewModel = UserViewModel();
+
+  bool? userNameNull;
+
+  bool? emailNull;
+  bool? passWordNull;
+  bool? isValid;
+  bool? emailValid;
+  bool? emailInUse;
+  bool? dupPasswordNull;
+  bool? checkDupPassword;
 
   @override
   Widget build(BuildContext context) {
@@ -48,32 +60,81 @@ class _RegisterSreenState extends State<RegisterSreen> {
                 SizedBox(
                   height: 40.h,
                 ),
-                _titleText(
-                    context, "Create account", "Enter your Email and Password"),
+                _titleText(context, "Đăng ký tài khoản",
+                    "Nhập tên người dùng, email và mật khẩu"),
                 SizedBox(
                   height: 80.h,
                 ),
-                _inputLabel(context, "UserName"),
+                _inputLabel(context, "Tên người dùng"),
                 SizedBox(
                   height: 4.h,
                 ),
                 _userNameinput(context),
+                userNameNull == true
+                    ? Text(
+                        "Vui lòng nhập tên người dùng",
+                        style: TextStyle(color: Colors.red, fontSize: 14.sp),
+                      )
+                    : SizedBox(),
                 SizedBox(
                   height: 20.h,
                 ),
                 _inputLabel(context, "Email"),
+
                 SizedBox(
                   height: 4.h,
                 ),
                 _emailInput(context),
+                emailNull == true
+                    ? Text(
+                  "Vui lòng nhập email",
+                  style: TextStyle(color: Colors.red, fontSize: 14.sp),
+                )
+                    : emailValid == false
+                    ? Text(
+                  "email sai định dạng",
+                  style:
+                  TextStyle(color: Colors.red, fontSize: 14.sp),
+                )
+                    : const SizedBox(),
+                emailInUse == true
+                    ? Text(
+                  "Email đã có người dùng",
+                  style: TextStyle(color: Colors.red, fontSize: 14.sp),
+                )
+                    : const SizedBox(),
                 SizedBox(
                   height: 20.h,
                 ),
-                _inputLabel(context, "Password"),
+                _inputLabel(context, "Mật khẩu"),
                 SizedBox(
                   height: 4.h,
                 ),
                 _passwordInput(context),
+                passWordNull == true
+                    ? Text(
+                        "Vui lòng nhập mật khẩu",
+                        style: TextStyle(color: Colors.red, fontSize: 14.sp),
+                      )
+                    : SizedBox(),
+                SizedBox(
+                  height: 20.h,
+                ),
+                _inputLabel(context, "Nhập lại mật khẩu"),
+                SizedBox(
+                  height: 4.h,
+                ),
+                _passwordDupInput(context),
+                dupPasswordNull == true
+                    ? Text(
+                        "Vui lòng nhập lại mật khẩu",
+                        style: TextStyle(color: Colors.red, fontSize: 14.sp),
+                      )
+                    : checkDupPassword == false ? Text(
+                  "Mật khẩu không trùng khớp",
+                  style: TextStyle(color: Colors.red, fontSize: 14.sp),
+                ) : const SizedBox(),
+
                 SizedBox(
                   height: 60.h,
                 ),
@@ -139,48 +200,142 @@ class _RegisterSreenState extends State<RegisterSreen> {
     );
   }
 
+  Widget _passwordDupInput(BuildContext context) {
+    return TextField(
+      controller: passwordDup,
+      obscureText: true,
+      onChanged: (value) {},
+    );
+  }
+
   Widget _userNameinput(BuildContext context) {
     return TextField(
       controller: userName,
-
       onChanged: (value) {},
     );
   }
 
   Widget _registerButton(BuildContext context) {
-    return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.black,
-            fixedSize: Size(150.w, 40.h),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.w),
-            )),
-        onPressed: () async {
+    return Consumer<AuthViewModel>(
+      builder: (context, value, child) => ElevatedButton(
+          style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.black,
+              fixedSize: Size(150.w, 40.h),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.w),
+              )),
+          onPressed: () async {
+            bool emailValidate = EmailValidator.validate(email.text.toString());
+            if (emailValidate) {
+              setState(() {
+                emailValid = true;
+              });
+            } else {
+              setState(() {
+                emailValid = false;
+              });
+            }
 
-          bool emailValidate = EmailValidator.validate(email.text.toString());
+            if (userName.text.isEmpty) {
+              setState(() {
+                userNameNull = true;
+              });
+            } else {
+              setState(() {
+                userNameNull = false;
+              });
+            }
 
-          bool result = await authViewModel.signUp(email.text, password.text);
-          UserInfor user = UserInfor(name: userName.text);
-          await userViewModel.addUser(user);
+            if (email.text.isEmpty) {
+              setState(() {
+                emailNull = true;
+              });
+            } else {
+              setState(() {
+                emailNull = false;
+              });
+            }
+            if (EmailValidator.validate(email.text.toString()) == false) {
+              setState(() {
+                emailValidate = false;
+              });
+            } else {
+              emailValidate = true;
+            }
+            if (password.text.isEmpty) {
+              setState(() {
+                passWordNull = true;
+              });
+            } else {
+              passWordNull = false;
+            }
 
-          print("???");
-          print(result);
-          if (result && emailValidate) {
-            // print("dung");
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const LoginScreen(),
-              ),
-            );
-          } else {
-            const Text("Sai thong tin");
-          }
-        },
-        child: Text(
-          "Sign Up",
-          style: TextStyle(color: Colors.white, fontSize: 22.sp),
-        ));
+            if(passwordDup.text.isEmpty)
+              {
+                setState(() {
+                  dupPasswordNull = true;
+                });
+              }
+            else{
+              setState(() {
+                dupPasswordNull = false;
+              });
+            }
+
+            if (passwordDup.text == password.text) {
+              setState(() {
+                checkDupPassword = true;
+              });
+            } else {
+              setState(() {
+                checkDupPassword = false;
+              });
+            }
+
+            bool emailAlreadyInUse =
+                await value.isEmailAlreadyInUse(email.text);
+            if (emailAlreadyInUse == false) {
+              setState(() {
+                emailInUse = false;
+              });
+              if (checkDupPassword == true) {
+                bool result =
+                    await authViewModel.signUp(email.text, passwordDup.text);
+                if (result) {
+                  setState(() {
+                    isValid = true;
+                  });
+                } else {
+                  isValid = false;
+                }
+                UserInfor user = UserInfor(name: userName.text);
+                await userViewModel.addUser(user);
+
+                print("???");
+                print(result);
+                if (result && emailValidate) {
+                  // print("dung");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                  );
+                } else {
+                  const Text("Sai thong tin");
+                }
+              }
+            } else {
+              setState(() {
+                emailInUse = true;
+              });
+            }
+          },
+          child: Text(
+            "Sign Up",
+            style: TextStyle(color: Colors.white, fontSize: 22.sp),
+          )),
+    );
   }
 
 // Widget _createAccount(BuildContext context) {

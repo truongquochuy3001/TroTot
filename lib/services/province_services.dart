@@ -31,36 +31,33 @@ class ProvinceServices implements IProvinceServices {
     final response =
         await http.get(Uri.parse('https://provinces.open-api.vn/api/p/$id'));
     if (response.statusCode == 200) {
-      final data = jsonDecode(utf8.decode(response.bodyBytes)) ;
-      return data.map((json) => City.fromJson(json));
+      final data = jsonDecode(utf8.decode(response.bodyBytes));
+
+      return City.fromJson(data);
     } else {
       throw Exception('Failed to fetch cities');
     }
   }
 
   @override
-  Future<District> getDistrictFromId(int id) async{
-    // TODO: implement getDistrictFromId
-    final response =
-        await http.get(Uri.parse('https://provinces.open-api.vn/api/d/$id'));
+  Future<District> getDistrictFromId(int id) async {
+    final response = await http.get(Uri.parse('https://provinces.open-api.vn/api/d/$id'));
     if (response.statusCode == 200) {
-      final data = jsonDecode(utf8.decode(response.bodyBytes)) ;
-      return data.map((json) => District.fromJson(json));
+      final data = jsonDecode(utf8.decode(response.bodyBytes));
+      return District.fromJson(data);
     } else {
-      throw Exception('Failed to fetch cities');
+      throw Exception('Failed to fetch districts');
     }
   }
 
   @override
-  Future<Ward> getWardFromId(int id) async{
-    // TODO: implement getWardFromId
-    final response =
-        await http.get(Uri.parse('https://provinces.open-api.vn/api/w/$id'));
+  Future<Ward> getWardFromId(int id) async {
+    final response = await http.get(Uri.parse('https://provinces.open-api.vn/api/w/$id'));
     if (response.statusCode == 200) {
-      final data = jsonDecode(utf8.decode(response.bodyBytes)) ;
-      return data.map((json) => District.fromJson(json));
+      final data = jsonDecode(utf8.decode(response.bodyBytes));
+      return Ward.fromJson(data);
     } else {
-      throw Exception('Failed to fetch cities');
+      throw Exception('Failed to fetch wards');
     }
   }
 

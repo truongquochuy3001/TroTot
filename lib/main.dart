@@ -12,7 +12,7 @@ import 'package:tro_tot_app/view_models.dart/user_view_model.dart';
 import 'package:tro_tot_app/views/gg_map_test.dart';
 import 'package:tro_tot_app/views/list_room_page.dart';
 
-import 'package:tro_tot_app/views/login_page1.dart';
+
 import 'package:tro_tot_app/views/map_predict.dart';
 
 void main() async {

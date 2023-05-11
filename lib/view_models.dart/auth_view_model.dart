@@ -24,4 +24,11 @@ class AuthViewModel extends ChangeNotifier {
     return  await _authServices.checkAuth();
   }
 
+  Future<bool> isEmailAlreadyInUse(String email) async{
+    return await _authServices.isEmailAlreadyInUse(email);
+  }
+
+  Future<bool> changePass(String id, String oldPassword, String newPassword) async{
+    return await _authServices.changePass(id, oldPassword, newPassword);
+  }
 }

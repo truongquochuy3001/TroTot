@@ -61,4 +61,29 @@ class AuthServices implements IAuthServices {
     // TODO: implement signOut
     await FirebaseAuth.instance.signOut();
   }
+
+  @override
+  Future<bool> changePass(String userId, String oldPassword, String newPassword) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null && user.uid == userId) {
+        AuthCredential credential = EmailAuthProvider.credential(email: user.email!, password: oldPassword);
+        await user.reauthenticateWithCredential(credential);
+        await user.updatePassword(newPassword);
+        return true; // password was successfully changed
+      } else {
+        return false; // invalid user ID
+      }
+    } catch (e) {
+      print('Failed to change password: $e');
+      return false; // failed to change password
+    }
+  }
+
+  @override
+  Future<bool> isEmailAlreadyInUse(String email) async {
+    List<String> signInMethods =
+    await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
+    return signInMethods.isNotEmpty;
+  }
 }
