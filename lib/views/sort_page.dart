@@ -267,7 +267,7 @@ class _SortPageState extends State<SortPage> {
                               style: TextStyle(
                                   fontSize: 14.sp,
                                   color:
-                                      const Color.fromARGB(255, 128, 128, 137)),
+                                  const Color.fromARGB(255, 128, 128, 137)),
                             ),
                             Icon(
                               Icons.arrow_drop_down,
@@ -295,7 +295,7 @@ class _SortPageState extends State<SortPage> {
                               style: TextStyle(
                                   fontSize: 14.sp,
                                   color:
-                                      const Color.fromARGB(255, 128, 128, 137)),
+                                  const Color.fromARGB(255, 128, 128, 137)),
                             ),
                             Icon(
                               Icons.arrow_drop_down,
@@ -342,7 +342,7 @@ class _SortPageState extends State<SortPage> {
                         child: Text(
                           "Chọn quận, huyện",
                           style:
-                              TextStyle(color: Colors.white, fontSize: 16.sp),
+                          TextStyle(color: Colors.white, fontSize: 16.sp),
                         ),
                       ),
                       SizedBox(
@@ -498,13 +498,13 @@ class _SortPageState extends State<SortPage> {
                           child: Text(
                             "Chọn phường, xã, thị trấn",
                             style:
-                                TextStyle(color: Colors.white, fontSize: 16.sp),
+                            TextStyle(color: Colors.white, fontSize: 16.sp),
                           ),
                         ),
                         SizedBox(
                           height: 640.h,
                           child: ListView.separated(
-                              // physics: NeverScrollableScrollPhysics(),
+                            // physics: NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) {
                                 Ward ward = _provinceViewModel
                                     .selectedDistrict!.wards[index];
@@ -634,8 +634,8 @@ class _SortPageState extends State<SortPage> {
                 selectedSortBy == 1
                     ? Icon(Icons.album_outlined, size: 24.w, color: Colors.blue)
                     : Icon(Icons.album_outlined,
-                        size: 24.w,
-                        color: const Color.fromARGB(255, 232, 232, 232)),
+                    size: 24.w,
+                    color: const Color.fromARGB(255, 232, 232, 232)),
                 SizedBox(
                   width: 8.w,
                 ),
@@ -680,8 +680,8 @@ class _SortPageState extends State<SortPage> {
                 selectedSortBy == 2
                     ? Icon(Icons.album_outlined, size: 24.w, color: Colors.blue)
                     : Icon(Icons.album_outlined,
-                        size: 24.w,
-                        color: const Color.fromARGB(255, 232, 232, 232)),
+                    size: 24.w,
+                    color: const Color.fromARGB(255, 232, 232, 232)),
                 SizedBox(
                   width: 8.w,
                 ),
@@ -726,8 +726,8 @@ class _SortPageState extends State<SortPage> {
                 selectedSortBy == 3
                     ? Icon(Icons.album_outlined, size: 24.w, color: Colors.blue)
                     : Icon(Icons.album_outlined,
-                        size: 24.w,
-                        color: const Color.fromARGB(255, 232, 232, 232)),
+                    size: 24.w,
+                    color: const Color.fromARGB(255, 232, 232, 232)),
                 SizedBox(
                   width: 8.w,
                 ),
@@ -756,7 +756,7 @@ class _SortPageState extends State<SortPage> {
 
               Navigator.pop(context, sort);
             });
-      }, child: Text("Áp dụng", style: TextStyle(fontSize: 16.sp),)),
+          }, child: Text("Áp dụng", style: TextStyle(fontSize: 16.sp),)),
     );
   }
 }

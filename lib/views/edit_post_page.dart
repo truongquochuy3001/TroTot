@@ -79,10 +79,10 @@ class _EditPostPageState extends State<EditPostPage> {
 
   StreamController<City> cityController = StreamController<City>.broadcast();
   StreamController<District> districtController =
-      StreamController<District>.broadcast();
+  StreamController<District>.broadcast();
   StreamController<Ward> wardController = StreamController<Ward>.broadcast();
   StreamController<List<File?>> imageController =
-      StreamController<List<File?>>.broadcast();
+  StreamController<List<File?>>.broadcast();
 
   List<XFile> listXfile = [];
 
@@ -91,7 +91,7 @@ class _EditPostPageState extends State<EditPostPage> {
     List<XFile> xfilePick = pickedFile;
 
     setState(
-      () {
+          () {
         if (xfilePick.isNotEmpty) {
           for (var i = 0; i < xfilePick.length; i++) {
             listXfile.add(XFile(xfilePick[i].path));
@@ -117,7 +117,7 @@ class _EditPostPageState extends State<EditPostPage> {
           .child(imageName);
 
       firebase_storage.UploadTask uploadTask =
-          ref.putFile(File(imageFile.path));
+      ref.putFile(File(imageFile.path));
 
       await uploadTask;
       String imageUrl = await ref.getDownloadURL();
@@ -132,7 +132,7 @@ class _EditPostPageState extends State<EditPostPage> {
   Future<LatLng> getLatLngFromAddress(String address) async {
     // Get the location coordinates from the address
     List<Location> locations =
-        await GeocodingPlatform.instance.locationFromAddress(address);
+    await GeocodingPlatform.instance.locationFromAddress(address);
 
     // Extract the latitude and longitude from the location
     LatLng latLng = LatLng(locations.first.latitude, locations.first.longitude);
@@ -161,8 +161,8 @@ class _EditPostPageState extends State<EditPostPage> {
         ),
       ),
       body:
-          // isLoading == true ? const Center(child: CircularProgressIndicator(),) :
-          SafeArea(
+      // isLoading == true ? const Center(child: CircularProgressIndicator(),) :
+      SafeArea(
         child: Consumer<RoomViewModel>(
           builder: (context, value, child) {
             return FutureBuilder(
@@ -308,7 +308,7 @@ class _EditPostPageState extends State<EditPostPage> {
                   child: Padding(
                     padding: EdgeInsets.only(left: 10.w),
                     child: ListView.separated(
-                        // shrinkWrap: true,
+                      // shrinkWrap: true,
                         itemBuilder: (context, index) {
                           return GestureDetector(
                               child: Text(_items[index]),
@@ -441,7 +441,7 @@ class _EditPostPageState extends State<EditPostPage> {
                         child: Text(
                           "Hoàn thành",
                           style:
-                              TextStyle(color: Colors.white, fontSize: 14.sp),
+                          TextStyle(color: Colors.white, fontSize: 14.sp),
                         ),
                       ),
                     ),
@@ -510,23 +510,23 @@ class _EditPostPageState extends State<EditPostPage> {
               }
               if (_provinceViewModel.selectedCity != null) {
                 for (int i = 0;
-                    i < _provinceViewModel.selectedCity!.districts.length;
-                    i++) {
+                i < _provinceViewModel.selectedCity!.districts.length;
+                i++) {
                   if (_provinceViewModel.selectedCity!.districts[i].code ==
                       roomData.districtId) {
                     _provinceViewModel.selectedDistrict =
-                        _provinceViewModel.selectedCity!.districts[i];
+                    _provinceViewModel.selectedCity!.districts[i];
                   }
                 }
               }
               if (_provinceViewModel.selectedDistrict != null) {
                 for (int i = 0;
-                    i < _provinceViewModel.selectedDistrict!.wards.length;
-                    i++) {
+                i < _provinceViewModel.selectedDistrict!.wards.length;
+                i++) {
                   if (_provinceViewModel.selectedDistrict!.wards[i].code ==
                       roomData.wardId) {
                     _provinceViewModel.selectedWard =
-                        _provinceViewModel.selectedDistrict!.wards[i];
+                    _provinceViewModel.selectedDistrict!.wards[i];
                   }
                 }
               }
@@ -618,7 +618,7 @@ class _EditPostPageState extends State<EditPostPage> {
                               style: TextStyle(
                                   fontSize: 14.sp,
                                   color:
-                                      const Color.fromARGB(255, 128, 128, 137)),
+                                  const Color.fromARGB(255, 128, 128, 137)),
                             ),
                             Icon(
                               Icons.arrow_drop_down,
@@ -646,7 +646,7 @@ class _EditPostPageState extends State<EditPostPage> {
                               style: TextStyle(
                                   fontSize: 14.sp,
                                   color:
-                                      const Color.fromARGB(255, 128, 128, 137)),
+                                  const Color.fromARGB(255, 128, 128, 137)),
                             ),
                             Icon(
                               Icons.arrow_drop_down,
@@ -708,7 +708,7 @@ class _EditPostPageState extends State<EditPostPage> {
                         child: Text(
                           "Chọn quận, huyện",
                           style:
-                              TextStyle(color: Colors.white, fontSize: 16.sp),
+                          TextStyle(color: Colors.white, fontSize: 16.sp),
                         ),
                       ),
                       SizedBox(
@@ -895,13 +895,13 @@ class _EditPostPageState extends State<EditPostPage> {
                           child: Text(
                             "Chọn phường, xã, thị trấn",
                             style:
-                                TextStyle(color: Colors.white, fontSize: 16.sp),
+                            TextStyle(color: Colors.white, fontSize: 16.sp),
                           ),
                         ),
                         SizedBox(
                           height: 640.h,
                           child: ListView.separated(
-                              // physics: NeverScrollableScrollPhysics(),
+                            // physics: NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) {
                                 Ward ward = _provinceViewModel
                                     .selectedDistrict!.wards[index];
@@ -1022,159 +1022,159 @@ class _EditPostPageState extends State<EditPostPage> {
   Widget _upLoadPhoto(BuildContext context, Room roomData) {
     return roomData.images.isEmpty
         ? GestureDetector(
+      onTap: () {
+        getImages();
+      },
+      child: Container(
+        margin: EdgeInsets.only(left: 12.w, right: 12.w),
+        width: 360.w,
+        height: 80.h,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.w),
+          color: const Color.fromARGB(255, 232, 232, 232),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.add_a_photo, size: 40.w, color: Colors.black),
+            Text(
+              "Nhấn vào đây để đăng hình",
+              style: TextStyle(fontSize: 12.sp),
+            )
+          ],
+        ),
+      ),
+    )
+        : SizedBox(
+      width: 360.w,
+      height: 80.h,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(children: [
+          SizedBox(
+            width: 12.w,
+          ),
+          GestureDetector(
             onTap: () {
               getImages();
             },
             child: Container(
-              margin: EdgeInsets.only(left: 12.w, right: 12.w),
-              width: 360.w,
+              width: 80.w,
               height: 80.h,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.w),
-                color: const Color.fromARGB(255, 232, 232, 232),
+                borderRadius: BorderRadius.circular(12.w),
+                color: Colors.blue,
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.add_a_photo, size: 40.w, color: Colors.black),
-                  Text(
-                    "Nhấn vào đây để đăng hình",
-                    style: TextStyle(fontSize: 12.sp),
-                  )
-                ],
+              child: Icon(
+                Icons.add_a_photo,
+                size: 20.w,
               ),
             ),
+          ),
+          SizedBox(
+            width: 12.w,
+          ),
+          ListView.builder(
+            scrollDirection: Axis.horizontal,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: selectedImages.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              if (selectedImages.isNotEmpty) {
+                print(selectedImages[index]);
+                return Stack(
+                  children: [
+                    Container(
+                        margin: EdgeInsets.only(left: 3.w, right: 3.w),
+                        width: 80.w,
+                        height: 80.h,
+
+                        // child: kIsWeb
+                        //     ? Image.network(
+                        //   selectedImages[index]!.path,
+                        //   fit: BoxFit.fill,
+                        // )
+                        //     : Image.file(
+                        //   selectedImages[index]!,
+                        //   fit: BoxFit.fill,
+                        // ),
+
+                        child: Image.file(selectedImages[index],
+                            fit: BoxFit.cover)),
+                    Positioned(
+                        right: 5.w,
+                        top: 0,
+                        child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                roomData.images.removeAt(index);
+                              });
+                            },
+                            child: Icon(
+                              Icons.remove_circle,
+                              color: Colors.red,
+                              size: 16.w,
+                            )))
+                  ],
+                );
+              } else {
+                return Container();
+              }
+            },
+          ),
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: roomData.images.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              if (roomData.images[index].isNotEmpty) {
+                print(roomData.images[index]);
+                return Stack(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(left: 3.w, right: 3.w),
+                      width: 80.w,
+                      height: 80.h,
+
+                      // child: kIsWeb
+                      //     ? Image.network(
+                      //   selectedImages[index]!.path,
+                      //   fit: BoxFit.fill,
+                      // )
+                      //     : Image.file(
+                      //   selectedImages[index]!,
+                      //   fit: BoxFit.fill,
+                      // ),
+
+                      child: CachedNetworkImage(
+                          imageUrl: roomData.images[index],
+                          fit: BoxFit.cover),
+                    ),
+                    Positioned(
+                        right: 5.w,
+                        top: 0,
+                        child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                roomData.images.removeAt(index);
+                              });
+                            },
+                            child: Icon(
+                              Icons.remove_circle,
+                              color: Colors.red,
+                              size: 16.w,
+                            )))
+                  ],
+                );
+              } else {
+                return Container();
+              }
+            },
+            scrollDirection: Axis.horizontal,
           )
-        : SizedBox(
-            width: 360.w,
-            height: 80.h,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(children: [
-                SizedBox(
-                  width: 12.w,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    getImages();
-                  },
-                  child: Container(
-                    width: 80.w,
-                    height: 80.h,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.w),
-                      color: Colors.blue,
-                    ),
-                    child: Icon(
-                      Icons.add_a_photo,
-                      size: 20.w,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 12.w,
-                ),
-                ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: selectedImages.length,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    if (selectedImages.isNotEmpty) {
-                      print(selectedImages[index]);
-                      return Stack(
-                        children: [
-                          Container(
-                              margin: EdgeInsets.only(left: 3.w, right: 3.w),
-                              width: 80.w,
-                              height: 80.h,
-
-                              // child: kIsWeb
-                              //     ? Image.network(
-                              //   selectedImages[index]!.path,
-                              //   fit: BoxFit.fill,
-                              // )
-                              //     : Image.file(
-                              //   selectedImages[index]!,
-                              //   fit: BoxFit.fill,
-                              // ),
-
-                              child: Image.file(selectedImages[index],
-                                  fit: BoxFit.cover)),
-                          Positioned(
-                              right: 5.w,
-                              top: 0,
-                              child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      roomData.images.removeAt(index);
-                                    });
-                                  },
-                                  child: Icon(
-                                    Icons.remove_circle,
-                                    color: Colors.red,
-                                    size: 16.w,
-                                  )))
-                        ],
-                      );
-                    } else {
-                      return Container();
-                    }
-                  },
-                ),
-                ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: roomData.images.length,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    if (roomData.images[index].isNotEmpty) {
-                      print(roomData.images[index]);
-                      return Stack(
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(left: 3.w, right: 3.w),
-                            width: 80.w,
-                            height: 80.h,
-
-                            // child: kIsWeb
-                            //     ? Image.network(
-                            //   selectedImages[index]!.path,
-                            //   fit: BoxFit.fill,
-                            // )
-                            //     : Image.file(
-                            //   selectedImages[index]!,
-                            //   fit: BoxFit.fill,
-                            // ),
-
-                            child: CachedNetworkImage(
-                                imageUrl: roomData.images[index],
-                                fit: BoxFit.cover),
-                          ),
-                          Positioned(
-                              right: 5.w,
-                              top: 0,
-                              child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      roomData.images.removeAt(index);
-                                    });
-                                  },
-                                  child: Icon(
-                                    Icons.remove_circle,
-                                    color: Colors.red,
-                                    size: 16.w,
-                                  )))
-                        ],
-                      );
-                    } else {
-                      return Container();
-                    }
-                  },
-                  scrollDirection: Axis.horizontal,
-                )
-              ]),
-            ),
-          );
+        ]),
+      ),
+    );
   }
 
   Widget _furnitureSelect(BuildContext context, Room roomData) {
@@ -1205,7 +1205,7 @@ class _EditPostPageState extends State<EditPostPage> {
                   child: Padding(
                     padding: EdgeInsets.only(left: 10.w),
                     child: ListView.separated(
-                        // shrinkWrap: true,
+                      // shrinkWrap: true,
                         itemBuilder: (context, index) {
                           return GestureDetector(
                               child: Text(_furStatus[index]),
@@ -1258,8 +1258,8 @@ class _EditPostPageState extends State<EditPostPage> {
                 Text(
                   _selectedFur == ""
                       ? roomData.furniture == false
-                          ? "Không"
-                          : "Có"
+                      ? "Không"
+                      : "Có"
                       : _selectedFur,
                   style: TextStyle(fontSize: 12.sp),
                 )
@@ -1413,7 +1413,7 @@ class _EditPostPageState extends State<EditPostPage> {
 
             labelStyle: const TextStyle(),
             hintText:
-                "vd: Phòng trọ 30m2 đường nguyễn A, Phường A, thành phố A, nội thất đầy đủ",
+            "vd: Phòng trọ 30m2 đường nguyễn A, Phường A, thành phố A, nội thất đầy đủ",
             hintMaxLines: 10,
             alignLabelWithHint: true,
             floatingLabelAlignment: FloatingLabelAlignment.start,

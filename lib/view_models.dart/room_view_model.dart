@@ -129,6 +129,7 @@ class RoomViewModel extends ChangeNotifier {
 
   Future<void> deleteRoom(String id ) async {
     await _roomServices.deleteRoom(id);
+    _userRooms.removeWhere((element) => element.id == id);
     notifyListeners();
   }
 }

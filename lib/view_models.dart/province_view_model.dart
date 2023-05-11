@@ -11,20 +11,26 @@ class ProvinceViewModel extends ChangeNotifier {
 
   List<City> _cities = [];
   List<District> _districts = [];
+  List<Ward> _wards =[];
 
   List<City> get GetCities => _cities;
 
   List<District> get GetDistrict => _districts;
 
+  List<Ward> get getWard => _wards;
+
   City? selectedCity ;
   City? cityFromId ;
   City? userCity ;
+  City? postEditCity;
   District? selectedDistrict ;
   District? districtFromId ;
   District? userDistrict;
+  District? postEditDistrict;
   Ward? selectedWard ;
   Ward? wardFromId ;
   Ward? userWard;
+  Ward? postEditWard;
 
   String? roadInput ;
   String? cityName ;
@@ -40,7 +46,7 @@ class ProvinceViewModel extends ChangeNotifier {
 
   StreamController<City> cityController = StreamController<City>.broadcast();
   StreamController<District> districtController =
-      StreamController<District>.broadcast();
+  StreamController<District>.broadcast();
   StreamController<Ward> wardController = StreamController<Ward>.broadcast();
 
   int? cityId;
@@ -65,7 +71,7 @@ class ProvinceViewModel extends ChangeNotifier {
     if (selectedCity == null) {}
     if (!cityController.isClosed) cityController.sink.add(city);
     selectedCity = city;
-    
+
     cityName = selectedCity!.name;
     districtName = "Chọn quận, huyện";
     wardName = "Chọn phường, xã, thị trấn";
@@ -90,7 +96,7 @@ class ProvinceViewModel extends ChangeNotifier {
     districtController.sink.add(district);
     selectedDistrict = district;
     districtName = selectedDistrict!.name;
-    wardName = "Chọn phuòng, xã, thị trấn";
+    wardName = "Chọn phường, xã, thị trấn";
     districtId = district.code;
     selectedWard = null;
 
@@ -113,13 +119,13 @@ class ProvinceViewModel extends ChangeNotifier {
         selectedWard != null &&
         roadInput == null) {
       address =
-          "${selectedCity!.name}, ${selectedDistrict!.name}, ${selectedWard!.name}";
+      "${selectedCity!.name}, ${selectedDistrict!.name}, ${selectedWard!.name}";
     } else if (selectedCity != null &&
         selectedDistrict != null &&
         selectedWard != null &&
         roadInput != null) {
       address =
-          "${selectedCity!.name}, ${selectedDistrict!.name}, ${selectedWard!.name}, $roadInput";
+      "${selectedCity!.name}, ${selectedDistrict!.name}, ${selectedWard!.name}, $roadInput";
     } else {
       if (selectedCity == null &&
           selectedDistrict == null &&
@@ -241,14 +247,56 @@ class ProvinceViewModel extends ChangeNotifier {
   }
 
   Future<City> getCityFromId(int id) async {
-    return await _provinceServices.getCityFromId(id);
+    return userCity = await _provinceServices.getCityFromId(id);
+  }
+
+  Future<City> getCityFromIdPost(int id) async {
+    return postEditCity = await _provinceServices.getCityFromId(id);
+  }
+
+  void getCityFromIdLocal(int id){
+    for (int i = 0 ; i < _cities.length; i ++)
+      {
+        if(_cities[i].code == id){
+          userCity = _cities[i];
+          _districts = _cities[i].districts;
+        }
+      }
   }
 
   Future<District> getDistrictFromId(int id) async {
-    return await _provinceServices.getDistrictFromId(id);
+    return userDistrict = await _provinceServices.getDistrictFromId(id);
+  }
+
+  Future<District> getDistrictFromIdPost(int id) async {
+    return postEditDistrict = await _provinceServices.getDistrictFromId(id);
+  }
+
+  void getDistrictFromIdLocal(int id){
+    for (int i = 0 ; i < _districts.length; i ++)
+    {
+      if(_districts[i].code == id){
+        userDistrict = _districts[id];
+
+        _wards = _districts[id].wards;
+      }
+    }
   }
 
   Future<Ward> getWardFromId(int id) async {
-    return await _provinceServices.getWardFromId(id);
+    return userWard = await _provinceServices.getWardFromId(id);
+  }
+
+  Future<Ward> getWardFromIdUser(int id) async {
+    return postEditWard = await _provinceServices.getWardFromId(id);
+  }
+
+  void getWardFromIdLocal(int id){
+    for (int i = 0 ; i < _wards.length; i ++)
+    {
+      if(_wards[i].code == id){
+        userWard = _wards[id];
+      }
+    }
   }
 }

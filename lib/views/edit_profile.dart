@@ -42,14 +42,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   StreamController<City> cityController = StreamController<City>.broadcast();
   StreamController<District> districtController =
-      StreamController<District>.broadcast();
+  StreamController<District>.broadcast();
   StreamController<Ward> wardController = StreamController<Ward>.broadcast();
   StreamController<List<File?>> imageController =
-      StreamController<List<File?>>.broadcast();
+  StreamController<List<File?>>.broadcast();
 
   Future<void> _pickImage() async {
     final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
@@ -79,7 +79,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Future<LatLng> getLatLngFromAddress(String address) async {
     // Get the location coordinates from the address
     List<Location> locations =
-        await GeocodingPlatform.instance.locationFromAddress(address);
+    await GeocodingPlatform.instance.locationFromAddress(address);
 
     // Extract the latitude and longitude from the location
     LatLng latLng = LatLng(locations.first.latitude, locations.first.longitude);
@@ -138,34 +138,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
               if (_latLng == null) {
                 await getLatLngFromAddress(
                     "${value2.selectedCity!.name}, ${value2.selectedDistrict!.name}, ${value2.selectedWard!.name}, ${roadInput.text.toString()}");
-                print(_latLng);
+
               } else if (_latLng == null) {
                 await getLatLngFromAddress(
                     "${value2.selectedCity!.name}, ${value2.selectedDistrict!.name}, ${value2.selectedWard!.name}");
-                print(
-                    "${value2.selectedCity!.name}, ${value2.selectedDistrict!.name}, ${value2.selectedWard!.name}");
-                print(_latLng);
+
+
               }
 
               if (_latLng == null) {
                 await getLatLngFromAddress(
                     "${value2.selectedCity!.name}, ${value2.selectedDistrict!.name}");
-                print(
-                    "${value2.selectedCity!.name}, ${value2.selectedDistrict!.name}");
-                print(_latLng);
+
+
               }
 
               if (_latLng == null) {
                 await getLatLngFromAddress("${value2.selectedCity!.name}");
-                print("${value2.selectedCity!.name}");
-                print(_latLng);
+
               }
-              print(_image);
+
               if (_image != null) {
                 await uploadImage(_image!);
               }
 
-              print(_imageUrl);
+
 
               UserInfor userInf = UserInfor(
                 road: roadInput.text,
@@ -173,7 +170,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 name: nameInput.text,
                 phoneNumber: phoneNumberInput.text,
                 address:
-                    value2.address == "" ? value.user!.address : value2.address,
+                value2.address == "" ? value.user!.address : value2.address,
                 lat: _latLng!.latitude,
                 lng: _latLng!.longitude,
                 city: value2.cityName == null ? userData.city : value2.cityName,
@@ -187,7 +184,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     : value2.districtId,
                 wardId: value2.wardId == null ? userData.wardId : value2.wardId,
               );
-              print(value.user!.userID!);
+
 
               await value.updateUser(userInf, value.user!.userID!);
               setState(() {
@@ -219,19 +216,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 child: Center(
                   child: _image != null
                       ? CircleAvatar(
-                          backgroundImage: FileImage(_image!),
-                          minRadius: 60.w,
-                        )
+                    backgroundImage: FileImage(_image!),
+                    minRadius: 60.w,
+                  )
                       : (user.avatar == null || user.avatar == "")
-                          ? CircleAvatar(
-                              backgroundImage:
-                                  const AssetImage("assets/images/avatar.jpg"),
-                              minRadius: 60.w,
-                            )
-                          : CircleAvatar(
-                              backgroundImage: NetworkImage(user.avatar!),
-                              minRadius: 60.w,
-                            ),
+                      ? CircleAvatar(
+                    backgroundImage:
+                    const AssetImage("assets/images/avatar.jpg"),
+                    minRadius: 60.w,
+                  )
+                      : CircleAvatar(
+                    backgroundImage: NetworkImage(user.avatar!),
+                    minRadius: 60.w,
+                  ),
                 ),
               ),
               Positioned(
@@ -332,6 +329,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
         return Consumer<ProvinceViewModel>(
           builder: (context, value, child) {
             value.roadInput = roadInput.text;
+            print("address");
+            print(value.address);
             return GestureDetector(
               onTap: () {
                 showModalBottomSheet(
@@ -385,29 +384,29 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               child: Consumer<ProvinceViewModel>(
                                 builder: (context, value, child) =>
                                     ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
+                                      style: ElevatedButton.styleFrom(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
                                               BorderRadius.circular(10.w)),
-                                      elevation: 0,
-                                      backgroundColor: Colors.blue,
-                                      fixedSize: Size(360.w, 40.h)),
-                                  onPressed: () {
-                                    setState(() {
-                                      value.roadInput = roadInput.text;
+                                          elevation: 0,
+                                          backgroundColor: Colors.blue,
+                                          fixedSize: Size(360.w, 40.h)),
+                                      onPressed: () {
+                                        setState(() {
+                                          value.roadInput = roadInput.text;
 
-                                      value.checkLocationInput();
-                                    });
-                                    if (value.address != "") {
-                                      Navigator.pop(context);
-                                    }
-                                  },
-                                  child: Text(
-                                    "Hoàn thành",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 14.sp),
-                                  ),
-                                ),
+                                          value.checkLocationInput();
+                                        });
+                                        if (value.address != "") {
+                                          Navigator.pop(context);
+                                        }
+                                      },
+                                      child: Text(
+                                        "Hoàn thành",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 14.sp),
+                                      ),
+                                    ),
                               ),
                             ),
                             SizedBox(
@@ -441,7 +440,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             style: TextStyle(
                                 fontSize: 10.sp,
                                 color:
-                                    const Color.fromARGB(255, 128, 128, 137)),
+                                const Color.fromARGB(255, 128, 128, 137)),
                           ),
                           Text(
                             value.address == ""
@@ -465,16 +464,27 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget _citySelect(BuildContext context, UserInfor userData) {
     return Consumer<ProvinceViewModel>(
       builder: (context, value, child) {
-        return FutureBuilder(
-          future: _getCities,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            } else if (snapshot.hasError) {
-              return Text("${snapshot.error}");
-            } else {
-              List<City> citiesData = value.GetCities;
-              if (value.selectedCity != null && value.selectedDistrict != null && value.selectedWard != null)
+        return Consumer<UserViewModel>(
+          builder: (context, value2, child) => FutureBuilder(
+            future: _getCities,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+              } else {
+                List<City> citiesData = value.GetCities;
+                if(value2.user!.cityId != null &&value2.user!.districtId != null && value2.user!.wardId != null )
+               {value.getCityFromId(value2.user!.cityId!);
+                value.getDistrictFromId(value2.user!.districtId!);
+                value.getWardFromId(value2.user!.wardId!);
+                value.selectedCity = value.userCity;
+                value.selectedDistrict = value.userDistrict;
+                value.selectedWard = value.userWard;}
+                // print("test");
+                // print(value.userCity!.name);
+                // print("test");
+
                 {for (int i = 0; i < citiesData.length; i++) {
                   if (citiesData[i].code == userData.cityId) {
                     value.selectedCity = citiesData[i];
@@ -497,139 +507,140 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   }
                 }}
 //
-              return GestureDetector(
-                onTap: () {
-                  showModalBottomSheet(
-                    enableDrag: true,
-                    isScrollControlled: true,
-                    context: context,
-                    builder: (context) {
-                      return SizedBox(
-                        height: 640.h,
-                        child: SingleChildScrollView(
-                          physics: NeverScrollableScrollPhysics(),
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: 20.h,
-                              ),
-                              Container(
-                                alignment: Alignment.center,
-                                width: 360.w,
-                                height: 40.h,
-                                color: Colors.blue,
-                                child: Text(
-                                  "Chọn tỉnh, thành phố",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 16.sp),
+                return GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                      enableDrag: true,
+                      isScrollControlled: true,
+                      context: context,
+                      builder: (context) {
+                        return SizedBox(
+                          height: 640.h,
+                          child: SingleChildScrollView(
+                            physics: NeverScrollableScrollPhysics(),
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 20.h,
                                 ),
-                              ),
-                              SizedBox(
-                                  height: 640.h,
-                                  child: ListView.separated(
-                                    separatorBuilder: (context, index) {
-                                      return Divider();
-                                    },
-                                    // shrinkWrap: true,
-                                    // physics:
-                                    //     const NeverScrollableScrollPhysics(),
-                                    itemCount: citiesData.length,
-                                    itemBuilder: (context, index) {
-                                      City city = citiesData[index];
+                                Container(
+                                  alignment: Alignment.center,
+                                  width: 360.w,
+                                  height: 40.h,
+                                  color: Colors.blue,
+                                  child: Text(
+                                    "Chọn tỉnh, thành phố",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 16.sp),
+                                  ),
+                                ),
+                                SizedBox(
+                                    height: 640.h,
+                                    child: ListView.separated(
+                                      separatorBuilder: (context, index) {
+                                        return Divider();
+                                      },
+                                      // shrinkWrap: true,
+                                      // physics:
+                                      //     const NeverScrollableScrollPhysics(),
+                                      itemCount: citiesData.length,
+                                      itemBuilder: (context, index) {
+                                        City city = citiesData[index];
 
-                                      return GestureDetector(
-                                        onTap: () {
-                                          value.citySelect(city);
+                                        return GestureDetector(
+                                          onTap: () {
+                                            value.citySelect(city);
 
-                                          Navigator.pop(context);
-                                        },
-                                        child: Padding(
-                                          padding: EdgeInsets.only(left: 12.w),
-                                          child: Text(
-                                            city.name,
-                                            style: TextStyle(),
+                                            Navigator.pop(context);
+                                          },
+                                          child: Padding(
+                                            padding: EdgeInsets.only(left: 12.w),
+                                            child: Text(
+                                              city.name,
+                                              style: TextStyle(),
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                    },
-                                  ))
+                                        );
+                                      },
+                                    ))
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  child: StreamBuilder<City>(
+                    stream: value.cityController.stream,
+                    initialData: value.selectedCity,
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData && userData.city == null) {
+                        return Container(
+                          alignment: Alignment.centerLeft,
+                          margin: EdgeInsets.only(left: 12.w, right: 12.w),
+                          padding: EdgeInsets.only(left: 8.w, right: 8.w),
+                          width: 360.w,
+                          height: 40.h,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.w),
+                            border: Border.all(color: Colors.blue, width: 1.w),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Chọn tỉnh, thành phố",
+                                style: TextStyle(
+                                    fontSize: 14.sp,
+                                    color:
+                                    const Color.fromARGB(255, 128, 128, 137)),
+                              ),
+                              Icon(
+                                Icons.arrow_drop_down,
+                                size: 26.w,
+                              ),
                             ],
                           ),
-                        ),
-                      );
+                        );
+                      } else {
+
+
+                        return Container(
+                          alignment: Alignment.centerLeft,
+                          margin: EdgeInsets.only(left: 12.w, right: 12.w),
+                          padding: EdgeInsets.only(left: 8.w, right: 8.w),
+                          width: 360.w,
+                          height: 40.h,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.w),
+                            border: Border.all(color: Colors.blue, width: 1.w),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                value.selectedCity == null
+                                    ? userData.city!
+                                    : value.selectedCity!.name,
+                                style: TextStyle(
+                                    fontSize: 14.sp,
+                                    color:
+                                    const Color.fromARGB(255, 128, 128, 137)),
+                              ),
+                              Icon(
+                                Icons.arrow_drop_down,
+                                size: 26.w,
+                              ),
+                            ],
+                          ),
+                        );
+                      }
                     },
-                  );
-                },
-                child: StreamBuilder<City>(
-                  stream: value.cityController.stream,
-                  initialData: value.selectedCity,
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData && userData.city == null) {
-                      return Container(
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.only(left: 12.w, right: 12.w),
-                        padding: EdgeInsets.only(left: 8.w, right: 8.w),
-                        width: 360.w,
-                        height: 40.h,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.w),
-                          border: Border.all(color: Colors.blue, width: 1.w),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Chọn tỉnh, thành phố",
-                              style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color:
-                                      const Color.fromARGB(255, 128, 128, 137)),
-                            ),
-                            Icon(
-                              Icons.arrow_drop_down,
-                              size: 26.w,
-                            ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      print(userData.city);
-                      // print(value.selectedCity!.name);
-                      return Container(
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.only(left: 12.w, right: 12.w),
-                        padding: EdgeInsets.only(left: 8.w, right: 8.w),
-                        width: 360.w,
-                        height: 40.h,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.w),
-                          border: Border.all(color: Colors.blue, width: 1.w),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              value.selectedCity == null
-                                  ? userData.city!
-                                  : value.selectedCity!.name,
-                              style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color:
-                                      const Color.fromARGB(255, 128, 128, 137)),
-                            ),
-                            Icon(
-                              Icons.arrow_drop_down,
-                              size: 26.w,
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                ),
-              );
-            }
-          },
+                  ),
+                );
+              }
+            },
+          ),
         );
       },
     );
@@ -675,7 +686,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           child: Text(
                             "Chọn quận, huyện",
                             style:
-                                TextStyle(color: Colors.white, fontSize: 16.sp),
+                            TextStyle(color: Colors.white, fontSize: 16.sp),
                           ),
                         ),
                         SizedBox(
@@ -684,7 +695,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               physics: const NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) {
                                 District district =
-                                    value.selectedCity!.districts[index];
+                                value.selectedCity!.districts[index];
 
                                 return GestureDetector(
                                   onTap: () {
@@ -789,7 +800,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   children: [
                     Text(
                       value.selectedDistrict == null
-                          ? userData.district!
+                          ? "Quận, huyện, thị xã"
                           : value.selectedDistrict!.name,
                       style: TextStyle(
                           fontSize: 14.sp,
@@ -870,10 +881,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           SizedBox(
                             height: 640.h,
                             child: ListView.separated(
-                                // physics: NeverScrollableScrollPhysics(),
+                              // physics: NeverScrollableScrollPhysics(),
                                 itemBuilder: (context, index) {
                                   Ward ward =
-                                      value.selectedDistrict!.wards[index];
+                                  value.selectedDistrict!.wards[index];
                                   return GestureDetector(
                                       onTap: () {
                                         value.wardSelect(ward);
@@ -885,7 +896,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   return Divider();
                                 },
                                 itemCount:
-                                    value.selectedDistrict!.wards.length),
+                                value.selectedDistrict!.wards.length),
                           ),
                         ],
                       ),
@@ -944,7 +955,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   children: [
                     Text(
                       value.selectedWard == null
-                          ? userData.ward!
+                          ? "phường, xã, thị trấn"
                           : value.selectedWard!.name,
                       style: TextStyle(
                           fontSize: 14.sp,

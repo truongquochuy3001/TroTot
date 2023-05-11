@@ -2,6 +2,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import 'package:tro_tot_app/view_models.dart/auth_view_model.dart';
@@ -20,6 +21,12 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   AuthViewModel authViewModel = AuthViewModel();
+
+   bool? emailNull ;
+  bool? passWordNull;
+  bool? isValid;
+  bool? emailValidate;
+
 
 
   @override
@@ -51,19 +58,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 40.h,
                 ),
                 _titleText(context, "Welcome Back!",
-                    "Enter your UserName and Password"),
+                    "Nhập Email và mật khẩu để đăng nhập"),
                 SizedBox(
                   height: 80.h,
                 ),
-                _inputLabel(context, "UserName"),
+                _inputLabel(context, "Email"),
                 SizedBox(
                   height: 4.h,
                 ),
                 _userNameInput(context),
+                emailNull == true ?  Text("Vui lòng nhập email", style: TextStyle(color: Colors.red, fontSize: 10.sp),): emailValidate == false ? Text("Email không hợp lệ", style: TextStyle(color: Colors.red, fontSize: 10.sp),) : const SizedBox(),
                 SizedBox(
                   height: 20.h,
                 ),
-                _inputLabel(context, "Password"),
+                _inputLabel(context, "Mật khẩu"),
+                passWordNull == true ?  Text("Vui lòng nhập mật khẩu", style: TextStyle(color: Colors.red, fontSize: 10.sp),): const SizedBox(),
                 SizedBox(
                   height: 4.h,
                 ),
@@ -72,6 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 60.h,
                 ),
                 Center(child: _loginButton(context)),
+
                 SizedBox(
                   height: 40.h,
                 ),
@@ -148,14 +158,50 @@ class _LoginScreenState extends State<LoginScreen> {
                 borderRadius: BorderRadius.circular(20.w),
               )),
           onPressed: () async {
-            print("aa");
-            bool emailValidate = EmailValidator.validate(email.text.toString());
+            if (email.text.isEmpty)
+              {
+                setState(() {
+                  emailNull = true;
+                });
+              }
+            else {
+              emailNull = false;
+            }
+
+            if (password.text.isEmpty)
+            {
+              setState(() {
+                passWordNull = true;
+              });
+            }
+            else {
+              passWordNull = false;
+            }
+            if(EmailValidator.validate(email.text.toString()) == false)
+              {setState(() {
+                emailValidate = false;
+              });}
+            else {
+              emailValidate = true;
+            }
+
 
             bool result = await authViewModel.signIn(email.text, password.text) ;
+            if (result)
+              {
+                setState(() {
+                  isValid = true;
+                });
+              }
+            else {
+              setState(() {
+                isValid = false;
+              });
+            }
 
-            print("???");
             print(result);
-            if (result && emailValidate) {
+            print(emailValidate);
+            if (result && emailValidate!) {
               // print("dung");
               value.getUser(FirebaseAuth.instance.currentUser!.uid);
               Navigator.push(
@@ -165,11 +211,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               );
             } else {
-              const Text("Sai thong tin");
+              Fluttertoast.showToast(
+                  msg: "Sai thông tin đăng nhập",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.grey,
+                  textColor: Colors.white,
+                  fontSize: 16.0
+              );;
             }
           },
           child: Text(
-            "LOGIN",
+            "Đăng nhập",
             style: TextStyle(color: Colors.white, fontSize: 22.sp),
           )),
     );
@@ -181,7 +235,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterSreen(),));
       },
       child: Text(
-        "Create a new account",
+        "Tạo tài khoản mới",
         style: TextStyle(
           fontSize: 14.sp,
           color: const Color.fromARGB(255, 107, 107, 107),
