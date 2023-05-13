@@ -92,6 +92,31 @@ class ProvinceViewModel extends ChangeNotifier {
     );
   }
 
+  void citySelectEdit(City city) {
+    if (selectedCity == null) {}
+    if (!cityController.isClosed) cityController.sink.add(city);
+    selectedCity = city;
+
+    cityName = selectedCity!.name;
+    districtName = "Chọn quận, huyện";
+    wardName = "Chọn phường, xã, thị trấn";
+    cityId = city.code;
+    selectedDistrict = null;
+    selectedWard = null;
+
+    districtController.sink.add(District(
+        name: "",
+        code: 0,
+        divisionType: "",
+        codename: "0",
+        provinceCode: 0,
+        wards: []));
+
+    wardController.sink.add(
+      Ward(name: "", code: 0, divisionType: "", codename: "0", districtCode: 0),
+    );
+  }
+
   void districtSelect(District district) {
     districtController.sink.add(district);
     selectedDistrict = district;
