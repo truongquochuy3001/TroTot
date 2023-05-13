@@ -4,6 +4,7 @@
         <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
         <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
         <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+        <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
    <application
         android:label="tro_tot_app"
         android:name="${applicationName}"
@@ -37,4 +38,17 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+        <!-- Add the <queries> tag here -->
+        <queries>
+            <!-- If your app checks for SMS support -->
+            <intent>
+                <action android:name="android.intent.action.VIEW" />
+                <data android:scheme="sms" />
+            </intent>
+            <!-- If your app checks for call support -->
+            <intent>
+                <action android:name="android.intent.action.VIEW" />
+                <data android:scheme="tel" />
+            </intent>
+        </queries>
 </manifest>

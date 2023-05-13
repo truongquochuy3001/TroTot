@@ -26,6 +26,7 @@ class Room {
   final String? district;
   final String? ward;
   final String geohash;
+  final GeoPoint location;
 
   Room(
       {this.id,
@@ -46,6 +47,7 @@ class Room {
       required this.furniture,
       required this.longitude,
       required this.latitude,
+      required this.location,
       this.deposit,
       this.road,
       this.city,
@@ -55,29 +57,30 @@ class Room {
 
   factory Room.fromJson(Map<String, dynamic> json) {
     return Room(
-        id: json['id'],
-        userId: json['userId'],
-        cityId: json['cityId'],
-        districtId: json['districtId'],
-        wardId: json['wardId'],
-        name: json['name'],
-        address: json['address'],
-        price: json['price'],
-        roomType: json['roomType'],
-        size: json['size'],
-        images: List<String>.from(json['images']),
-        image: json['image'],
-        postingDate: (json['postingDate'] as Timestamp?)?.toDate(),
-        status: json['status'],
-        description: json['description'],
-        furniture: json['furniture'],
-        longitude: json['longitude'],
-        latitude: json['latitude'],
-        deposit: json['deposit'],
-        road: json['road'],
-        city: json['city'],
-        district: json['district'],
-        ward: json['ward'],
+      id: json['id'],
+      userId: json['userId'],
+      cityId: json['cityId'],
+      districtId: json['districtId'],
+      wardId: json['wardId'],
+      name: json['name'],
+      address: json['address'],
+      price: json['price'],
+      roomType: json['roomType'],
+      size: json['size'],
+      images: List<String>.from(json['images']),
+      image: json['image'],
+      postingDate: (json['postingDate'] as Timestamp?)?.toDate(),
+      status: json['status'],
+      description: json['description'],
+      furniture: json['furniture'],
+      longitude: json['longitude'],
+      latitude: json['latitude'],
+      deposit: json['deposit'],
+      road: json['road'],
+      city: json['city'],
+      district: json['district'],
+      ward: json['ward'],
+      location: json['location']
     );
   }
 
@@ -105,7 +108,8 @@ class Room {
       'road': road,
       'city': city,
       'district': district,
-      'ward' : ward,
+      'ward': ward,
+      'location' : location,
       'geohash': geohash,
     };
     if (id != null) {

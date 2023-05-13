@@ -22,14 +22,12 @@ class UserViewModel extends ChangeNotifier{
   user =  await _userServices.getUser(id);
   }
 
-  Future<UserInfor?> getRoomOwner(String id) async{
+  Future<void> getRoomOwner(String id) async{
     roomOwner = await _userServices.getUser(id);
     notifyListeners();
   }
 
   Future<void> updateUser(UserInfor user, String id) async{
    await _userServices.updateUser(user, id);
-
-
   }
 }

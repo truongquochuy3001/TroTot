@@ -124,81 +124,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget _submitButton(BuildContext context, UserInfor userData) {
-    return Consumer<UserViewModel>(
-      builder: (context, value, child) => Consumer<ProvinceViewModel>(
-        builder: (context, value2, child) => ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              fixedSize: Size(360.w, 40.h),
-            ),
-            onPressed: () async {
-              if (value.user!.lat != null && value.user!.lng != null) {
-                _latLng = LatLng(value.user!.lat!, value.user!.lng!);
-              }
-              if (_latLng == null) {
-                await getLatLngFromAddress(
-                    "${value2.selectedCity!.name}, ${value2.selectedDistrict!.name}, ${value2.selectedWard!.name}, ${roadInput.text.toString()}");
-
-              } else if (_latLng == null) {
-                await getLatLngFromAddress(
-                    "${value2.selectedCity!.name}, ${value2.selectedDistrict!.name}, ${value2.selectedWard!.name}");
-
-
-              }
-
-              if (_latLng == null) {
-                await getLatLngFromAddress(
-                    "${value2.selectedCity!.name}, ${value2.selectedDistrict!.name}");
-
-
-              }
-
-              if (_latLng == null) {
-                await getLatLngFromAddress("${value2.selectedCity!.name}");
-
-              }
-
-              if (_image != null) {
-                await uploadImage(_image!);
-              }
-
-
-
-              UserInfor userInf = UserInfor(
-                road: roadInput.text,
-                avatar: _imageUrl == "" ? value.user!.avatar : _imageUrl,
-                name: nameInput.text,
-                phoneNumber: phoneNumberInput.text,
-                address:
-                value2.address == "" ? value.user!.address : value2.address,
-                lat: _latLng!.latitude,
-                lng: _latLng!.longitude,
-                city: value2.cityName == null ? userData.city : value2.cityName,
-                district: value2.districtName == null
-                    ? userData.district
-                    : value2.districtName,
-                ward: value2.wardName == null ? userData.ward : value2.wardName,
-                cityId: value2.cityId == null ? userData.cityId : value2.cityId,
-                districtId: value2.districtId == null
-                    ? userData.districtId
-                    : value2.districtId,
-                wardId: value2.wardId == null ? userData.wardId : value2.wardId,
-              );
-
-
-              await value.updateUser(userInf, value.user!.userID!);
-              setState(() {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProfilePage(),
-                    ));
-              });
-            },
-            child: Text("Cập nhật")),
-      ),
-    );
-  }
 
   Widget _userInfor(BuildContext context, UserInfor user) {
     // roadInput.text = user.road!;
@@ -800,7 +725,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   children: [
                     Text(
                       value.selectedDistrict == null
-                          ? "Quận, huyện, thị xã"
+                          ? userData.district!
                           : value.selectedDistrict!.name,
                       style: TextStyle(
                           fontSize: 14.sp,
@@ -1000,4 +925,90 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
     );
   }
+  Widget _submitButton(BuildContext context, UserInfor userData) {
+    return Consumer<UserViewModel>(
+      builder: (context, value, child) => Consumer<ProvinceViewModel>(
+        builder: (context, value2, child) => ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              fixedSize: Size(360.w, 40.h),
+            ),
+            onPressed: () async {
+              if (value.user!.lat != null && value.user!.lng != null) {
+                _latLng = LatLng(value.user!.lat!, value.user!.lng!);
+              }
+              if (_latLng == null) {
+                await getLatLngFromAddress(
+                    "${value2.selectedCity!.name}, ${value2.selectedDistrict!.name}, ${value2.selectedWard!.name}, ${roadInput.text.toString()}");
+
+              } else if (_latLng == null) {
+                await getLatLngFromAddress(
+                    "${value2.selectedCity!.name}, ${value2.selectedDistrict!.name}, ${value2.selectedWard!.name}");
+
+
+              }
+
+              if (_latLng == null) {
+                await getLatLngFromAddress(
+                    "${value2.selectedCity!.name}, ${value2.selectedDistrict!.name}");
+
+
+              }
+
+              if (_latLng == null) {
+                await getLatLngFromAddress("${value2.selectedCity!.name}");
+
+              }
+
+              if (_image != null) {
+                await uploadImage(_image!);
+              }
+
+
+
+              UserInfor userInf = UserInfor(
+                road: roadInput.text,
+                avatar: _imageUrl == "" ? value.user!.avatar : _imageUrl,
+                name: nameInput.text,
+                phoneNumber: phoneNumberInput.text,
+                address:
+                value2.address == "" ? value.user!.address : value2.address,
+                lat: _latLng!.latitude,
+                lng: _latLng!.longitude,
+                city: value2.cityName == null ? userData.city : value2.cityName,
+                district: value2.districtName == null
+                    ? userData.district
+                    : value2.districtName,
+                ward: value2.wardName == null ? userData.ward : value2.wardName,
+                cityId: value2.cityId == null ? userData.cityId : value2.cityId,
+                districtId: value2.districtId == null
+                    ? userData.districtId
+                    : value2.districtId,
+                wardId: value2.wardId == null ? userData.wardId : value2.wardId,
+              );
+
+
+              await value.updateUser(userInf, value.user!.userID!);
+              await value.getUser(value.user!.id!);
+              print(value.user!.name);
+
+              // Navigator.pushReplacement(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (context) => ProfilePage(),
+              //     ));
+              // Navigator.pop(context);
+              setState(() {
+                // Navigator.pushReplacement(
+                //         context,
+                //         MaterialPageRoute(
+                //           builder: (context) => ProfilePage(),
+                //         ));
+                    Navigator.pop(context);
+              });
+            },
+            child: Text("Cập nhật")),
+      ),
+    );
+  }
+
 }

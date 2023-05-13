@@ -23,7 +23,7 @@ class UserSevices implements IUserServices {
         .collection('User')
         .where('id', isEqualTo: id)
         .get();
-    print("aaa");
+    print("Lenh lay User trong Service");
     print(snapshot.docs.first.data());
     return UserInfor.fromJson(snapshot.docs.first.data());
   }

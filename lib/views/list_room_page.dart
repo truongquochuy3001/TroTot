@@ -38,7 +38,6 @@ class _ListRoomPageState extends State<ListRoomPage> {
   late RoomViewModel _roomViewModel;
   late AuthViewModel _authViewModel;
 
-
   bool isClickSearch = false;
   bool sort = false;
   TextEditingController? searchKey;
@@ -46,7 +45,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
   int _selectedIndex = 0;
 
   // Chuyển hướng trang ở BottomNavigationBar
-   _onItemTapped(int index, UserViewModel user) async {
+  _onItemTapped(int index, UserViewModel user) async {
     _selectedIndex = index;
     if (index == 0) {
       _roomViewModel.sortRooms.clear();
@@ -56,14 +55,15 @@ class _ListRoomPageState extends State<ListRoomPage> {
             builder: (context) => ListRoomPage(),
           ));
     } else if (index == 1) {
-      print("a");
-      if (user.user != null) {
 
+      if (user.user != null) {
         Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => PostManagePage(),
-            ));
+            )).then((value) {
+          setState(() {});
+        });
       } else {
         Navigator.push(
             context,
@@ -73,12 +73,13 @@ class _ListRoomPageState extends State<ListRoomPage> {
       }
     } else if (index == 2) {
       if (user.user != null) {
-
         Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => PostPage(),
-            ));
+            )).then((value) {
+          setState(() {});
+        });
       } else {
         Navigator.push(
             context,
@@ -144,8 +145,8 @@ class _ListRoomPageState extends State<ListRoomPage> {
                         ),
                         Container(
                             margin: EdgeInsets.only(left: 16.w, right: 16.w),
-                            child: _roomViewModel.sortRooms.isNotEmpty
-                                ? _listRoom(context, _roomViewModel.sortRooms)
+                            child: value.sortRooms.isNotEmpty
+                                ? _listRoom(context, value.sortRooms)
                                 : searchKey == null
                                     ? _listRoom(context, value.rooms)
                                     : _listRoom(
@@ -162,7 +163,6 @@ class _ListRoomPageState extends State<ListRoomPage> {
               currentIndex: _selectedIndex,
               selectedItemColor: Colors.blue,
               onTap: (value) {
-
                 _onItemTapped(value, user);
               },
               elevation: 0,

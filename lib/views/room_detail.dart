@@ -1,7 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +9,8 @@ import 'package:tro_tot_app/models/room_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/user_view_model.dart';
 import 'package:tro_tot_app/views/room_owner_page.dart';
+
+import '../models/user_model.dart';
 
 class RoomDetailPage extends StatefulWidget {
   final String id;
@@ -24,14 +26,30 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
   late GoogleMapController _mapController;
   String userId = "";
   late RoomViewModel roomProvider;
+  Future<void> launchPhoneDialer(String contactNumber) async {
+    final Uri phoneUri = Uri(scheme: "tel", path: contactNumber);
+    try {
+      if (await canLaunchUrl(phoneUri)) {
+        await launchUrl(phoneUri);
+      }
+    } catch (error) {
+      debugPrint(error.toString());
+    }
+  }
 
+  late Future getRoomOwner ;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    print(widget.id);
-    getRoom = context.read<RoomViewModel>().getRoom(widget.id);
+
+    getRoom = context.read<RoomViewModel>().getRoom(widget.id).then((value) async {
+      await context.read<UserViewModel>().getRoomOwner(value!.userId);
+      return value;
+    });
     roomProvider = context.read<RoomViewModel>();
+
+
   }
 
   late Future getRoom;
@@ -64,59 +82,62 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
             )
           ],
         ),
-        body: SingleChildScrollView(child: Consumer<RoomViewModel>(
-          builder: (context, value, child) {
-            return FutureBuilder(
-              future: getRoom,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Text('Lỗi: ${snapshot.error}');
-                } else if (!snapshot.hasData) {
-                  return const Center(child: Text('Không tìm thấy phòng trọ!'));
-                } else {
-                  final roomData = snapshot.data;
-                  return Column(
-                    children: [
-                      _carouselImage(context, roomData!),
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                      _generalInfo(context, roomData),
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                      _roomDetail(context, roomData),
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                      _detailDecribe(context, roomData),
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                      _location(context, roomData),
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                      _userInfor(context, roomData),
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                      _chatWithSaler(context),
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                      _otherPost(context, roomData),
-                      SizedBox(
-                        height: 10.h,
-                      ),
-                    ],
-                  );
-                }
-              },
-            );
-          },
+        body: SingleChildScrollView(child: Consumer2<RoomViewModel, UserViewModel>(
+          builder: (context, value, value2, child) => FutureBuilder(
+            future: getRoom,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Text('Lỗi: ${snapshot.error}');
+              } else if (!snapshot.hasData) {
+                return const Center(child: Text('Không tìm thấy phòng trọ!'));
+              } else {
+                final roomData = snapshot.data;
+                Room room = snapshot.data;
+
+                // cai ham ni lam rang de han await
+                // value2.getRoomOwner(room.userId);
+
+                return Column(
+                  children: [
+                    _carouselImage(context, roomData!),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _generalInfo(context, roomData!),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _roomDetail(context, roomData),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _detailDecribe(context, roomData),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _location(context, roomData),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _userInfor(context, roomData),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _chatWithSaler(context),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    _otherPost(context, roomData),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
         )));
   }
 
@@ -204,8 +225,8 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                         fontWeight: FontWeight.w600),
                     children: [
                       TextSpan(
-                        text: " đ",
-                        style: TextStyle(color: Colors.grey, fontSize: 12.sp),
+                        text: "đ/tháng",
+                        style: TextStyle(color: Colors.blue, fontSize: 12.sp),
                       ),
                     ],
                   ),
@@ -231,9 +252,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
               ],
             ),
           ),
-          SizedBox(
-            height: 5.h,
-          ),
+
           Padding(
             padding: EdgeInsets.only(left: 12.w, right: 12.w),
             child: Row(
@@ -254,9 +273,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
               ],
             ),
           ),
-          SizedBox(
-            height: 8.h,
-          ),
+
           Padding(
             padding: EdgeInsets.only(left: 12.w, right: 12.w),
             child: Row(
@@ -357,6 +374,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
   }
 
   Widget _detailDecribe(BuildContext context, Room roomData) {
+
     return Container(
       padding: EdgeInsets.only(left: 20.w, right: 20.w),
       width: 360.w,
@@ -375,18 +393,25 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
               style: TextStyle(fontSize: 12.sp),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(left: 12.w, right: 12.w),
-            child: GestureDetector(
-              onTap: () {},
-              child: Text(
-                "Liên hệ ngay: " + "0123456789",
-                style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: Colors.blue,
-                    fontSize: 12.sp),
+          Consumer<UserViewModel>(
+            builder: (context, value, child) =>
+            value.roomOwner!.phoneNumber !=null ?
+            Padding(
+              padding: EdgeInsets.only(left: 12.w, right: 12.w),
+              child: GestureDetector(
+                onTap: () async{
+                  await launchPhoneDialer(value.roomOwner!.phoneNumber!);
+                },
+                child: Text(
+                  "Liên hệ ngay: ${value.roomOwner!.phoneNumber}" ,
+                  style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      color: Colors.blue,
+                      fontSize: 12.sp),
+                ),
               ),
-            ),
+            ) : const SizedBox()
+
           )
         ],
       ),
@@ -409,7 +434,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
           ),
           SizedBox(
             width: 360.w,
-            height: 100.h,
+            height: 80.h,
             // child: Image.asset(
             //   "assets/images/maps.jpg",
             //   fit: BoxFit.cover,
@@ -442,14 +467,14 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
         // color: Colors.grey,
         child: Row(
           children: [
-            value.user!.avatar == null ?
+            value.roomOwner!.avatar == null ?
             const CircleAvatar(
-            foregroundImage: AssetImage("assets/images/avatar.jpg"),
+              foregroundImage: AssetImage("assets/images/avatar.jpg"),
 
-             
+
             ) :
             CircleAvatar(
-              foregroundImage: NetworkImage(value.user!.avatar!),
+              foregroundImage: NetworkImage(value.roomOwner!.avatar!),
             )
             ,
             SizedBox(
@@ -460,9 +485,9 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    value.user!.name,
+                    value.roomOwner!.name,
                     style:
-                        TextStyle(fontWeight: FontWeight.w700, fontSize: 14.sp),
+                    TextStyle(fontWeight: FontWeight.w700, fontSize: 14.sp),
                   ),
                   SizedBox(
                     height: 8.h,
@@ -514,10 +539,10 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                       side: BorderSide(width: 2.w, color: Colors.blue)),
                 ),
                 onPressed: () async {
-                  print("bbb");
-                  print(roomData.userId);
-                  await value.getRoomOwner(roomData.userId);
-                  print(value.roomOwner!.name);
+
+
+
+
                   Navigator.push(
                       context,
                       MaterialPageRoute(

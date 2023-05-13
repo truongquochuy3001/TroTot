@@ -273,10 +273,10 @@ class _ChangePassScreenState extends State<ChangePassScreen> {
                 print(result);
                 if (result) {
                   // print("dung");
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const ProfilePage(),
+                      builder: (context) =>  ProfilePage(),
                     ),
                   );
                 } else {

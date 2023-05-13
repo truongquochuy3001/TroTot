@@ -14,6 +14,7 @@ class _LocationPageState extends State<LocationPage> {
   Position? _position;
   String _address = '';
 
+
   @override
   void initState() {
     super.initState();
@@ -72,6 +73,8 @@ class _LocationPageState extends State<LocationPage> {
       ),
     ));
   }
+
+
 
   @override
   Widget build(BuildContext context) {

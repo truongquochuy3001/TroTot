@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 import 'package:geocoding/geocoding.dart';
 import 'package:geohash/geohash.dart';
+
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -67,6 +68,14 @@ class _EditPostPageState extends State<EditPostPage> {
   bool isFur = false;
   bool isLoading = false;
 
+  bool roomTypeError = false;
+  bool addrError = false;
+  bool imagesError = false;
+  bool sizeError = false;
+  bool priceError = false;
+  bool titleError = false;
+  bool decribeError = false;
+
   final List<String> _items = ['Phòng trọ', 'Nhà ở', 'Căn hộ/chung cư'];
   final List<String> _furStatus = ["Có", "Không"];
   List<File> selectedImages = [];
@@ -124,7 +133,7 @@ class _EditPostPageState extends State<EditPostPage> {
       imageUrls.add(imageUrl);
     }
 
-    print(imageUrls);
+
     return imageUrls;
   }
 
@@ -209,6 +218,12 @@ class _EditPostPageState extends State<EditPostPage> {
                             height: 10.h,
                           ),
                           _upLoadPhoto(context, roomData),
+                          imagesError
+                              ? const Text(
+                            "Vui lòng chọn ít nhất 1 ảnh",
+                            style: TextStyle(color: Colors.red),
+                          )
+                              : const SizedBox(),
                           SizedBox(
                             height: 10.h,
                           ),
@@ -225,10 +240,22 @@ class _EditPostPageState extends State<EditPostPage> {
                             height: 10.h,
                           ),
                           _sizeInput(context, roomData),
+                          sizeError
+                              ? const Text(
+                            "Vui lòng nhập diện tích",
+                            style: TextStyle(color: Colors.red),
+                          )
+                              : const SizedBox(),
                           SizedBox(
                             height: 10.h,
                           ),
                           _priceInput(context),
+                          priceError
+                              ? const Text(
+                            "Vui lòng nhập giá",
+                            style: TextStyle(color: Colors.red),
+                          )
+                              : const SizedBox(),
                           SizedBox(
                             height: 10.h,
                           ),
@@ -242,10 +269,22 @@ class _EditPostPageState extends State<EditPostPage> {
                             height: 10.h,
                           ),
                           _titleInput(context),
+                          titleError
+                              ? const Text(
+                            "Vui lòng nhập tiêu đề",
+                            style: TextStyle(color: Colors.red),
+                          )
+                              : const SizedBox(),
                           SizedBox(
                             height: 10.h,
                           ),
                           _detailDecribe(context),
+                          decribeError
+                              ? const Text(
+                            "Vui lòng nhập mô tả",
+                            style: TextStyle(color: Colors.red),
+                          )
+                              : const SizedBox(),
                           SizedBox(height: 20.h),
                           _submitButton(context, roomData),
                           SizedBox(
@@ -1081,7 +1120,7 @@ class _EditPostPageState extends State<EditPostPage> {
             shrinkWrap: true,
             itemBuilder: (context, index) {
               if (selectedImages.isNotEmpty) {
-                print(selectedImages[index]);
+
                 return Stack(
                   children: [
                     Container(
@@ -1128,7 +1167,7 @@ class _EditPostPageState extends State<EditPostPage> {
             shrinkWrap: true,
             itemBuilder: (context, index) {
               if (roomData.images[index].isNotEmpty) {
-                print(roomData.images[index]);
+
                 return Stack(
                   children: [
                     Container(
@@ -1446,8 +1485,72 @@ class _EditPostPageState extends State<EditPostPage> {
             setState(() {
               isLoading = true;
             });
+
+            if (address == "Địa chỉ") {
+              setState(() {
+                addrError = true;
+                isLoading = false;
+              });
+            } else {
+              setState(() {
+                addrError = false;
+                isLoading = false;
+              });
+            }
+
+            if (imageUrls.isEmpty) {
+              setState(() {
+                imagesError = true;
+                isLoading = false;
+              });
+            } else {
+              setState(() {
+                imagesError = false;
+                isLoading = false;
+              });
+            }
+            if (priceInput.text.isEmpty) {
+              setState(() {
+                priceError = true;
+                isLoading = false;
+              });
+
+            }
+            else {
+              setState(() {
+                priceError = false;
+                isLoading = false;
+              });
+            }
+            if (titleInput.text.isEmpty) {
+              setState(() {
+                titleError = true;
+                isLoading = false;
+              });
+
+            }
+            else {
+              setState(() {
+                titleError = false  ;
+                isLoading = false;
+              });
+            }
+            if (decribeInput.text.isEmpty) {
+              setState(() {
+                decribeError = true;
+                isLoading = false;
+              });
+
+            }
+            else {
+              setState(() {
+                decribeError = false;
+                isLoading = false;
+              });
+            }
+
             String userId = _auth.currentUser!.uid.toString();
-            print(userId);
+
             _latLng = LatLng(roomData.latitude, roomData.longitude);
             if (_latLng == null) {
               await getLatLngFromAddress(
@@ -1479,6 +1582,7 @@ class _EditPostPageState extends State<EditPostPage> {
             String geohash = Geohash.encode(
                 _latLng!.latitude, _latLng!.longitude,
                 codeLength: 8);
+            GeoPoint location = GeoPoint(_latLng!.latitude, _latLng!.longitude);
             print(selectedImages);
             await _getImageUrls();
             // nối chuỗi ảnh vừa thêm và ảnh có sẵn
@@ -1498,7 +1602,7 @@ class _EditPostPageState extends State<EditPostPage> {
                     ? roomData.wardId
                     : _provinceViewModel.cityId,
                 name: titleInput.text.toString(),
-                address: _provinceViewModel.address,
+                address: _provinceViewModel.address == "" ? roomData.address : _provinceViewModel.address,
                 price: double.parse(priceInput.text.toString()),
                 roomType: _selectedRoomType,
                 size: double.parse(sizeInput.text.toString()),
@@ -1509,6 +1613,7 @@ class _EditPostPageState extends State<EditPostPage> {
                 furniture: isFur,
                 longitude: _latLng!.longitude,
                 latitude: _latLng!.latitude,
+                location: location,
                 postingDate: DateTime.now(),
                 road: _provinceViewModel.roadInput,
                 city: _provinceViewModel.selectedCity?.name == null
@@ -1545,6 +1650,7 @@ class _EditPostPageState extends State<EditPostPage> {
                 furniture: isFur,
                 longitude: _latLng!.longitude,
                 latitude: _latLng!.latitude,
+                location: location,
                 postingDate: DateTime.now(),
                 deposit: double.parse(depositInput.text.toString()),
                 road: _provinceViewModel.roadInput,
@@ -1560,6 +1666,8 @@ class _EditPostPageState extends State<EditPostPage> {
               );
             }
             await _roomViewModel.updateRoom(widget.id, room, geohash);
+            await _roomViewModel.getAllRoom();
+            print(_roomViewModel.userRooms.first.name) ;
             setState(() {
               isLoading = false;
               Navigator.pushReplacement(
@@ -1567,6 +1675,7 @@ class _EditPostPageState extends State<EditPostPage> {
                   MaterialPageRoute(
                     builder: (context) => const ListRoomPage(),
                   ));
+              // Navigator.pop(context);
             });
           },
           child: Text(
