@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:provider/provider.dart';
 import 'package:tro_tot_app/view_models.dart/auth_view_model.dart';
@@ -45,14 +46,12 @@ class _ProfilePageState extends State<ProfilePage> {
       _getRoomsHide =
           context.read<RoomViewModel>().getRoomUserHide(_getUser.user!.id!);
     }
-    // _getUserInfor = context.read<UserViewModel>().getUser(userId);
-    // _getRoomsDisplay = context.read<RoomViewModel>().getRoomsUser(userId);
-    // _getRoomsHide = context.read<RoomViewModel>().getRoomUserHide(userId);
+
   }
 
   @override
   Widget build(BuildContext context) {
-    print(_getUser.user!.userID);
+
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 245, 245, 250),
@@ -102,37 +101,71 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _userInfor(BuildContext context, UserInfor user) {
-    return Container(
-      color: Colors.white,
-      width: 360.w,
-      height: 350.h,
-      child: Column(
-        children: [
-          Stack(
-            children: [
-              SizedBox(
-                width: 100.w,
-                height: 100.w,
-                child: (user.avatar == null || user.avatar == "")
-                    ? CircleAvatar(
-                        minRadius: 32.w,
-                        backgroundImage:
-                            const AssetImage("assets/images/avatar.jpg"),
-                      )
-                    : CircleAvatar(
-                        minRadius: 32.w,
-                        backgroundImage: NetworkImage(user.avatar!),
-                      ),
-              ),
-            ],
-          ),
-          _userInforDetail(context, user),
-        ],
+    return Consumer<UserViewModel>(
+      builder: (context, value, child) => Container(
+        color: Colors.white,
+        width: 360.w,
+        height: 350.h,
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                SizedBox(
+                  width: 100.w,
+                  height: 100.w,
+                  child: (user.avatar == null || user.avatar == "")
+                      ? CircleAvatar(
+                          minRadius: 32.w,
+                          backgroundImage:
+                              const AssetImage("assets/images/avatar.jpg"),
+                        )
+                      : CircleAvatar(
+                          minRadius: 32.w,
+                          backgroundImage: NetworkImage(value.user!.avatar!),
+                        ),
+                ),
+              ],
+            ),
+            _userInforDetail(context, user),
+          ],
+        ),
       ),
     );
   }
 
   Widget _userInforDetail(BuildContext context, UserInfor user) {
+    Duration difference = now.difference(user.joinDate!);
+
+    // mặc định thời gian chênh lệnh ban đầu là số giây
+    var time = difference.inSeconds;
+    String timeType = "giây trước";
+
+    // Xác định thời gian chênh lệch là năm, tháng, ngày, giờ, phút, giây
+    if (time > 60) {
+      //nếu thời gian chênh lệch lớn hơn 60 giây thì đổi sang phút
+      time = difference.inMinutes;
+      timeType = "phút trước";
+      if (time > 60) {
+        //nếu thời gian chênh lệch lớn hơn 60 phút thì đổi sang giờ
+        time = difference.inHours;
+        timeType = "giờ trước";
+        if (time > 24) {
+          //nếu lớn hơn 24 giờ thì đổi sang ngày
+          time = difference.inDays;
+          timeType = "ngày trước";
+          if (time > 30) {
+            // nếu lớn hơn 30 ngày (tạm thời chưa xử lý các tháng 28,29 hoặc 31 ngày) thì đổi sang tháng
+            time = (time / 30.44).floor();
+            timeType = "tháng trước";
+            if (time > 12) {
+              // nếu lớn hơn 12 tháng thì đổi sang năm
+              time = (time / 365.25).floor();
+              timeType = "năm trước";
+            }
+          }
+        }
+      }
+    }
     return Expanded(
       child: Container(
         padding: EdgeInsets.only(left: 12.w, right: 12.w),
@@ -151,7 +184,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         shape: RoundedRectangleBorder(
                             side: BorderSide(color: Colors.blue, width: 1.w),
                             borderRadius: BorderRadius.circular(8.w))),
-                    onPressed: () {
+                    onPressed: () async {
                       value2.selectedCity = null;
                       value2.selectedDistrict = null;
                       value2.selectedWard = null;
@@ -164,11 +197,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       value2.address = "";
                       value2.roadInput = null;
 
-                      Navigator.push(
+                       Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => EditProfilePage(),
-                          ));
+                          )).then((value) {setState(() {
+                            
+                          });});
                     },
                     child: Text(
                       "Chỉnh sửa thông tin",
@@ -181,25 +216,29 @@ class _ProfilePageState extends State<ProfilePage> {
 
 
             Center(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    alignment: Alignment.center,
-                    elevation: 0,
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.blue, width: 1.w),
-                        borderRadius: BorderRadius.circular(8.w))),
-                onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const ChangePassScreen(),));
-              }, child: Text(
-                "Đổi mật khẩu",
-                style: TextStyle(color: Colors.red, fontSize: 12.sp),
-              ), ),
+              child: Consumer<UserViewModel>(
+                builder: (context, value, child) =>  ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      alignment: Alignment.center,
+                      elevation: 0,
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.blue, width: 1.w),
+                          borderRadius: BorderRadius.circular(8.w))),
+                  onPressed: (){
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ChangePassScreen(),));
+                }, child: Text(
+                  "Đổi mật khẩu",
+                  style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                ), ),
+              ),
             ),
-            Center(
-              child: Text(
-                _getUser.user!.name,
-                style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w700),
+            Consumer<UserViewModel>(
+              builder: (context, value, child) => Center(
+                child: Text(
+                  value.user!.name,
+                  style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w700),
+                ),
               ),
             ),
             SizedBox(
@@ -222,7 +261,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   style: TextStyle(fontSize: 12.sp),
                 ),
                 Text(
-                  "1 Năm ",
+                " ${time.toString()} $timeType",
                   style: TextStyle(fontSize: 12.sp),
                 ),
               ],
@@ -243,12 +282,40 @@ class _ProfilePageState extends State<ProfilePage> {
                   "Địa chỉ: ",
                   style: TextStyle(fontSize: 12.sp),
                 ),
-                Text(
-                  "Chưa cung cấp",
-                  style: TextStyle(fontSize: 12.sp),
+
+                Consumer<UserViewModel>(
+                  builder: (context, value, child) => (value.user!.address  == null || value.user!.address  == "") ? Text(
+                    "Chưa cung cấp",
+                    style: TextStyle(fontSize: 12.sp),
+                  ) : Expanded(
+                    child: Text(
+                      maxLines: 2,
+                      value.user!.address!,
+                      style: TextStyle(fontSize: 12.sp, overflow: TextOverflow.ellipsis, ),
+                    ),
+                  ),
                 ),
               ],
+            ),
+            SizedBox(height: 5.h,),
+            Consumer<UserViewModel>(
+              builder: (context, value, child) => (value.user!.lat !=null && value.user!.lng != null) ?  SizedBox(width:360.w , height: 80.h,
+                child: GoogleMap(
+                    zoomGesturesEnabled: true,
+                    zoomControlsEnabled: false,
+                    myLocationEnabled: true,
+                    markers: {
+                      Marker(
+                          markerId: MarkerId(''),
+                          position: LatLng(value.user!.lat!, value.user!.lng!))
+                    },
+                    // markers: Set<Marker>.of(Marker(markerId: markerId)),
+                    mapToolbarEnabled: true,
+                    initialCameraPosition: CameraPosition(
+                        zoom: 13,
+                        target: LatLng(value.user!.lat!, value.user!.lng!))),) :  const SizedBox(),
             )
+
           ],
         ),
       ),
@@ -467,6 +534,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     Expanded(
                       child: Text(
+
                         room.address,
                         style: TextStyle(
                           fontSize: 10.sp,

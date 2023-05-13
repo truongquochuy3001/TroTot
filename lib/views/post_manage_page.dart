@@ -42,15 +42,18 @@ class _PostManagePageState extends State<PostManagePage> {
     return Scaffold(
         appBar: AppBar(
           elevation: 0,
-          leading: BackButton(
-            onPressed: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ListRoomPage(),
-                  ));
-            },
-          ),
+          // leading: BackButton(
+          //   onPressed: () {
+          //     // setState(() {
+          //     //   Navigator.pop(context);
+          //     // });
+          //     Navigator.pushReplacement(
+          //         context,
+          //         MaterialPageRoute(
+          //           builder: (context) => ListRoomPage(),
+          //         ));
+          //   },
+          // ),
           title: Text(
             "Quản lý tin của bạn",
             style: TextStyle(fontSize: 20.sp),
@@ -120,14 +123,13 @@ class _PostManagePageState extends State<PostManagePage> {
         return FutureBuilder(
           future: isSelected ? _getRoomsDisplay : _getRoomsHide,
           builder: (context, snapshot) {
-            List<Room> rooms = isSelected ? value.userRooms : value.userRoomsHide;
+            List<Room> rooms =
+                isSelected ? value.userRooms : value.userRoomsHide;
 
             return ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount:
-
-                  rooms.length,
+              itemCount: rooms.length,
               itemBuilder: (context, index) {
                 Room room = rooms[index];
 
@@ -258,9 +260,11 @@ class _PostManagePageState extends State<PostManagePage> {
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           EditPostPage(id: room.id!),
-                                    ));
+                                    )).then((value) {
+                                  setState(() {});
+                                });
                               },
-                              icon:const  Icon(
+                              icon: const Icon(
                                 Icons.edit,
                                 color: Colors.blue,
                               )),
@@ -287,7 +291,7 @@ class _PostManagePageState extends State<PostManagePage> {
                               onPressed: () {
                                 _getRoomUser.deleteRoom(room.id!);
                               },
-                              icon:const Icon(
+                              icon: const Icon(
                                 Icons.delete,
                                 color: Colors.red,
                               )),

@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:core';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_geo_hash/geohash.dart';
+
 import 'package:geocoding/geocoding.dart';
 import 'package:geohash/geohash.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -214,7 +215,7 @@ class _PostPageState extends State<PostPage> {
                       height: 10.h,
                     ),
                     _sizeInput(context),
-                    imagesError
+                    sizeError
                         ? const Text(
                             "Vui lòng nhập diện tích",
                             style: TextStyle(color: Colors.red),
@@ -224,7 +225,7 @@ class _PostPageState extends State<PostPage> {
                       height: 10.h,
                     ),
                     _priceInput(context),
-                    imagesError
+                    priceError
                         ? const Text(
                             "Vui lòng nhập giá",
                             style: TextStyle(color: Colors.red),
@@ -242,7 +243,7 @@ class _PostPageState extends State<PostPage> {
                       height: 10.h,
                     ),
                     _titleInput(context),
-                    imagesError
+                    titleError
                         ? const Text(
                             "Vui lòng nhập tiêu đề",
                             style: TextStyle(color: Colors.red),
@@ -252,7 +253,7 @@ class _PostPageState extends State<PostPage> {
                       height: 10.h,
                     ),
                     _detailDecribe(context),
-                    imagesError
+                    decribeError
                         ? const Text(
                             "Vui lòng nhập mô tả",
                             style: TextStyle(color: Colors.red),
@@ -440,6 +441,8 @@ class _PostPageState extends State<PostPage> {
                             _provinceViewModel.roadInput = roadInput.text;
 
                             _provinceViewModel.checkLocationInput();
+
+                            address = _provinceViewModel.address;
                           });
                           if (_provinceViewModel.address != "") {
                             Navigator.pop(context);
@@ -483,9 +486,7 @@ class _PostPageState extends State<PostPage> {
                     color: const Color.fromARGB(255, 128, 128, 137)),
               ),
               Text(
-                _provinceViewModel.address == ""
-                    ? "Địa chỉ"
-                    : _provinceViewModel.address,
+                address == "" ? "Địa chỉ" : address,
                 style: TextStyle(fontSize: 12.sp),
               ),
             ]),
@@ -496,6 +497,9 @@ class _PostPageState extends State<PostPage> {
   Widget _citySelect(BuildContext context) {
     return Consumer<ProvinceViewModel>(
       builder: (context, value, child) {
+        value.selectedCity = null;
+        value.selectedDistrict = null;
+        value.selectedWard = null;
         return FutureBuilder(
           future: _getCities,
           builder: (context, snapshot) {
@@ -505,6 +509,7 @@ class _PostPageState extends State<PostPage> {
               return Text("${snapshot.error}");
             } else {
               List<City> citiesData = value.GetCities;
+
               return GestureDetector(
                 onTap: () {
                   showModalBottomSheet(
@@ -794,7 +799,9 @@ class _PostPageState extends State<PostPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    snapshot.data!.name,
+                    _provinceViewModel.selectedCity == null
+                        ? "Chọn quận, huyện, thị xã"
+                        : _provinceViewModel.selectedCity!.name,
                     style: TextStyle(
                         fontSize: 14.sp,
                         color: const Color.fromARGB(255, 128, 128, 137)),
@@ -945,7 +952,9 @@ class _PostPageState extends State<PostPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    _provinceViewModel.selectedWard!.name,
+                    _provinceViewModel.selectedWard == null
+                        ? "Chọn phường, xã, thị trấn"
+                        : _provinceViewModel.selectedWard!.name,
                     style: TextStyle(
                         fontSize: 14.sp,
                         color: const Color.fromARGB(255, 128, 128, 137)),
@@ -1369,27 +1378,75 @@ class _PostPageState extends State<PostPage> {
                 isLoading = false;
               });
             }
-            if (_provinceViewModel.address == "") {
-              addrError = true;
-              isLoading = false;
+            else {
+              setState(() {
+                roomTypeError = false;
+                isLoading = false;
+              });
             }
-            if (imageUrls.isEmpty) {
-              imagesError = true;
-              isLoading = false;
-            }
-            if (priceInput.text.isEmpty) {
-              priceError = true;
-              isLoading = false;
-            }
-            if (titleInput.text.isEmpty) {
-              titleError = true;
-              isLoading = false;
-            }
-            if (decribeInput.text.isEmpty) {
-              decribeError = true;
-              isLoading = false;
+            if (address == "Địa chỉ") {
+              setState(() {
+                addrError = true;
+                isLoading = false;
+              });
+            } else {
+              setState(() {
+                addrError = false;
+                isLoading = false;
+              });
             }
 
+            if (imageUrls.isEmpty) {
+              setState(() {
+                imagesError = true;
+                isLoading = false;
+              });
+            } else {
+              setState(() {
+                imagesError = false;
+                isLoading = false;
+              });
+            }
+            if (priceInput.text.isEmpty) {
+              setState(() {
+                priceError = true;
+                isLoading = false;
+              });
+
+            }
+            else {
+              setState(() {
+                priceError = false;
+                isLoading = false;
+              });
+            }
+            if (titleInput.text.isEmpty) {
+              setState(() {
+                titleError = true;
+                isLoading = false;
+              });
+
+            }
+            else {
+              setState(() {
+                titleError = false  ;
+                isLoading = false;
+              });
+            }
+            if (decribeInput.text.isEmpty) {
+              setState(() {
+                decribeError = true;
+                isLoading = false;
+              });
+
+            }
+            else {
+              setState(() {
+                decribeError = false;
+                isLoading = false;
+              });
+            }
+            print(address);
             String userId = _auth.currentUser!.uid.toString();
             print(userId);
             if (_provinceViewModel.address.isNotEmpty) {
@@ -1422,9 +1479,8 @@ class _PostPageState extends State<PostPage> {
                   _latLng!.latitude, _latLng!.longitude,
                   codeLength: 8);
 
-
-
-
+              GeoPoint location =
+                  GeoPoint(_latLng!.latitude, _latLng!.longitude);
 
               // await _getImageUrls();
               // print (imageUrls);
@@ -1446,6 +1502,7 @@ class _PostPageState extends State<PostPage> {
                   furniture: isFur,
                   longitude: _latLng!.longitude,
                   latitude: _latLng!.latitude,
+                  location: location,
                   postingDate: DateTime.now(),
                   road: _provinceViewModel.roadInput,
                   city: _provinceViewModel.cityName,
@@ -1470,6 +1527,7 @@ class _PostPageState extends State<PostPage> {
                   furniture: isFur,
                   longitude: _latLng!.longitude,
                   latitude: _latLng!.latitude,
+                  location: location,
                   postingDate: DateTime.now(),
                   deposit: double.parse(depositInput.text.toString()),
                   road: _provinceViewModel.roadInput,
@@ -1483,18 +1541,17 @@ class _PostPageState extends State<PostPage> {
               setState(() {
                 isLoading = false;
               });
+              // Navigator.pop(context);
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (context) => ListRoomPage(),
                   ));
-            }
-            else {
+            } else {
               setState(() {
-                isLoading = false ;
+                isLoading = false;
               });
             }
-
           },
           child: Text(
             "Đăng tin",

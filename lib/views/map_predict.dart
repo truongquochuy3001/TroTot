@@ -1,61 +1,75 @@
-import 'dart:convert';
-
-import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:path/path.dart';
-import 'package:uuid/uuid.dart';
-import 'package:http/http.dart' as http;
-
-class MapPredict extends StatefulWidget {
-  const MapPredict({Key? key}) : super(key: key);
-
-  @override
-  State<MapPredict> createState() => _MapPredictState();
-}
-
-class _MapPredictState extends State<MapPredict> {
-  TextEditingController place = TextEditingController();
-  var uuid = Uuid();
-  String _sessionToken = "";
-  List<dynamic> _placeList =[];
-
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    place.addListener(() {
-      onChange();
-    });
-  }
-
-  void onChange(){
-    if (_sessionToken == null ){
-      _sessionToken = uuid.v4();
-    }
-    getSuggestion(place.text);
-
-  }
-
-  void getSuggestion(String input) async{
-    String kPLACES_API_KEY = "AIzaSyDc7PnOq3Hxzq6dxeUVaY8WGLHIePl0swY";
-    String baseURL ='https://maps.googleapis.com/maps/api/place/autocomplete/json';
-    String request = '$baseURL?input=$input&key=$kPLACES_API_KEY&sessiontoken=$_sessionToken';
-
-    var response = await http.get(Uri.parse(request));
-    var data = response.body.toString();
-    print(data);
-    if (response.statusCode == 200){
-      _placeList = jsonDecode(response.body.toString())['predictions'];
-    }
-    else {throw Exception("failed");}
-  }
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: GoogleMap( initialCameraPosition: CameraPosition(target: LatLng(37.4219999, -122.0862462),)),
-      ),
-    );
-  }
-}
+// import 'package:flutter/material.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:geoflutterfire/geoflutterfire.dart';
+// import 'package:geolocator/geolocator.dart';
+//
+// final geo = Geoflutterfire();
+// final CollectionReference placesRef = FirebaseFirestore.instance.collection('places');
+//
+// void main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   runApp(MyApp());
+// }
+//
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'My App',
+//       home: MyHomePage(),
+//     );
+//   }
+// }
+//
+// class MyHomePage extends StatefulWidget {
+//   @override
+//   _MyHomePageState createState() => _MyHomePageState();
+// }
+//
+// class _MyHomePageState extends State<MyHomePage> {
+//   List<DocumentSnapshot> nearbyPlaces = [];
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _getCurrentLocation();
+//   }
+//
+//   Future<void> _getCurrentLocation() async {
+//     final position = await Geolocator.getCurrentPosition();
+//     final userLocation = geo.point(latitude: position.latitude, longitude: position.longitude);
+//     final result = await _getNearbyPlaces(userLocation, 10.0);
+//     setState(() {
+//       nearbyPlaces = result;
+//     });
+//   }
+//
+//   Future<List<DocumentSnapshot>> _getNearbyPlaces(GeoFirePoint userLocation, double radius) async {
+//     final field = 'position';
+//     final stream = geo.collection(collectionRef: placesRef)
+//         .within(center: userLocation, radius: radius, field: field);
+//     final documentList = await stream.first;
+//     return documentList;
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Nearby Places'),
+//       ),
+//       body: nearbyPlaces.isEmpty
+//           ? Center(child: CircularProgressIndicator())
+//           : ListView.builder(
+//         itemCount: nearbyPlaces.length,
+//         itemBuilder: (context, index) {
+//           final place = nearbyPlaces[index].data();
+//           return ListTile(
+//             title: Text(place['name']),
+//             subtitle: Text(place['address']),
+//           );
+//         },
+//       ),
+//     );
+//   }
+// }

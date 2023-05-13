@@ -102,7 +102,7 @@ class RoomServices implements IRoomServices {
         .map((doc) => Room.fromJson(doc.data() as Map<String, dynamic>))
         .toList();
     for (int i = 0; i < rooms.length; i++) {
-      print(rooms[i].name);
+
     }
 
     return rooms;
@@ -111,7 +111,7 @@ class RoomServices implements IRoomServices {
   @override
   Future<List<Room>> getRoomsUser(String userId) async {
     // TODO: implement getRoomsUser
-    userId = FirebaseAuth.instance.currentUser!.uid;
+
     final snapshot = await FirebaseFirestore.instance
         .collection('Room')
         .where('userId', isEqualTo: userId).where('status', isEqualTo: true)
