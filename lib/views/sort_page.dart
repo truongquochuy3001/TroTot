@@ -171,145 +171,134 @@ class _SortPageState extends State<SortPage> {
   Widget _citySelect(BuildContext context) {
     return Consumer<ProvinceViewModel>(
       builder: (context, value, child) {
-        return FutureBuilder(
-          future: _getCities,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Text("${snapshot.error}");
-            } else {
-              List<City> citiesData = value.GetCities;
-              return GestureDetector(
-                onTap: () {
-                  showModalBottomSheet(
-                    enableDrag: true,
-                    isScrollControlled: true,
-                    context: context,
-                    builder: (context) {
-                      return SizedBox(
-                        height: 640.h,
-                        child: SingleChildScrollView(
-                          physics: NeverScrollableScrollPhysics(),
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: 20.h,
-                              ),
-                              Container(
-                                alignment: Alignment.center,
-                                width: 360.w,
-                                height: 40.h,
-                                color: Colors.blue,
-                                child: Text(
-                                  "Chọn tỉnh, thành phố",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 16.sp),
-                                ),
-                              ),
-                              SizedBox(
-                                  height: 640.h,
-                                  child: ListView.separated(
-                                    separatorBuilder: (context, index) {
-                                      return Divider();
-                                    },
-                                    // shrinkWrap: true,
-                                    // physics:
-                                    //     const NeverScrollableScrollPhysics(),
-                                    itemCount: citiesData.length,
-                                    itemBuilder: (context, index) {
-                                      City city = citiesData[index];
-
-                                      return GestureDetector(
-                                        onTap: () {
-                                          _provinceViewModel.citySelect(city);
-
-                                          Navigator.pop(context);
-                                        },
-                                        child: Padding(
-                                          padding: EdgeInsets.only(left: 12.w),
-                                          child: Text(
-                                            city.name,
-                                            style: TextStyle(),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  )),
-                              SizedBox(height: 10.h,),
-                            ],
+        List<City> citiesData = value.GetCities;
+        return GestureDetector(
+          onTap: () {
+            showModalBottomSheet(
+              enableDrag: true,
+              isScrollControlled: true,
+              context: context,
+              builder: (context) {
+                return SizedBox(
+                  height: 640.h,
+                  child: SingleChildScrollView(
+                    physics: NeverScrollableScrollPhysics(),
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 20.h,
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          width: 360.w,
+                          height: 40.h,
+                          color: Colors.blue,
+                          child: Text(
+                            "Chọn tỉnh, thành phố",
+                            style: TextStyle(
+                                color: Colors.white, fontSize: 16.sp),
                           ),
                         ),
-                      );
-                    },
-                  );
-                },
-                child: StreamBuilder<City>(
-                  stream: _provinceViewModel.cityController.stream,
-                  initialData: _provinceViewModel.selectedCity,
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return Container(
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.only(left: 12.w, right: 12.w),
-                        padding: EdgeInsets.only(left: 8.w, right: 8.w),
-                        width: 360.w,
-                        height: 40.h,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.w),
-                          border: Border.all(color: Colors.blue, width: 1.w),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Chọn tỉnh, thành phố",
-                              style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color:
-                                  const Color.fromARGB(255, 128, 128, 137)),
-                            ),
-                            Icon(
-                              Icons.arrow_drop_down,
-                              size: 26.w,
-                            ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      return Container(
-                        alignment: Alignment.centerLeft,
-                        margin: EdgeInsets.only(left: 12.w, right: 12.w),
-                        padding: EdgeInsets.only(left: 8.w, right: 8.w),
-                        width: 360.w,
-                        height: 40.h,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.w),
-                          border: Border.all(color: Colors.blue, width: 1.w),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              snapshot.data!.name,
-                              style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color:
-                                  const Color.fromARGB(255, 128, 128, 137)),
-                            ),
-                            Icon(
-                              Icons.arrow_drop_down,
-                              size: 26.w,
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                ),
-              );
-            }
+                        SizedBox(
+                            height: 640.h,
+                            child: ListView.separated(
+                              separatorBuilder: (context, index) {
+                                return Divider();
+                              },
+                              // shrinkWrap: true,
+                              // physics:
+                              //     const NeverScrollableScrollPhysics(),
+                              itemCount: citiesData.length,
+                              itemBuilder: (context, index) {
+                                City city = citiesData[index];
+
+                                return GestureDetector(
+                                  onTap: () {
+                                    _provinceViewModel.citySelect(city);
+
+                                    Navigator.pop(context);
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 12.w),
+                                    child: Text(
+                                      city.name,
+                                      style: TextStyle(),
+                                    ),
+                                  ),
+                                );
+                              },
+                            )),
+                        SizedBox(height: 10.h,),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
           },
+          child: StreamBuilder<City>(
+            stream: _provinceViewModel.cityController.stream,
+            initialData: _provinceViewModel.selectedCity,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Container(
+                  alignment: Alignment.centerLeft,
+                  margin: EdgeInsets.only(left: 12.w, right: 12.w),
+                  padding: EdgeInsets.only(left: 8.w, right: 8.w),
+                  width: 360.w,
+                  height: 40.h,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8.w),
+                    border: Border.all(color: Colors.blue, width: 1.w),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Chọn tỉnh, thành phố",
+                        style: TextStyle(
+                            fontSize: 14.sp,
+                            color:
+                            const Color.fromARGB(255, 128, 128, 137)),
+                      ),
+                      Icon(
+                        Icons.arrow_drop_down,
+                        size: 26.w,
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                return Container(
+                  alignment: Alignment.centerLeft,
+                  margin: EdgeInsets.only(left: 12.w, right: 12.w),
+                  padding: EdgeInsets.only(left: 8.w, right: 8.w),
+                  width: 360.w,
+                  height: 40.h,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8.w),
+                    border: Border.all(color: Colors.blue, width: 1.w),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        snapshot.data!.name,
+                        style: TextStyle(
+                            fontSize: 14.sp,
+                            color:
+                            const Color.fromARGB(255, 128, 128, 137)),
+                      ),
+                      Icon(
+                        Icons.arrow_drop_down,
+                        size: 26.w,
+                      ),
+                    ],
+                  ),
+                );
+              }
+            },
+          ),
         );
       },
     );

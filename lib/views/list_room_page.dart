@@ -19,6 +19,7 @@ import 'package:tro_tot_app/views/room_detail.dart';
 import 'package:tro_tot_app/views/sort_page.dart';
 
 import '../models/user_model.dart';
+import '../view_models.dart/province_view_model.dart';
 
 class ListRoomPage extends StatefulWidget {
   const ListRoomPage({super.key});
@@ -350,82 +351,91 @@ class _ListRoomPageState extends State<ListRoomPage> {
   }
 
   Widget _sortAndArea(BuildContext context) {
-    return Container(
-      color: const Color.fromARGB(255, 255, 255, 255),
-      padding: EdgeInsets.only(left: 16.w, right: 16.w),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.w),
-                  side: BorderSide(
-                      color: const Color.fromARGB(255, 221, 221, 227),
-                      width: 1.w)),
-              backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-            ),
-            onPressed: () {
-              setState(() {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SortPage(),
-                    ));
-              });
-            },
-            child: Row(
-              children: [
-                Icon(
-                  Icons.filter_alt_outlined,
-                  color: const Color.fromARGB(255, 128, 128, 137),
-                  size: 20.w,
-                ),
-                Text(
-                  "Lọc",
-                  style: TextStyle(
-                      color: const Color.fromARGB(255, 39, 39, 42),
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w400),
-                ),
-              ],
-            ),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
+    return Consumer<ProvinceViewModel>(
+      builder: (context, value, child) => Container(
+        color: const Color.fromARGB(255, 255, 255, 255),
+        padding: EdgeInsets.only(left: 16.w, right: 16.w),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
                 elevation: 0,
-                backgroundColor: const Color.fromARGB(255, 255, 255, 255),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16.w),
                     side: BorderSide(
-                        width: 1.w,
-                        color: const Color.fromARGB(255, 26, 148, 255)))),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LocationPage(),
-                  ));
-            },
-            child: Row(
-              children: [
-                Icon(
-                  Icons.location_on_outlined,
-                  size: 20.w,
-                  color: const Color.fromARGB(255, 26, 148, 255),
-                ),
-                Text(
-                  "Vị trí",
-                  style: TextStyle(
-                      overflow: TextOverflow.ellipsis,
-                      fontSize: 14.sp,
-                      color: const Color.fromARGB(255, 26, 148, 255)),
-                )
-              ],
+                        color: const Color.fromARGB(255, 221, 221, 227),
+                        width: 1.w)),
+                backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+              ),
+              onPressed: () {
+                setState(() {
+                  value.selectedCity = null;
+                  value.selectedDistrict = null;
+                  value.selectedWard = null;
+                  value.cityId = null;
+                  value.districtId = null;
+                  value.wardId = null;
+
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SortPage(),
+                      ));
+                });
+              },
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.filter_alt_outlined,
+                    color: const Color.fromARGB(255, 128, 128, 137),
+                    size: 20.w,
+                  ),
+                  Text(
+                    "Lọc",
+                    style: TextStyle(
+                        color: const Color.fromARGB(255, 39, 39, 42),
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w400),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.w),
+                      side: BorderSide(
+                          width: 1.w,
+                          color: const Color.fromARGB(255, 26, 148, 255)))),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LocationPage(),
+                    ));
+              },
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.location_on_outlined,
+                    size: 20.w,
+                    color: const Color.fromARGB(255, 26, 148, 255),
+                  ),
+                  Text(
+                    "Vị trí",
+                    style: TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                        fontSize: 14.sp,
+                        color: const Color.fromARGB(255, 26, 148, 255)),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
