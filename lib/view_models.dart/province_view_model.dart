@@ -34,10 +34,20 @@ class ProvinceViewModel extends ChangeNotifier {
 
   String? roadInput ;
   String? cityName ;
+  String? cityNameEdit;
+  String? cityNameUser;
   String? districtName ;
+  String? districtNameEdit;
+  String? districtNameUser;
   String? wardName ;
+  String? wardNameEdit;
+  String? wardNameUser;
   String address = "";
   String searchAddress = "";
+
+  String? cityReset ;
+  String? districtReset;
+  String? wardReset;
 
 
   // int cityId = 0;
@@ -52,6 +62,10 @@ class ProvinceViewModel extends ChangeNotifier {
   int? cityId;
   int? districtId;
   int? wardId;
+
+  int? cityIdEdit;
+  int? districtIdEdit;
+  int? wardIdEdit;
 
   int? userCityId;
   int? userDistrictId;
@@ -71,11 +85,12 @@ class ProvinceViewModel extends ChangeNotifier {
     if (selectedCity == null) {}
     if (!cityController.isClosed) cityController.sink.add(city);
     selectedCity = city;
-
+    cityReset = "a";
     cityName = selectedCity!.name;
-    districtName = "Chọn quận, huyện";
+    districtName = "Chọn quận, huyện, thị xã";
     wardName = "Chọn phường, xã, thị trấn";
     cityId = city.code;
+    print(cityId);
     selectedDistrict = null;
     selectedWard = null;
 
@@ -92,12 +107,15 @@ class ProvinceViewModel extends ChangeNotifier {
     );
   }
 
+
+
   void districtSelect(District district) {
     districtController.sink.add(district);
     selectedDistrict = district;
     districtName = selectedDistrict!.name;
     wardName = "Chọn phường, xã, thị trấn";
     districtId = district.code;
+    print(districtId);
     selectedWard = null;
 
     wardController.sink.add(
@@ -105,12 +123,18 @@ class ProvinceViewModel extends ChangeNotifier {
     );
   }
 
+
   void wardSelect(Ward ward) {
     wardController.sink.add(ward);
     selectedWard = ward;
     wardName = selectedWard!.name;
     wardId = ward.code;
+    print(wardId);
   }
+
+
+
+
 
   // Kiểm tra nếu chọn địa chỉ ở phần đăng tin bị trống
   void checkLocationInput() {

@@ -37,7 +37,8 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<UserViewModel>(
         builder: (context, value, child) {
-          print("test");
+          print("Kiem tra dong nay"
+              );
           if (FirebaseAuth.instance.currentUser != null) {
             value.getUser(FirebaseAuth.instance.currentUser!.uid);
           }

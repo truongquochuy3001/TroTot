@@ -46,13 +46,10 @@ class _ProfilePageState extends State<ProfilePage> {
       _getRoomsHide =
           context.read<RoomViewModel>().getRoomUserHide(_getUser.user!.id!);
     }
-
   }
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 245, 245, 250),
       appBar: AppBar(
@@ -75,10 +72,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 },
                 icon: Icon(Icons.logout)),
           ),
-          // Consumer<UserViewModel>(builder: (context, value, child) => IconButton(onPressed: (){
-          //
-          //     Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePassScreen(),));
-          // }, icon: Icon(Icons.password)),)
         ],
       ),
       body: Consumer<UserViewModel>(
@@ -105,7 +98,7 @@ class _ProfilePageState extends State<ProfilePage> {
       builder: (context, value, child) => Container(
         color: Colors.white,
         width: 360.w,
-        height: 350.h,
+        height: 400.h,
         child: Column(
           children: [
             Stack(
@@ -185,25 +178,24 @@ class _ProfilePageState extends State<ProfilePage> {
                             side: BorderSide(color: Colors.blue, width: 1.w),
                             borderRadius: BorderRadius.circular(8.w))),
                     onPressed: () async {
-                      value2.selectedCity = null;
-                      value2.selectedDistrict = null;
-                      value2.selectedWard = null;
-                      value2.cityName = null;
-                      value2.districtName = null;
-                      value2.wardName = null;
-                      value2.cityId = null;
-                      value2.districtId = null;
-                      value2.wardId = null;
-                      value2.address = "";
-                      value2.roadInput = null;
+                      setState(() {
+                        value2.selectedCity = null;
+                        value2.selectedDistrict = null;
+                        value2.selectedWard = null;
+                        value2.cityId == null;
+                        value2.districtId == null;
+                        value2.wardId == null;
+                        value2.address = "";
+                      });
 
-                       Navigator.push(
+
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => EditProfilePage(),
-                          )).then((value) {setState(() {
-                            
-                          });});
+                          )).then((value) {
+                        setState(() {});
+                      });
                     },
                     child: Text(
                       "Chỉnh sửa thông tin",
@@ -213,11 +205,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
-
-
             Center(
               child: Consumer<UserViewModel>(
-                builder: (context, value, child) =>  ElevatedButton(
+                builder: (context, value, child) => ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       alignment: Alignment.center,
                       elevation: 0,
@@ -225,19 +215,26 @@ class _ProfilePageState extends State<ProfilePage> {
                       shape: RoundedRectangleBorder(
                           side: BorderSide(color: Colors.blue, width: 1.w),
                           borderRadius: BorderRadius.circular(8.w))),
-                  onPressed: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ChangePassScreen(),));
-                }, child: Text(
-                  "Đổi mật khẩu",
-                  style: TextStyle(color: Colors.red, fontSize: 12.sp),
-                ), ),
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ChangePassScreen(),
+                        ));
+                  },
+                  child: Text(
+                    "Đổi mật khẩu",
+                    style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                  ),
+                ),
               ),
             ),
             Consumer<UserViewModel>(
               builder: (context, value, child) => Center(
                 child: Text(
                   value.user!.name,
-                  style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w700),
+                  style:
+                      TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w700),
                 ),
               ),
             ),
@@ -261,7 +258,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   style: TextStyle(fontSize: 12.sp),
                 ),
                 Text(
-                " ${time.toString()} $timeType",
+                  " ${time.toString()} $timeType",
                   style: TextStyle(fontSize: 12.sp),
                 ),
               ],
@@ -282,16 +279,57 @@ class _ProfilePageState extends State<ProfilePage> {
                   "Địa chỉ: ",
                   style: TextStyle(fontSize: 12.sp),
                 ),
-
                 Consumer<UserViewModel>(
-                  builder: (context, value, child) => (value.user!.address  == null || value.user!.address  == "") ? Text(
+                  builder: (context, value, child) =>
+                      (value.user!.address == null || value.user!.address == "")
+                          ? Text(
+                              "Chưa cung cấp",
+                              style: TextStyle(fontSize: 12.sp),
+                            )
+                          : Expanded(
+                              child: Text(
+                                maxLines: 2,
+                                value.user!.address!,
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 5.h,
+            ),
+            Row(
+              children: [
+                Icon(
+                  Icons.phone,
+                  size: 16.w,
+                ),
+                SizedBox(
+                  width: 6.w,
+                ),
+                Text(
+                  "Số điện thoại: ",
+                  style: TextStyle(fontSize: 12.sp),
+                ),
+                Consumer<UserViewModel>(
+                  builder: (context, value, child) =>
+                  (value.user!.phoneNumber == null || value.user!.phoneNumber == "")
+                      ? Text(
                     "Chưa cung cấp",
                     style: TextStyle(fontSize: 12.sp),
-                  ) : Expanded(
+                  )
+                      : Expanded(
                     child: Text(
                       maxLines: 2,
-                      value.user!.address!,
-                      style: TextStyle(fontSize: 12.sp, overflow: TextOverflow.ellipsis, ),
+                      value.user!.phoneNumber!,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ),
                 ),
@@ -299,23 +337,30 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             SizedBox(height: 5.h,),
             Consumer<UserViewModel>(
-              builder: (context, value, child) => (value.user!.lat !=null && value.user!.lng != null) ?  SizedBox(width:360.w , height: 80.h,
-                child: GoogleMap(
-                    zoomGesturesEnabled: true,
-                    zoomControlsEnabled: false,
-                    myLocationEnabled: true,
-                    markers: {
-                      Marker(
-                          markerId: MarkerId(''),
-                          position: LatLng(value.user!.lat!, value.user!.lng!))
-                    },
-                    // markers: Set<Marker>.of(Marker(markerId: markerId)),
-                    mapToolbarEnabled: true,
-                    initialCameraPosition: CameraPosition(
-                        zoom: 13,
-                        target: LatLng(value.user!.lat!, value.user!.lng!))),) :  const SizedBox(),
+              builder: (context, value, child) => (value.user!.lat != null &&
+                      value.user!.lng != null)
+                  ? SizedBox(
+                      width: 360.w,
+                      height: 110.h,
+                      child: GoogleMap(
+                          zoomGesturesEnabled: true,
+                          zoomControlsEnabled: false,
+                          myLocationEnabled: true,
+                          markers: {
+                            Marker(
+                                markerId: MarkerId(''),
+                                position:
+                                    LatLng(value.user!.lat!, value.user!.lng!))
+                          },
+                          // markers: Set<Marker>.of(Marker(markerId: markerId)),
+                          mapToolbarEnabled: true,
+                          initialCameraPosition: CameraPosition(
+                              zoom: 13,
+                              target:
+                                  LatLng(value.user!.lat!, value.user!.lng!))),
+                    )
+                  : const SizedBox(),
             )
-
           ],
         ),
       ),
@@ -534,7 +579,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     Expanded(
                       child: Text(
-
                         room.address,
                         style: TextStyle(
                           fontSize: 10.sp,

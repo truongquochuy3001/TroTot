@@ -16,9 +16,8 @@ class UserViewModel extends ChangeNotifier{
     notifyListeners();
   }
 
-  Future<UserInfor?> getUser(String id)async
+  Future<void> getUser(String id)async
   {
-    print(id);
   user =  await _userServices.getUser(id);
   }
 

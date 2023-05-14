@@ -9,7 +9,9 @@ import 'package:tro_tot_app/views/edit_post_page.dart';
 import 'package:tro_tot_app/views/list_room_page.dart';
 import 'package:tro_tot_app/views/room_detail.dart';
 
+import '../models/province_model.dart';
 import '../models/room_model.dart';
+import '../view_models.dart/province_view_model.dart';
 import '../view_models.dart/room_view_model.dart';
 
 class PostManagePage extends StatefulWidget {
@@ -185,166 +187,178 @@ class _PostManagePageState extends State<PostManagePage> {
         }
       }
     }
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.w),
-        color: const Color.fromARGB(255, 255, 255, 255),
-      ),
-      width: 328.w,
-      height: 145.h,
-      padding: EdgeInsets.all(12.w),
-      child: Row(
-        children: [
-          Image.network(
-            room.image,
-            width: 120.w,
-            height: 120.h,
-            fit: BoxFit.cover,
-          ),
-          SizedBox(
-            width: 10.w,
-          ),
-          SizedBox(
-            width: 172.w,
-            height: 120.h,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 172.w,
-                        child: Text(
-                          room.name,
-                          maxLines: 2,
-                          style: TextStyle(
-                            overflow: TextOverflow.ellipsis,
-                            fontSize: 16.sp,
-                            color: const Color.fromARGB(255, 39, 39, 42),
-                            fontWeight: FontWeight.w400,
+    return Consumer<ProvinceViewModel>(
+      builder: (context, value, child) =>  Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.w),
+          color: const Color.fromARGB(255, 255, 255, 255),
+        ),
+        width: 328.w,
+        height: 145.h,
+        padding: EdgeInsets.all(12.w),
+        child: Row(
+          children: [
+            Image.network(
+              room.image,
+              width: 120.w,
+              height: 120.h,
+              fit: BoxFit.cover,
+            ),
+            SizedBox(
+              width: 10.w,
+            ),
+            SizedBox(
+              width: 172.w,
+              height: 120.h,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 172.w,
+                          child: Text(
+                            room.name,
+                            maxLines: 2,
+                            style: TextStyle(
+                              overflow: TextOverflow.ellipsis,
+                              fontSize: 16.sp,
+                              color: const Color.fromARGB(255, 39, 39, 42),
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
                         ),
-                      ),
-                      Text(
-                        "${room.size} m2",
-                        style: TextStyle(
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.w400,
-                            color: const Color.fromARGB(255, 128, 128, 137),
-                            overflow: TextOverflow.ellipsis),
-                      ),
-                      SizedBox(
-                        height: 4.h,
-                      ),
-                      Text(
-                        "${room.price}/Tháng",
-                        style: TextStyle(
-                            color: const Color.fromARGB(255, 26, 148, 255),
-                            fontSize: 14.sp,
-                            overflow: TextOverflow.ellipsis,
-                            fontWeight: FontWeight.w700),
-                      ),
-                    ],
+                        Text(
+                          "${room.size} m2",
+                          style: TextStyle(
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w400,
+                              color: const Color.fromARGB(255, 128, 128, 137),
+                              overflow: TextOverflow.ellipsis),
+                        ),
+                        SizedBox(
+                          height: 4.h,
+                        ),
+                        Text(
+                          "${room.price}/Tháng",
+                          style: TextStyle(
+                              color: const Color.fromARGB(255, 26, 148, 255),
+                              fontSize: 14.sp,
+                              overflow: TextOverflow.ellipsis,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                isSelected == true
-                    ? Row(
-                        children: [
-                          IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          EditPostPage(id: room.id!),
-                                    )).then((value) {
+                  isSelected == true
+                      ? Row(
+                          children: [
+                            IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    value.selectedCity = null;
+                                    value.selectedDistrict = null;
+                                    value.selectedWard = null;
+                                    // value.cityId  == null;
+                                    // value.districtId == null;
+                                    // value.wardId == null;
+                                    value.address = "";
+                                  });
+
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            EditPostPage(id: room.id!),
+                                      )).then((value) {
+                                    setState(() {});
+                                  });
+                                },
+                                icon: const Icon(
+                                  Icons.edit,
+                                  color: Colors.blue,
+                                )),
+                            SizedBox(
+                              width: 5.w,
+                            ),
+                            IconButton(
+                                onPressed: () async {
+                                  setState(() {
+                                    isHide = true;
+                                  });
+
+                                  await _getRoomUser.hideRoom(room.id!, isHide);
                                   setState(() {});
-                                });
-                              },
-                              icon: const Icon(
-                                Icons.edit,
-                                color: Colors.blue,
-                              )),
-                          SizedBox(
-                            width: 5.w,
-                          ),
-                          IconButton(
-                              onPressed: () async {
-                                setState(() {
-                                  isHide = true;
-                                });
+                                },
+                                icon: const Icon(
+                                  Icons.remove_red_eye_outlined,
+                                  color: Colors.grey,
+                                )),
+                            SizedBox(
+                              width: 5.w,
+                            ),
+                            IconButton(
+                                onPressed: () {
+                                  _getRoomUser.deleteRoom(room.id!);
+                                },
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                )),
+                          ],
+                        )
+                      : ElevatedButton(
+                          onPressed: () async {
+                            setState(() {
+                              isHide = false;
+                            });
 
-                                await _getRoomUser.hideRoom(room.id!, isHide);
-                                setState(() {});
-                              },
-                              icon: const Icon(
-                                Icons.remove_red_eye_outlined,
-                                color: Colors.grey,
-                              )),
-                          SizedBox(
-                            width: 5.w,
-                          ),
-                          IconButton(
-                              onPressed: () {
-                                _getRoomUser.deleteRoom(room.id!);
-                              },
-                              icon: const Icon(
-                                Icons.delete,
-                                color: Colors.red,
-                              )),
-                        ],
-                      )
-                    : ElevatedButton(
-                        onPressed: () async {
-                          setState(() {
-                            isHide = false;
-                          });
-
-                          await _getRoomUser.displayRoom(room.id!);
-                          setState(() {});
-                        },
-                        child: Text("Hiện tin")),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.account_circle_rounded,
-                      size: 12.w,
-                      color: const Color.fromARGB(255, 128, 128, 137),
-                    ),
-                    SizedBox(
-                      width: 6.w,
-                    ),
-                    Text(
-                      "$time $timeType",
-                      softWrap: true,
-                      style: TextStyle(
-                        overflow: TextOverflow.ellipsis,
-                        fontSize: 10.sp,
+                            await _getRoomUser.displayRoom(room.id!);
+                            setState(() {});
+                          },
+                          child: Text("Hiện tin")),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.account_circle_rounded,
+                        size: 12.w,
                         color: const Color.fromARGB(255, 128, 128, 137),
                       ),
-                    ),
-                    SizedBox(
-                      width: 6.w,
-                    ),
-                    Expanded(
-                      child: Text(
-                        room.address,
+                      SizedBox(
+                        width: 6.w,
+                      ),
+                      Text(
+                        "$time $timeType",
+                        softWrap: true,
                         style: TextStyle(
+                          overflow: TextOverflow.ellipsis,
                           fontSize: 10.sp,
                           color: const Color.fromARGB(255, 128, 128, 137),
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                    )
-                  ],
-                )
-              ],
-            ),
-          )
-        ],
+                      SizedBox(
+                        width: 6.w,
+                      ),
+                      Expanded(
+                        child: Text(
+                          room.address,
+                          style: TextStyle(
+                            fontSize: 10.sp,
+                            color: const Color.fromARGB(255, 128, 128, 137),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

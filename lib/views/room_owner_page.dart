@@ -221,14 +221,55 @@ class _RoomOwnerPageState extends State<RoomOwnerPage> {
                               "Chưa cung cấp",
                               style: TextStyle(fontSize: 12.sp),
                             )
-                          : Text(
-                              maxLines: 1,
-                              value.roomOwner!.address!,
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                overflow: TextOverflow.ellipsis,
+                          : Expanded(
+
+                            child: Text(
+                                maxLines: 2,
+                                value.roomOwner!.address!,
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                            ),
+                          ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 8.h,
+            ),
+            Row(
+              children: [
+                Icon(
+                  Icons.location_on_outlined,
+                  size: 16.w,
+                ),
+                SizedBox(
+                  width: 6.w,
+                ),
+                Text(
+                  "Số điện thoại: ",
+                  style: TextStyle(fontSize: 12.sp),
+                ),
+                Consumer<UserViewModel>(
+                  builder: (context, value, child) =>
+                  (value.roomOwner!.phoneNumber == null ||
+                      value.roomOwner!.phoneNumber == "")
+                      ? Text(
+                    "Chưa cung cấp",
+                    style: TextStyle(fontSize: 12.sp),
+                  )
+                      : Expanded(
+
+                    child: Text(
+                      maxLines: 2,
+                      value.roomOwner!.phoneNumber!,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
