@@ -345,7 +345,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: 360.w,
                       height: 110.h,
                       child: GoogleMap(
-
                           zoomGesturesEnabled: true,
                           zoomControlsEnabled: false,
                           myLocationEnabled: true,
