@@ -194,10 +194,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           MaterialPageRoute(
                             builder: (context) => const EditProfilePage(),
                           ))
-                      //     .then((value) {
-                      //   setState(() {});
-                      // });
-                      ;
+                          .then((value) {
+                        setState(() {});
+                      });
+
                     },
                     child: Text(
                       "Chỉnh sửa thông tin",
@@ -339,12 +339,13 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             SizedBox(height: 5.h,),
             Consumer<UserViewModel>(
-              builder: (context, value, child) => (value.user!.lat != null &&
-                      value.user!.lng != null)
+              builder: (context, value, child) => (user.lat != null &&
+                      user.lng != null)
                   ? SizedBox(
                       width: 360.w,
                       height: 110.h,
                       child: GoogleMap(
+
                           zoomGesturesEnabled: true,
                           zoomControlsEnabled: false,
                           myLocationEnabled: true,
@@ -352,14 +353,14 @@ class _ProfilePageState extends State<ProfilePage> {
                             Marker(
                                 markerId: MarkerId(''),
                                 position:
-                                    LatLng(value.user!.lat!, value.user!.lng!))
+                                    LatLng(user.lat!, user.lng!))
                           },
                           // markers: Set<Marker>.of(Marker(markerId: markerId)),
                           mapToolbarEnabled: true,
                           initialCameraPosition: CameraPosition(
                               zoom: 13,
                               target:
-                                  LatLng(value.user!.lat!, value.user!.lng!))),
+                                  LatLng(user.lat!, user.lng!))),
                     )
                   : const SizedBox(),
             )
