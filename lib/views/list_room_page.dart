@@ -61,7 +61,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => PostManagePage(),
+              builder: (context) => const PostManagePage(),
             )).then((value) {
           setState(() {});
         });
@@ -69,7 +69,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => LoginScreen(),
+              builder: (context) =>const  LoginScreen(),
             ));
       }
     } else if (index == 2) {
@@ -77,7 +77,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => PostPage(),
+              builder: (context) => const PostPage(),
             )).then((value) {
           setState(() {});
         });
@@ -85,7 +85,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => LoginScreen(),
+              builder: (context) => const LoginScreen(),
             ));
       }
     } else {
@@ -94,13 +94,13 @@ class _ListRoomPageState extends State<ListRoomPage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ProfilePage(),
+              builder: (context) => const ProfilePage(),
             ));
       } else {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => LoginScreen(),
+              builder: (context) => const LoginScreen(),
             ));
       }
     }
