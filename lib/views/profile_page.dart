@@ -192,10 +192,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => EditProfilePage(),
-                          )).then((value) {
-                        setState(() {});
-                      });
+                            builder: (context) => const EditProfilePage(),
+                          ))
+                      //     .then((value) {
+                      //   setState(() {});
+                      // });
+                      ;
                     },
                     child: Text(
                       "Chỉnh sửa thông tin",

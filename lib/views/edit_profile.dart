@@ -112,7 +112,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             print(value2.districtId);
             print(value2.wardId);
 
-            // List<City> citiesData = value2.GetCities;
+            List<City> citiesData = value2.GetCities;
             // if (value.user!.cityId != null && value.user!.districtId != null && value.user!.wardId != null ){
             // for (int i = 0; i < citiesData.length; i++) {
             //   if (citiesData[i].code == value.user!.cityId) {
@@ -909,10 +909,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
             if (_latLng == null) {
               await getLatLngFromAddress("${value2.selectedCity!.name}");
             }
-            if(_latLng == null){
-            if (userData.lat != null && userData.lng != null) {
-              _latLng = LatLng(userData.lat!, userData.lng!);
-            }}
+            // if(_latLng == null){
+            // if (userData.lat != null && userData.lng != null) {
+            //   _latLng = LatLng(userData.lat!, userData.lng!);
+            // }}
 
             if (_image != null) {
               await uploadImage(_image!);
@@ -921,6 +921,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             print(userData.districtId);
             print(userData.wardId);
             print("abc");
+            print(value2.selectedCity!.code);
             print(value2.cityId);
             print(value2.districtId);
             print(value2.wardId);
@@ -938,7 +939,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ? userData.district
                   : value2.districtName,
               ward: value2.wardName == null ? userData.ward : value2.wardName,
-              cityId: value2.selectedCity == null ? userData.cityId : value2.selectedCity!.code,
+              cityId: value2.selectedCity!.code == null ? userData.cityId : value2.selectedCity!.code,
               districtId: value2.selectedDistrict == null
                   ? userData.districtId
                   : value2.selectedDistrict!.code,
