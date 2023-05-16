@@ -704,7 +704,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
               height: 70.h,
               child: Image.network(
                 room.image,
-                fit: BoxFit.scaleDown,
+                fit: BoxFit.cover,
               ),
             ),
             Text(
