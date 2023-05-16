@@ -125,38 +125,24 @@ class _ListRoomPageState extends State<ListRoomPage> {
         return Scaffold(
           backgroundColor: const Color.fromARGB(255, 245, 245, 250),
           body: SafeArea(
-            child: FutureBuilder(
-              // future: _getRooms,
-              future: searchKey?.text == null ? _getRooms : _getSearchRoomLocal,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (snapshot.hasError) {
-                  return Text("Lỗi: ${snapshot.error}");
-                } else {
-                  return SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        _searchField(context, value.searchHistory),
-                        _sortAndArea(context),
-                        SizedBox(
-                          height: 10.h,
-                        ),
-                        Container(
-                            margin: EdgeInsets.only(left: 16.w, right: 16.w),
-                            child: value.sortRooms.isNotEmpty
-                                ? _listRoom(context, value.sortRooms)
-                                : searchKey == null
-                                    ? _listRoom(context, value.rooms)
-                                    : _listRoom(
-                                        context, value.searchRoomsLocal)),
-                      ],
-                    ),
-                  );
-                }
-              },
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _searchField(context, value.searchHistory),
+                  _sortAndArea(context),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  Container(
+                      margin: EdgeInsets.only(left: 16.w, right: 16.w),
+                      child: value.sortRooms.isNotEmpty
+                          ? _listRoom(context, value.sortRooms)
+                          : searchKey == null
+                          ? _listRoom(context, value.rooms)
+                          : _listRoom(
+                          context, value.searchRoomsLocal)),
+                ],
+              ),
             ),
           ),
           bottomNavigationBar: Consumer<UserViewModel>(

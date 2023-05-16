@@ -1,3 +1,4 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:tro_tot_app/models/room_model.dart';
 
 abstract class IRoomServices {
@@ -22,4 +23,6 @@ abstract class IRoomServices {
   Future<List<Room>> getRoomUserHide (String userId);
 
   Future<void> deleteRoom(String id);
+
+  Stream<List<Room>> getRoomNearLocation(Position position);
 }

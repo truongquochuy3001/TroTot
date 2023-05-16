@@ -71,6 +71,7 @@ dependencies:
   location: ^4.4.0
   cached_network_image: ^3.2.3
   url_launcher: ^6.1.11
+  geoflutterfire2: ^2.3.15
 #  geoflutterfire:
 
 #  permission: ^0.1.7
