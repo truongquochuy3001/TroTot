@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:geoflutterfire2/geoflutterfire2.dart';
 import 'package:geohash/geohash.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:tro_tot_app/interfaces/room_interfaces.dart';
 import 'package:tro_tot_app/models/room_model.dart';
 
@@ -187,5 +189,83 @@ class RoomServices implements IRoomServices {
     final snapshot =
     await FirebaseFirestore.instance.collection('Room').doc(id);
    await snapshot.delete();
+  }
+
+  @override
+  Stream<List<Room>> getRoomNearLocation(Position position)  {
+    // TODO: implement getRoomNearLocation
+
+    final GeoFirePoint center = GeoFlutterFire().point(
+      latitude: position.latitude,
+      longitude: position.longitude,
+    );
+
+    final CollectionReference ref =
+    FirebaseFirestore.instance.collection('Room');
+
+    final stream = GeoFlutterFire()
+        .collection(collectionRef: ref)
+        .within(center: center, radius: 5000, field: 'location');
+
+    // Chờ cho danh sách các địa điểm được tải về
+    return stream.map((List<DocumentSnapshot> documentList) {
+      return documentList.map((DocumentSnapshot document) {
+        Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+        String roomId = document.id;
+        String userId = data['userId'];
+        int? cityId = data['cityId'];
+        int? districtId = data['districtId'];
+        int? wardId = data['wardId'];
+        String name = data['name'];
+        String address = data['address'];
+        double price = data['price'];
+        String roomType = data['roomType'];
+        double size = data['size'];
+        List<String> images = List<String>.from(data['images']);
+        String image = data['image'];
+        DateTime? postingDate = data['postingDate']?.toDate();
+        bool status = data['status'];
+        String description = data['description'];
+        bool furniture = data['furniture'];
+        double longitude = data['longitude'];
+        double latitude = data['latitude'];
+        double? deposit = data['deposit'];
+        String? road = data['road'];
+        String? city = data['city'];
+        String? district = data['district'];
+        String? ward = data['ward'];
+
+        GeoPoint location = data['location'];
+
+        return Room(
+          id: roomId,
+          userId: userId,
+          cityId: cityId,
+          districtId: districtId,
+          wardId: wardId,
+          name: name,
+          address: address,
+          price: price,
+          roomType: roomType,
+          size: size,
+          images: images,
+          image: image,
+          postingDate: postingDate,
+          status: status,
+          description: description,
+          furniture: furniture,
+          longitude: longitude,
+          latitude: latitude,
+          deposit: deposit,
+          road: road,
+          city: city,
+          district: district,
+          ward: ward,
+
+          location: location,
+        );
+      }).toList();
+    });
+    throw UnimplementedError();
   }
 }

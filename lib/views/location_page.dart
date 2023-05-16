@@ -3,6 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
+
 
 class LocationPage extends StatefulWidget {
   @override
@@ -81,7 +84,15 @@ class _LocationPageState extends State<LocationPage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-
+        actions: [
+          Consumer<RoomViewModel>(
+            builder: (context, value, child) => ElevatedButton(onPressed: ()async{
+              value.getRoomNearby(_position!);
+             print(_position!.latitude);
+             print(value.roomsNearby.length);
+            }, child: Text("Tim")),
+          )
+        ],
         title: GestureDetector(
 
             child: Text(_address, maxLines: 2,softWrap: true, style: TextStyle(fontSize: 16.sp, overflow: TextOverflow.ellipsis),)),
