@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -14,7 +15,6 @@ import '../models/user_model.dart';
 
 class RoomDetailPage extends StatefulWidget {
   final String id;
-
   const RoomDetailPage({super.key, required this.id});
 
   @override
@@ -22,6 +22,8 @@ class RoomDetailPage extends StatefulWidget {
 }
 
 class _RoomDetailPageState extends State<RoomDetailPage> {
+  var formatter = NumberFormat('#,###');
+
   bool _isMyLocationEnabled = false;
   late GoogleMapController _mapController;
   String userId = "";
@@ -218,7 +220,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
               children: [
                 RichText(
                   text: TextSpan(
-                    text: roomData.price.toString(),
+                    text: formatter.format(roomData.price).toString() ,
                     style: TextStyle(
                         color: Colors.blue,
                         fontSize: 12.sp,
@@ -716,7 +718,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
               style: TextStyle(fontSize: 12.sp, color: Colors.grey),
             ),
             Text(
-              "${room.price.toString()} đ/tháng",
+              "${formatter.format(room.price).toString() } đ/tháng",
               style: TextStyle(
                   color: Colors.blue,
                   fontWeight: FontWeight.w700,

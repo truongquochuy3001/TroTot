@@ -2,12 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 import 'package:provider/provider.dart';
 import 'package:tro_tot_app/models/room_model.dart';
 import 'package:tro_tot_app/view_models.dart/auth_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/user_view_model.dart';
+import 'package:tro_tot_app/views/chat_page.dart';
 import 'package:tro_tot_app/views/location_page.dart';
 import 'package:tro_tot_app/views/login_page.dart';
 import 'package:tro_tot_app/views/post_manage_page.dart';
@@ -30,7 +32,7 @@ class ListRoomPage extends StatefulWidget {
 
 class _ListRoomPageState extends State<ListRoomPage> {
   RoomViewModel? room1;
-
+  var formatter = NumberFormat('#,###');
   DateTime now = DateTime.now();
 
   late Future _getRooms;
@@ -120,8 +122,8 @@ class _ListRoomPageState extends State<ListRoomPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<RoomViewModel>(
-      builder: (context, value, child) {
+    return Consumer2<RoomViewModel, UserViewModel>(
+      builder: (context, value,value2, child) {
         return Scaffold(
           backgroundColor: const Color.fromARGB(255, 245, 245, 250),
           body: SafeArea(
@@ -190,73 +192,81 @@ class _ListRoomPageState extends State<ListRoomPage> {
   }
 
   Widget _searchField(BuildContext context, List<String> history) {
-    return Container(
-      alignment: Alignment.center,
-      color: const Color.fromARGB(255, 26, 148, 255),
-      padding: EdgeInsets.only(left: 16.w, right: 16.w),
-      height: 56.h,
-      width: 360.w,
-      child: Row(
-        children: [
-          Expanded(
-            flex: 8,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => _searchPage(context, history),
-                  ),
-                );
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    flex: 8,
-                    child: Text(
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      searchKey == null
-                          ? "Nhấn vào đây để search"
-                          : searchKey!.text,
-                      style: TextStyle(
-                          fontSize: 18.sp,
-                          color: Colors.white,
-                          overflow: TextOverflow.ellipsis,
-                          fontWeight: FontWeight.w700),
+    return Consumer<UserViewModel>(
+      builder: (context, value, child) =>  Container(
+        alignment: Alignment.center,
+        color: const Color.fromARGB(255, 26, 148, 255),
+        padding: EdgeInsets.only(left: 16.w, right: 16.w),
+        height: 56.h,
+        width: 360.w,
+        child: Row(
+          children: [
+            Expanded(
+              flex: 8,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => _searchPage(context, history),
                     ),
-                  ),
-                  Expanded(
-                      flex: 1,
-                      child: Icon(
-                        Icons.search,
-                        color: Colors.white,
-                        size: 24.w,
-                      )),
-                ],
+                  );
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      flex: 8,
+                      child: Text(
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        searchKey == null
+                            ? "Nhấn vào đây để search"
+                            : searchKey!.text,
+                        style: TextStyle(
+                            fontSize: 18.sp,
+                            color: Colors.white,
+                            overflow: TextOverflow.ellipsis,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    Expanded(
+                        flex: 1,
+                        child: Icon(
+                          Icons.search,
+                          color: Colors.white,
+                          size: 24.w,
+                        )),
+                  ],
+                ),
               ),
             ),
-          ),
-          Expanded(
-            flex: 1,
-            child: IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.notifications,
-                  color: Colors.white,
-                )),
-          ),
-          Expanded(
-            flex: 1,
-            child: IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.message,
-                  color: Colors.white,
-                )),
-          )
-        ],
+            Expanded(
+              flex: 1,
+              child: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.notifications,
+                    color: Colors.white,
+                  )),
+            ),
+            Expanded(
+              flex: 1,
+              child: IconButton(
+                  onPressed: () {
+                    if (value.user != null)
+                    {Navigator.push(context, MaterialPageRoute(builder: (context) =>  ChatScreen(id :value.user!.id!),));}
+                    else {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen(),));
+                    }
+                  },
+                  icon: const Icon(
+                    Icons.message,
+                    color: Colors.white,
+                  )),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -427,7 +437,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
   }
 
   Widget _listRoom(BuildContext context, List<Room> roomData) {
-    return roomData.isEmpty
+    return (roomData.isEmpty || roomData == [])
         ? Center(
             child: Text(
               "Không tìm thấy kết quả",
@@ -542,7 +552,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
                         height: 4.h,
                       ),
                       Text(
-                        "${room.price}/Tháng",
+                        "${formatter.format(room.price) }/Tháng",
                         style: TextStyle(
                             color: const Color.fromARGB(255, 26, 148, 255),
                             fontSize: 14.sp,
