@@ -2,6 +2,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tro_tot_app/models/chat_model.dart';
+import 'package:tro_tot_app/view_models.dart/chat_view_model.dart';
+import 'package:tro_tot_app/views/chat_detail.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -15,6 +18,7 @@ import '../models/user_model.dart';
 
 class RoomDetailPage extends StatefulWidget {
   final String id;
+
   const RoomDetailPage({super.key, required this.id});
 
   @override
@@ -28,6 +32,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
   late GoogleMapController _mapController;
   String userId = "";
   late RoomViewModel roomProvider;
+
   Future<void> launchPhoneDialer(String contactNumber) async {
     final Uri phoneUri = Uri(scheme: "tel", path: contactNumber);
     try {
@@ -39,19 +44,19 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
     }
   }
 
-  late Future getRoomOwner ;
+  late Future getRoomOwner;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    getRoom = context.read<RoomViewModel>().getRoom(widget.id).then((value) async {
+    getRoom =
+        context.read<RoomViewModel>().getRoom(widget.id).then((value) async {
       await context.read<UserViewModel>().getRoomOwner(value!.userId);
       return value;
     });
     roomProvider = context.read<RoomViewModel>();
-
-
   }
 
   late Future getRoom;
@@ -84,7 +89,8 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
             )
           ],
         ),
-        body: SingleChildScrollView(child: Consumer2<RoomViewModel, UserViewModel>(
+        body: SingleChildScrollView(
+            child: Consumer2<RoomViewModel, UserViewModel>(
           builder: (context, value, value2, child) => FutureBuilder(
             future: getRoom,
             builder: (context, snapshot) {
@@ -220,7 +226,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
               children: [
                 RichText(
                   text: TextSpan(
-                    text: formatter.format(roomData.price).toString() ,
+                    text: formatter.format(roomData.price).toString(),
                     style: TextStyle(
                         color: Colors.blue,
                         fontSize: 12.sp,
@@ -254,7 +260,6 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
               ],
             ),
           ),
-
           Padding(
             padding: EdgeInsets.only(left: 12.w, right: 12.w),
             child: Row(
@@ -275,7 +280,6 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
               ],
             ),
           ),
-
           Padding(
             padding: EdgeInsets.only(left: 12.w, right: 12.w),
             child: Row(
@@ -376,7 +380,6 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
   }
 
   Widget _detailDecribe(BuildContext context, Room roomData) {
-
     return Container(
       padding: EdgeInsets.only(left: 20.w, right: 20.w),
       width: 360.w,
@@ -396,25 +399,25 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
             ),
           ),
           Consumer<UserViewModel>(
-            builder: (context, value, child) =>
-            value.roomOwner!.phoneNumber !=null ?
-            Padding(
-              padding: EdgeInsets.only(left: 12.w, right: 12.w),
-              child: GestureDetector(
-                onTap: () async{
-                  await launchPhoneDialer(value.roomOwner!.phoneNumber!);
-                },
-                child: Text(
-                  "Liên hệ ngay: ${value.roomOwner!.phoneNumber}" ,
-                  style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      color: Colors.blue,
-                      fontSize: 12.sp),
-                ),
-              ),
-            ) : const SizedBox()
-
-          )
+              builder: (context, value, child) =>
+                  value.roomOwner!.phoneNumber != null
+                      ? Padding(
+                          padding: EdgeInsets.only(left: 12.w, right: 12.w),
+                          child: GestureDetector(
+                            onTap: () async {
+                              await launchPhoneDialer(
+                                  value.roomOwner!.phoneNumber!);
+                            },
+                            child: Text(
+                              "Liên hệ ngay: ${value.roomOwner!.phoneNumber}",
+                              style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  color: Colors.blue,
+                                  fontSize: 12.sp),
+                            ),
+                          ),
+                        )
+                      : const SizedBox())
         ],
       ),
     );
@@ -469,16 +472,13 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
         // color: Colors.grey,
         child: Row(
           children: [
-            value.roomOwner!.avatar == null ?
-            const CircleAvatar(
-              foregroundImage: AssetImage("assets/images/avatar.jpg"),
-
-
-            ) :
-            CircleAvatar(
-              foregroundImage: NetworkImage(value.roomOwner!.avatar!),
-            )
-            ,
+            value.roomOwner!.avatar == null
+                ? const CircleAvatar(
+                    foregroundImage: AssetImage("assets/images/avatar.jpg"),
+                  )
+                : CircleAvatar(
+                    foregroundImage: NetworkImage(value.roomOwner!.avatar!),
+                  ),
             SizedBox(
               width: 15.w,
             ),
@@ -489,7 +489,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                   Text(
                     value.roomOwner!.name,
                     style:
-                    TextStyle(fontWeight: FontWeight.w700, fontSize: 14.sp),
+                        TextStyle(fontWeight: FontWeight.w700, fontSize: 14.sp),
                   ),
                   SizedBox(
                     height: 8.h,
@@ -541,10 +541,6 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                       side: BorderSide(width: 2.w, color: Colors.blue)),
                 ),
                 onPressed: () async {
-
-
-
-
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -605,19 +601,34 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
   }
 
   Widget _commonAsk(BuildContext context, String text) {
-    return Container(
-      margin: EdgeInsets.only(left: 12.w, right: 12.w),
-      alignment: Alignment.center,
-      padding: EdgeInsets.only(left: 12.w, right: 12.w),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: const Color.fromARGB(255, 217, 217, 217)),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 12.sp,
+    return Consumer2<ChatViewModel, UserViewModel>(
+      builder: (context, value,value2, child) => GestureDetector(
+        onTap: () async {
+
+          RoomChat roomChat = RoomChat(roomOwnerId: value2.roomOwner!.userID!, userId: value2.user!.userID!, roomId: widget.id );
+          Message message = Message(senderId: value2.user!.userID!, time: DateTime.now(), content: text);
+
+          await value.addRoomChat(roomChat);
+          await value.getRoomChatFromId(widget.id);
+          await value.addMessage(message, userId, value2.roomOwner!.userID!, widget.id , value.getRoomChat!.id!);
+
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ChatDetailPage(id : value.getRoomChat!.id!),));
+        },
+        child: Container(
+          margin: EdgeInsets.only(left: 12.w, right: 12.w),
+          alignment: Alignment.center,
+          padding: EdgeInsets.only(left: 12.w, right: 12.w),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: const Color.fromARGB(255, 217, 217, 217)),
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 12.sp,
+            ),
+            softWrap: true,
+          ),
         ),
-        softWrap: true,
       ),
     );
   }
@@ -718,7 +729,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
               style: TextStyle(fontSize: 12.sp, color: Colors.grey),
             ),
             Text(
-              "${formatter.format(room.price).toString() } đ/tháng",
+              "${formatter.format(room.price).toString()} đ/tháng",
               style: TextStyle(
                   color: Colors.blue,
                   fontWeight: FontWeight.w700,
