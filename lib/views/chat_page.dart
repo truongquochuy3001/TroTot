@@ -22,7 +22,7 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             GestureDetector(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ChatDetailPage(),));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ChatDetailPage(id: '',),));
               },
               child: _chatDetail(
                   context,

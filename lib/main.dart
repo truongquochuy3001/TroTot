@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tro_tot_app/view_models.dart/auth_view_model.dart';
+import 'package:tro_tot_app/view_models.dart/chat_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/province_view_model.dart';
 import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RoomViewModel()),
         ChangeNotifierProvider(create: (_) => ProvinceViewModel()),
         ChangeNotifierProvider(create: (_) => UserViewModel()),
+        ChangeNotifierProvider(create: (_) => ChatViewModel()),
       ],
       child: Consumer<UserViewModel>(
         builder: (context, value, child) {
