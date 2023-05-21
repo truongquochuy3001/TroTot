@@ -8,6 +8,9 @@ import 'package:tro_tot_app/services/chat_services.dart';
 class ChatViewModel extends ChangeNotifier {
   StreamController<List<Message>> messageController =
       StreamController<List<Message>>.broadcast();
+
+  StreamController<Message> lastMessageController =
+  StreamController<Message>.broadcast();
   List<Message> listMessage = [];
 
   RoomChat? _roomChat;
@@ -57,6 +60,7 @@ class ChatViewModel extends ChangeNotifier {
     listMessage = await _chatServices.getAllMessage(id);
 
     messageController.sink.add(listMessage);
+    lastMessageController.sink.add(listMessage.last);
     notifyListeners();
     // print(messageController.stream.length.toString());
   }

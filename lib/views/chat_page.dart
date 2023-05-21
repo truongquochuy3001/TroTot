@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tro_tot_app/models/chat_model.dart';
 import 'package:tro_tot_app/models/user_model.dart';
@@ -25,17 +26,21 @@ class _ChatScreenState extends State<ChatScreen> {
   UserViewModel getUser = UserViewModel();
   bool isSelected = true;
   late UserViewModel _userViewModel;
+  late ChatViewModel getMessage;
+  var formatter = NumberFormat('#,###');
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     print(widget.id);
+    getMessage = context.read<ChatViewModel>();
     getAllRoomChat = context.read<ChatViewModel>().getAllRoomChat();
     getRoomChatYouOwn =
         context.read<ChatViewModel>().getRoomChatYouOwn(widget.id);
     getRoomChatHire = context.read<ChatViewModel>().getRoomChatHire(widget.id);
     getRoomFromId = context.read<RoomViewModel>();
+
   }
 
   @override
@@ -114,7 +119,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
                         return GestureDetector(
                           onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => ChatDetailPage(id: roomChats[index].id!),));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => ChatDetailPage(id: roomChats[index].id!, userId: room.userId, roomOwnerId: room.roomOwnerId, roomId : room.roomId!),));
                           },
                           child: _chatDetail(
                               context,
@@ -192,10 +197,16 @@ class _ChatScreenState extends State<ChatScreen> {
                               SizedBox(
                                 height: 5.h,
                               ),
-                              Text(
-                                "",
-                                style: TextStyle(fontSize: 12.sp),
-                              )
+                              Text("${formatter.format(snapshot2.data!.price)}đ/Tháng", style:  TextStyle(fontSize: 12.sp, color: Colors.blue),),
+                              // Consumer<ChatViewModel>(
+                              //   builder: (context, value, child) => StreamBuilder(
+                              //     stream: value.lastMessageController.stream ,
+                              //     builder: (context, snapshot3) =>  Text(
+                              //       "",
+                              //       style: TextStyle(fontSize: 12.sp),
+                              //     ),
+                              //   ),
+                              // )
                             ],
                           ),
                         ),

@@ -12,8 +12,16 @@ import '../models/room_model.dart';
 
 class ChatDetailPage extends StatefulWidget {
   final String id;
+  final String userId;
+  final String roomOwnerId;
+  final String roomId;
 
-  const ChatDetailPage({Key? key, required this.id}) : super(key: key);
+  const ChatDetailPage(
+      {Key? key,
+      required this.id,
+      required this.userId,
+      required this.roomOwnerId,  required this.roomId})
+      : super(key: key);
 
   @override
   State<ChatDetailPage> createState() => _ChatDetailPageState();
@@ -25,7 +33,6 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   late Future getRoomChat;
   late RoomViewModel getRoom;
   late UserViewModel getUser;
-
 
   @override
   void initState() {
@@ -42,147 +49,145 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Huy Truong"),
+        title: FutureBuilder(
+          future: getUser.user!.id == widget.userId
+              ? getUser.getUserChat(widget.roomOwnerId)
+              : getUser.getUserChat(widget.userId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
+            } else {
+              return Text(snapshot.data!.name);
+            }
+          },
+        ),
         elevation: 0,
       ),
       body: SafeArea(
         child: Column(
           children: [
-            // FutureBuilder(
-            //   future: getRoomChat,
-            //   builder: (context, snapshot) {
-            //     RoomChat roomChat = snapshot.data;
-            //
-            //     return FutureBuilder(
-            //       future: getRoom.getRoom(roomChat.id!),
-            //       builder: (context, snapshot2) {
-            //         if (!snapshot2.hasData) {
-            //           return const SizedBox();
-            //         }
-            //         else {
-            //           return Container(
-            //             color: const Color.fromARGB(100, 222, 222, 222),
-            //             width: 360.w,
-            //             height: 60.h,
-            //             child: Row(
-            //               children: [
-            //                 SizedBox(
-            //                   width: 10.w,
-            //                 ),
-            //                 Image.network(
-            //                   snapshot2.data!.image,
-            //                   fit: BoxFit.cover,
-            //                   width: 60.w,
-            //                   height: 60.w,
-            //                 ),
-            //                 SizedBox(
-            //                   width: 10.w,
-            //                 ),
-            //                 Expanded(
-            //                   child: Column(
-            //                     mainAxisAlignment: MainAxisAlignment.center,
-            //                     crossAxisAlignment: CrossAxisAlignment.start,
-            //                     children: [
-            //                       Text(
-            //                         snapshot2.data!.name,
-            //                         style: TextStyle(
-            //                             fontSize: 16.sp,
-            //                             fontWeight: FontWeight.bold),
-            //                       ),
-            //                       Text(
-            //                         "${snapshot2.data!.price
-            //                             .toString()}đ/tháng",
-            //                         style: TextStyle(
-            //                             fontSize: 14.sp, color: Colors.blue),
-            //                       ),
-            //                       Text(
-            //                         snapshot2.data!.address,
-            //                         style: TextStyle(
-            //                             fontSize: 14.sp,
-            //                             overflow: TextOverflow.ellipsis),
-            //                       )
-            //                     ],
-            //                   ),
-            //                 )
-            //               ],
-            //             ),
-            //           );
-            //         }
-            //       },
-            //
-            //     );
-            //   },
-            //
-            // ),
+        FutureBuilder(
+        future: getRoom.getRoom(widget.roomId),
+        builder: (context, snapshot2) {
+          if (!snapshot2.hasData) {
+            return const SizedBox();
+          }
+          else {
+            return Container(
+              color: const Color.fromARGB(100, 222, 222, 222),
+              width: 360.w,
+              height: 60.h,
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 10.w,
+                  ),
+                  Image.network(
+                    snapshot2.data!.image,
+                    fit: BoxFit.cover,
+                    width: 60.w,
+                    height: 60.w,
+                  ),
+                  SizedBox(
+                    width: 10.w,
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          snapshot2.data!.name,
+                          style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "${snapshot2.data!.price
+                              .toString()}đ/tháng",
+                          style: TextStyle(
+                              fontSize: 14.sp, color: Colors.blue),
+                        ),
+                        Text(
+                          snapshot2.data!.address,
+                          style: TextStyle(
+                              fontSize: 14.sp,
+                              overflow: TextOverflow.ellipsis),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            );
+          }
+        },
+
+      ),
             SizedBox(
               height: 5.h,
             ),
             Expanded(
                 child: SingleChildScrollView(
-                  reverse: true,
-                  child: Column(
-                    children: [
-                      Consumer2<ChatViewModel, UserViewModel>(
-                        builder: (context, value, value2, child) =>
-                            StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance
-                                  .collection('ChatRoom')
-                                  .doc(widget.id)
-                                  .collection('Message')
-                                  .orderBy('time', descending: false)
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  // List<Message> listMess = snapshot.data!;
+              reverse: true,
+              child: Column(
+                children: [
+                  Consumer2<ChatViewModel, UserViewModel>(
+                    builder: (context, value, value2, child) =>
+                        StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('ChatRoom')
+                          .doc(widget.id)
+                          .collection('Message')
+                          .orderBy('time', descending: false)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          // List<Message> listMess = snapshot.data!;
 
-                                  return ListView.builder(
-                                    shrinkWrap: true,
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    itemCount: snapshot.data!.docs.length,
-                                    itemBuilder: (context, index) {
-                                      Map<String, dynamic> map = snapshot.data!.docs[index]
-                                          .data() as Map<String, dynamic>;
-                                          return Container(
-                                            width: 360.w,
-                                            height: 50.h,
-                                            alignment:
-                                            map['senderId'] ==
-                                                value2.user!.id
-                                                ? Alignment.centerRight
-                                                : Alignment.centerLeft,
-                                            padding: EdgeInsets.only(
-                                                left: 10.w, right: 10.w),
-                                            child: Container(
-                                              padding: EdgeInsets.all(16.w),
-                                              // width: 300.w,
-                                              // height: 40.h,
-                                              decoration: BoxDecoration(
-                                                color:  map['senderId'] ==
-                                                    value2.user!.id
-                                                    ? const Color.fromARGB(
-                                                    255, 176, 209, 252)
-                                                    : const Color.fromARGB(
-                                                    100, 222, 222, 222),
-                                                borderRadius: BorderRadius
-                                                    .circular(12.w),
-                                              ),
-                                              child: Text(
-                                                map['content'],
-                                                style: TextStyle(fontSize: 14.sp),
-                                              ),
-                                            ),
-                                          );
-                                    }
-
-                                  );
-                                }
-                                return const SizedBox();
-                              },
-                            ),
-                      ),
-                    ],
+                          return ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (context, index) {
+                                Map<String, dynamic> map =
+                                    snapshot.data!.docs[index].data()
+                                        as Map<String, dynamic>;
+                                return Container(
+                                  width: 360.w,
+                                  height: 50.h,
+                                  alignment: map['senderId'] == value2.user!.id
+                                      ? Alignment.centerRight
+                                      : Alignment.centerLeft,
+                                  padding:
+                                      EdgeInsets.only(left: 10.w, right: 10.w),
+                                  child: Container(
+                                    padding: EdgeInsets.all(16.w),
+                                    // width: 300.w,
+                                    // height: 40.h,
+                                    decoration: BoxDecoration(
+                                      color: map['senderId'] == value2.user!.id
+                                          ? const Color.fromARGB(
+                                              255, 176, 209, 252)
+                                          : const Color.fromARGB(
+                                              100, 222, 222, 222),
+                                      borderRadius: BorderRadius.circular(12.w),
+                                    ),
+                                    child: Text(
+                                      map['content'],
+                                      style: TextStyle(fontSize: 14.sp),
+                                    ),
+                                  ),
+                                );
+                              });
+                        }
+                        return const SizedBox();
+                      },
+                    ),
                   ),
-                )),
+                ],
+              ),
+            )),
             Row(
               children: [
                 IconButton(
@@ -222,24 +227,23 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                   ),
                 ),
                 Consumer2<ChatViewModel, UserViewModel>(
-                  builder: (context, value, value2, child) =>
-                      IconButton(
-                        onPressed: () async {
-                          if (_messageText.text.isNotEmpty) {
-                            Message message = Message(
-                                senderId: value2.user!.id!,
-                                time: DateTime.now(),
-                                content: _messageText.text);
-                            await value.addMessage(
-                                message, "a", "a", "a", widget.id);
-                            _messageText.clear();
-                          }
-                        },
-                        icon: const Icon(
-                          Icons.send,
-                          color: Colors.blue,
-                        ),
-                      ),
+                  builder: (context, value, value2, child) => IconButton(
+                    onPressed: () async {
+                      if (_messageText.text.isNotEmpty) {
+                        Message message = Message(
+                            senderId: value2.user!.id!,
+                            time: DateTime.now(),
+                            content: _messageText.text);
+                        await value.addMessage(
+                            message, "a", "a", "a", widget.id);
+                        _messageText.clear();
+                      }
+                    },
+                    icon: const Icon(
+                      Icons.send,
+                      color: Colors.blue,
+                    ),
+                  ),
                 ),
               ],
             ),

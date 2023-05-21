@@ -625,7 +625,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              ChatDetailPage(id: value.getRoomChat!.id!),
+                              ChatDetailPage(id: value.getRoomChat!.id!, userId : value.getRoomChat!.userId, roomOwnerId : value.getRoomChat!.roomOwnerId, roomId : value.getRoomChat!.roomId! ),
                         ),
                       ).then((value) {
                         setState(() {});
@@ -652,7 +652,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            ChatDetailPage(id: value.getRoomChat!.id!),
+                            ChatDetailPage(id: value.getRoomChat!.id!, userId : value.getRoomChat!.userId, roomOwnerId : value.getRoomChat!.roomOwnerId, roomId : value.getRoomChat!.roomId! ),
                       ),
                     ).then((value) {setState(() {
 
