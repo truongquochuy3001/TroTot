@@ -81,10 +81,10 @@ class _PostPageState extends State<PostPage> {
 
   StreamController<City> cityController = StreamController<City>.broadcast();
   StreamController<District> districtController =
-      StreamController<District>.broadcast();
+  StreamController<District>.broadcast();
   StreamController<Ward> wardController = StreamController<Ward>.broadcast();
   StreamController<List<File?>> imageController =
-      StreamController<List<File?>>.broadcast();
+  StreamController<List<File?>>.broadcast();
 
   List<XFile> listXfile = [];
 
@@ -93,7 +93,7 @@ class _PostPageState extends State<PostPage> {
     List<XFile> xfilePick = pickedFile;
 
     setState(
-      () {
+          () {
         if (xfilePick.isNotEmpty) {
           for (var i = 0; i < xfilePick.length; i++) {
             listXfile.add(XFile(xfilePick[i].path));
@@ -112,14 +112,17 @@ class _PostPageState extends State<PostPage> {
 
   Future<List<String>> _getImageUrls() async {
     for (File imageFile in selectedImages) {
-      String imageName = DateTime.now().millisecondsSinceEpoch.toString();
+      String imageName = DateTime
+          .now()
+          .millisecondsSinceEpoch
+          .toString();
       firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
           .ref()
           .child('Room')
           .child(imageName);
 
       firebase_storage.UploadTask uploadTask =
-          ref.putFile(File(imageFile.path));
+      ref.putFile(File(imageFile.path));
 
       await uploadTask;
       String imageUrl = await ref.getDownloadURL();
@@ -133,7 +136,7 @@ class _PostPageState extends State<PostPage> {
   Future<LatLng> getLatLngFromAddress(String address) async {
     // Get the location coordinates from the address
     List<Location> locations =
-        await GeocodingPlatform.instance.locationFromAddress(address);
+    await GeocodingPlatform.instance.locationFromAddress(address);
 
     // Extract the latitude and longitude from the location
     LatLng latLng = LatLng(locations.first.latitude, locations.first.longitude);
@@ -162,112 +165,112 @@ class _PostPageState extends State<PostPage> {
       body: isLoading == true
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    _roomTypeSelect(context),
-                    roomTypeError
-                        ? const Text(
-                            "Vui lòng chọn loại phòng",
-                            style: TextStyle(color: Colors.red),
-                          )
-                        : const SizedBox(),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    _titleText(context, "Địa chỉ và hình ảnh"),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    _addrSelect(context),
-                    addrError
-                        ? const Text(
-                            "Vui lòng chọn địa chỉ",
-                            style: TextStyle(color: Colors.red),
-                          )
-                        : const SizedBox(),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    _upLoadPhoto(context),
-                    imagesError
-                        ? const Text(
-                            "Vui lòng chọn ít nhất 1 ảnh",
-                            style: TextStyle(color: Colors.red),
-                          )
-                        : const SizedBox(),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    _titleText(context, "Thông tin khác"),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    _furnitureSelect(context),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    _titleText(context, "Diện tích và giá"),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    _sizeInput(context),
-                    sizeError
-                        ? const Text(
-                            "Vui lòng nhập diện tích",
-                            style: TextStyle(color: Colors.red),
-                          )
-                        : const SizedBox(),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    _priceInput(context),
-                    priceError
-                        ? const Text(
-                            "Vui lòng nhập giá",
-                            style: TextStyle(color: Colors.red),
-                          )
-                        : const SizedBox(),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    _depositInput(context),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    _titleText(context, "Tiêu đề tin đăng và mô tả chi tiết"),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    _titleInput(context),
-                    titleError
-                        ? const Text(
-                            "Vui lòng nhập tiêu đề",
-                            style: TextStyle(color: Colors.red),
-                          )
-                        : const SizedBox(),
-                    SizedBox(
-                      height: 10.h,
-                    ),
-                    _detailDecribe(context),
-                    decribeError
-                        ? const Text(
-                            "Vui lòng nhập mô tả",
-                            style: TextStyle(color: Colors.red),
-                          )
-                        : const SizedBox(),
-                    SizedBox(height: 20.h),
-                    _submitButton(context),
-                    SizedBox(
-                      height: 5.h,
-                    ),
-                  ],
-                ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 10.h,
               ),
-            ),
+              _roomTypeSelect(context),
+              roomTypeError
+                  ? const Text(
+                "Vui lòng chọn loại phòng",
+                style: TextStyle(color: Colors.red),
+              )
+                  : const SizedBox(),
+              SizedBox(
+                height: 10.h,
+              ),
+              _titleText(context, "Địa chỉ và hình ảnh"),
+              SizedBox(
+                height: 10.h,
+              ),
+              _addrSelect(context),
+              addrError
+                  ? const Text(
+                "Vui lòng chọn địa chỉ",
+                style: TextStyle(color: Colors.red),
+              )
+                  : const SizedBox(),
+              SizedBox(
+                height: 10.h,
+              ),
+              _upLoadPhoto(context),
+              imagesError
+                  ? const Text(
+                "Vui lòng chọn ít nhất 1 ảnh",
+                style: TextStyle(color: Colors.red),
+              )
+                  : const SizedBox(),
+              SizedBox(
+                height: 10.h,
+              ),
+              _titleText(context, "Thông tin khác"),
+              SizedBox(
+                height: 10.h,
+              ),
+              _furnitureSelect(context),
+              SizedBox(
+                height: 10.h,
+              ),
+              _titleText(context, "Diện tích và giá"),
+              SizedBox(
+                height: 10.h,
+              ),
+              _sizeInput(context),
+              sizeError
+                  ? const Text(
+                "Vui lòng nhập diện tích",
+                style: TextStyle(color: Colors.red),
+              )
+                  : const SizedBox(),
+              SizedBox(
+                height: 10.h,
+              ),
+              _priceInput(context),
+              priceError
+                  ? const Text(
+                "Vui lòng nhập giá",
+                style: TextStyle(color: Colors.red),
+              )
+                  : const SizedBox(),
+              SizedBox(
+                height: 10.h,
+              ),
+              _depositInput(context),
+              SizedBox(
+                height: 10.h,
+              ),
+              _titleText(context, "Tiêu đề tin đăng và mô tả chi tiết"),
+              SizedBox(
+                height: 10.h,
+              ),
+              _titleInput(context),
+              titleError
+                  ? const Text(
+                "Vui lòng nhập tiêu đề",
+                style: TextStyle(color: Colors.red),
+              )
+                  : const SizedBox(),
+              SizedBox(
+                height: 10.h,
+              ),
+              _detailDecribe(context),
+              decribeError
+                  ? const Text(
+                "Vui lòng nhập mô tả",
+                style: TextStyle(color: Colors.red),
+              )
+                  : const SizedBox(),
+              SizedBox(height: 20.h),
+              _submitButton(context),
+              SizedBox(
+                height: 5.h,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -316,7 +319,7 @@ class _PostPageState extends State<PostPage> {
                   child: Padding(
                     padding: EdgeInsets.only(left: 10.w),
                     child: ListView.separated(
-                        // shrinkWrap: true,
+                      // shrinkWrap: true,
                         itemBuilder: (context, index) {
                           return GestureDetector(
                               child: Text(_items[index]),
@@ -411,7 +414,8 @@ class _PostPageState extends State<PostPage> {
                           color: Colors.blue,
                           child: Text(
                             "Địa chỉ",
-                            style: TextStyle(color: Colors.white, fontSize: 16.sp),
+                            style: TextStyle(
+                                color: Colors.white, fontSize: 16.sp),
                           ),
                         ),
                         SizedBox(
@@ -509,7 +513,6 @@ class _PostPageState extends State<PostPage> {
   Widget _citySelect(BuildContext context) {
     return Consumer<ProvinceViewModel>(
       builder: (context, value, child) {
-
         List<City> citiesData = value.GetCities;
 
         return GestureDetector(
@@ -536,7 +539,7 @@ class _PostPageState extends State<PostPage> {
                           child: Text(
                             "Chọn tỉnh, thành phố",
                             style:
-                                TextStyle(color: Colors.white, fontSize: 16.sp),
+                            TextStyle(color: Colors.white, fontSize: 16.sp),
                           ),
                         ),
                         SizedBox(
@@ -643,285 +646,288 @@ class _PostPageState extends State<PostPage> {
 
   Widget _districtSelect(BuildContext context) {
     return Consumer<ProvinceViewModel>(
-      builder: (context, value, child) => GestureDetector(
-        onTap: () {
-          if (value.checkDistrictSelect()) {
-            showModalBottomSheet(
-              isScrollControlled: true,
-              context: context,
-              builder: (context) {
-                return SizedBox(
-                  height: 640.h,
-                  child: SingleChildScrollView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 20.h,
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          width: 360.w,
-                          height: 40.h,
-                          color: Colors.blue,
-                          child: Text(
-                            "Chọn quận, huyện",
-                            style:
+      builder: (context, value, child) =>
+          GestureDetector(
+            onTap: () {
+              if (value.checkDistrictSelect()) {
+                showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (context) {
+                    return SizedBox(
+                      height: 640.h,
+                      child: SingleChildScrollView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 20.h,
+                            ),
+                            Container(
+                              alignment: Alignment.center,
+                              width: 360.w,
+                              height: 40.h,
+                              color: Colors.blue,
+                              child: Text(
+                                "Chọn quận, huyện",
+                                style:
                                 TextStyle(color: Colors.white, fontSize: 16.sp),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 640.h,
-                          child: ListView.separated(
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemBuilder: (context, index) {
-                                District district = _provinceViewModel
-                                    .selectedCity!.districts[index];
+                              ),
+                            ),
+                            SizedBox(
+                              height: 640.h,
+                              child: ListView.separated(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    District district = _provinceViewModel
+                                        .selectedCity!.districts[index];
 
-                                return GestureDetector(
-                                  onTap: () {
-                                    _provinceViewModel.districtSelect(district);
-                                    Navigator.pop(context);
+                                    return GestureDetector(
+                                      onTap: () {
+                                        _provinceViewModel.districtSelect(
+                                            district);
+                                        Navigator.pop(context);
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.only(left: 12.w),
+                                        child: Text(
+                                          district.name,
+                                          style: TextStyle(),
+                                        ),
+                                      ),
+                                    );
                                   },
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 12.w),
-                                    child: Text(
-                                      district.name,
-                                      style: TextStyle(),
-                                    ),
-                                  ),
-                                );
-                              },
-                              separatorBuilder: (context, index) {
-                                return Divider();
-                              },
-                              itemCount: _provinceViewModel
-                                  .selectedCity!.districts.length),
-                        )
+                                  separatorBuilder: (context, index) {
+                                    return Divider();
+                                  },
+                                  itemCount: _provinceViewModel
+                                      .selectedCity!.districts.length),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }
+            },
+            child: StreamBuilder<District>(
+              stream: _provinceViewModel.districtController.stream,
+              initialData: _provinceViewModel.selectedDistrict,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData || snapshot.data!.code == 0) {
+                  //
+                  return Container(
+                    alignment: Alignment.centerLeft,
+                    margin: EdgeInsets.only(left: 12.w, right: 12.w),
+                    padding: EdgeInsets.only(left: 8.w, right: 8.w),
+                    width: 360.w,
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.w),
+                      border: Border.all(color: Colors.blue, width: 1.w),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Chọn quận, huyện, thị xã",
+                          style: TextStyle(
+                              fontSize: 14.sp,
+                              color: const Color.fromARGB(255, 128, 128, 137)),
+                        ),
+                        Icon(
+                          Icons.arrow_drop_down,
+                          size: 26.w,
+                        ),
                       ],
                     ),
-                  ),
-                );
+                  );
+                } else if (snapshot.hasError) {
+                  return Container(
+                    alignment: Alignment.centerLeft,
+                    margin: EdgeInsets.only(left: 12.w, right: 12.w),
+                    padding: EdgeInsets.only(left: 8.w, right: 8.w),
+                    width: 360.w,
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.w),
+                      border: Border.all(color: Colors.blue, width: 1.w),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          snapshot.error.toString(),
+                          style: TextStyle(
+                              fontSize: 14.sp,
+                              color: const Color.fromARGB(255, 128, 128, 137)),
+                        ),
+                        Icon(
+                          Icons.arrow_drop_down,
+                          size: 26.w,
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  return Container(
+                    alignment: Alignment.centerLeft,
+                    margin: EdgeInsets.only(left: 12.w, right: 12.w),
+                    padding: EdgeInsets.only(left: 8.w, right: 8.w),
+                    width: 360.w,
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.w),
+                      border: Border.all(color: Colors.blue, width: 1.w),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          _provinceViewModel.selectedDistrict == null
+                              ? "Chọn quận, huyện, thị xã"
+                              : _provinceViewModel.selectedDistrict!.name,
+                          style: TextStyle(
+                              fontSize: 14.sp,
+                              color: const Color.fromARGB(255, 128, 128, 137)),
+                        ),
+                        Icon(
+                          Icons.arrow_drop_down,
+                          size: 26.w,
+                        ),
+                      ],
+                    ),
+                  );
+                }
               },
-            );
-          }
-        },
-        child: StreamBuilder<District>(
-          stream: _provinceViewModel.districtController.stream,
-          initialData: _provinceViewModel.selectedDistrict,
-          builder: (context, snapshot) {
-            if (!snapshot.hasData || snapshot.data!.code == 0) {
-              //
-              return Container(
-                alignment: Alignment.centerLeft,
-                margin: EdgeInsets.only(left: 12.w, right: 12.w),
-                padding: EdgeInsets.only(left: 8.w, right: 8.w),
-                width: 360.w,
-                height: 40.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.w),
-                  border: Border.all(color: Colors.blue, width: 1.w),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Chọn quận, huyện, thị xã",
-                      style: TextStyle(
-                          fontSize: 14.sp,
-                          color: const Color.fromARGB(255, 128, 128, 137)),
-                    ),
-                    Icon(
-                      Icons.arrow_drop_down,
-                      size: 26.w,
-                    ),
-                  ],
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return Container(
-                alignment: Alignment.centerLeft,
-                margin: EdgeInsets.only(left: 12.w, right: 12.w),
-                padding: EdgeInsets.only(left: 8.w, right: 8.w),
-                width: 360.w,
-                height: 40.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.w),
-                  border: Border.all(color: Colors.blue, width: 1.w),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      snapshot.error.toString(),
-                      style: TextStyle(
-                          fontSize: 14.sp,
-                          color: const Color.fromARGB(255, 128, 128, 137)),
-                    ),
-                    Icon(
-                      Icons.arrow_drop_down,
-                      size: 26.w,
-                    ),
-                  ],
-                ),
-              );
-            } else {
-              return Container(
-                alignment: Alignment.centerLeft,
-                margin: EdgeInsets.only(left: 12.w, right: 12.w),
-                padding: EdgeInsets.only(left: 8.w, right: 8.w),
-                width: 360.w,
-                height: 40.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.w),
-                  border: Border.all(color: Colors.blue, width: 1.w),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _provinceViewModel.selectedDistrict == null
-                          ? "Chọn quận, huyện, thị xã"
-                          : _provinceViewModel.selectedDistrict!.name,
-                      style: TextStyle(
-                          fontSize: 14.sp,
-                          color: const Color.fromARGB(255, 128, 128, 137)),
-                    ),
-                    Icon(
-                      Icons.arrow_drop_down,
-                      size: 26.w,
-                    ),
-                  ],
-                ),
-              );
-            }
-          },
-        ),
-      ),
+            ),
+          ),
     );
   }
 
   Widget _wardSelect(BuildContext context) {
     return Consumer<ProvinceViewModel>(
-      builder: (context, value, child) => GestureDetector(
-        onTap: () {
-          if (value.checkWardSelect()) {
-            showModalBottomSheet(
-              isScrollControlled: true,
-              context: context,
-              builder: (context) {
-                return SafeArea(
-                  child: SizedBox(
-                    height: 640.h,
-                    child: SingleChildScrollView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      child: Column(
-                        children: [
-                          // SizedBox(height: 20.h,),
-                          Container(
-                            alignment: Alignment.center,
-                            width: 360.w,
-                            height: 40.h,
-                            color: Colors.blue,
-                            child: Text(
-                              "Chọn phường, xã, thị trấn",
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 16.sp),
-                            ),
+      builder: (context, value, child) =>
+          GestureDetector(
+            onTap: () {
+              if (value.checkWardSelect()) {
+                showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (context) {
+                    return SafeArea(
+                      child: SizedBox(
+                        height: 640.h,
+                        child: SingleChildScrollView(
+                          physics: const NeverScrollableScrollPhysics(),
+                          child: Column(
+                            children: [
+                              // SizedBox(height: 20.h,),
+                              Container(
+                                alignment: Alignment.center,
+                                width: 360.w,
+                                height: 40.h,
+                                color: Colors.blue,
+                                child: Text(
+                                  "Chọn phường, xã, thị trấn",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 16.sp),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 640.h,
+                                child: ListView.separated(
+                                  // physics: NeverScrollableScrollPhysics(),
+                                    itemBuilder: (context, index) {
+                                      Ward ward = _provinceViewModel
+                                          .selectedDistrict!.wards[index];
+                                      return GestureDetector(
+                                          onTap: () {
+                                            _provinceViewModel.wardSelect(ward);
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text(ward.name));
+                                    },
+                                    separatorBuilder: (context, index) {
+                                      return Divider();
+                                    },
+                                    itemCount: _provinceViewModel
+                                        .selectedDistrict!.wards.length),
+                              ),
+                            ],
                           ),
-                          SizedBox(
-                            height: 640.h,
-                            child: ListView.separated(
-                                // physics: NeverScrollableScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  Ward ward = _provinceViewModel
-                                      .selectedDistrict!.wards[index];
-                                  return GestureDetector(
-                                      onTap: () {
-                                        _provinceViewModel.wardSelect(ward);
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text(ward.name));
-                                },
-                                separatorBuilder: (context, index) {
-                                  return Divider();
-                                },
-                                itemCount: _provinceViewModel
-                                    .selectedDistrict!.wards.length),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 );
+              }
+            },
+            child: StreamBuilder<Ward>(
+              stream: _provinceViewModel.wardController.stream,
+              initialData: _provinceViewModel.selectedWard,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData || snapshot.data!.code == 0) {
+                  return Container(
+                    alignment: Alignment.centerLeft,
+                    margin: EdgeInsets.only(left: 12.w, right: 12.w),
+                    padding: EdgeInsets.only(left: 8.w, right: 8.w),
+                    width: 360.w,
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.w),
+                      border: Border.all(color: Colors.blue, width: 1.w),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Chọn phường, xã, thị trấn",
+                          style: TextStyle(
+                              fontSize: 14.sp,
+                              color: const Color.fromARGB(255, 128, 128, 137)),
+                        ),
+                        Icon(
+                          Icons.arrow_drop_down,
+                          size: 26.w,
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  return Container(
+                    alignment: Alignment.centerLeft,
+                    margin: EdgeInsets.only(left: 12.w, right: 12.w),
+                    padding: EdgeInsets.only(left: 8.w, right: 8.w),
+                    width: 360.w,
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.w),
+                      border: Border.all(color: Colors.blue, width: 1.w),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          _provinceViewModel.selectedWard == null
+                              ? "Chọn phường, xã, thị trấn"
+                              : _provinceViewModel.selectedWard!.name,
+                          style: TextStyle(
+                              fontSize: 14.sp,
+                              color: const Color.fromARGB(255, 128, 128, 137)),
+                        ),
+                        Icon(
+                          Icons.arrow_drop_down,
+                          size: 26.w,
+                        ),
+                      ],
+                    ),
+                  );
+                }
               },
-            );
-          }
-        },
-        child: StreamBuilder<Ward>(
-          stream: _provinceViewModel.wardController.stream,
-          initialData: _provinceViewModel.selectedWard,
-          builder: (context, snapshot) {
-            if (!snapshot.hasData || snapshot.data!.code == 0) {
-              return Container(
-                alignment: Alignment.centerLeft,
-                margin: EdgeInsets.only(left: 12.w, right: 12.w),
-                padding: EdgeInsets.only(left: 8.w, right: 8.w),
-                width: 360.w,
-                height: 40.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.w),
-                  border: Border.all(color: Colors.blue, width: 1.w),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Chọn phường, xã, thị trấn",
-                      style: TextStyle(
-                          fontSize: 14.sp,
-                          color: const Color.fromARGB(255, 128, 128, 137)),
-                    ),
-                    Icon(
-                      Icons.arrow_drop_down,
-                      size: 26.w,
-                    ),
-                  ],
-                ),
-              );
-            } else {
-              return Container(
-                alignment: Alignment.centerLeft,
-                margin: EdgeInsets.only(left: 12.w, right: 12.w),
-                padding: EdgeInsets.only(left: 8.w, right: 8.w),
-                width: 360.w,
-                height: 40.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.w),
-                  border: Border.all(color: Colors.blue, width: 1.w),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _provinceViewModel.selectedWard == null
-                          ? "Chọn phường, xã, thị trấn"
-                          : _provinceViewModel.selectedWard!.name,
-                      style: TextStyle(
-                          fontSize: 14.sp,
-                          color: const Color.fromARGB(255, 128, 128, 137)),
-                    ),
-                    Icon(
-                      Icons.arrow_drop_down,
-                      size: 26.w,
-                    ),
-                  ],
-                ),
-              );
-            }
-          },
-        ),
-      ),
+            ),
+          ),
     );
   }
 
@@ -954,109 +960,109 @@ class _PostPageState extends State<PostPage> {
   Widget _upLoadPhoto(BuildContext context) {
     return selectedImages.isEmpty
         ? GestureDetector(
+      onTap: () {
+        getImages();
+      },
+      child: Container(
+        margin: EdgeInsets.only(left: 12.w, right: 12.w),
+        width: 360.w,
+        height: 80.h,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.w),
+          color: const Color.fromARGB(255, 232, 232, 232),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.add_a_photo, size: 40.w, color: Colors.black),
+            Text(
+              "Nhấn vào đây để đăng hình",
+              style: TextStyle(fontSize: 12.sp),
+            )
+          ],
+        ),
+      ),
+    )
+        : SizedBox(
+      width: 360.w,
+      height: 80.h,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(children: [
+          SizedBox(
+            width: 12.w,
+          ),
+          GestureDetector(
             onTap: () {
               getImages();
             },
             child: Container(
-              margin: EdgeInsets.only(left: 12.w, right: 12.w),
-              width: 360.w,
+              width: 80.w,
               height: 80.h,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.w),
-                color: const Color.fromARGB(255, 232, 232, 232),
+                borderRadius: BorderRadius.circular(12.w),
+                color: Colors.blue,
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.add_a_photo, size: 40.w, color: Colors.black),
-                  Text(
-                    "Nhấn vào đây để đăng hình",
-                    style: TextStyle(fontSize: 12.sp),
-                  )
-                ],
+              child: Icon(
+                Icons.add_a_photo,
+                size: 20.w,
               ),
             ),
+          ),
+          SizedBox(
+            width: 12.w,
+          ),
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: selectedImages.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              if (selectedImages[index] != null) {
+                return Stack(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(left: 3.w, right: 3.w),
+                      width: 80.w,
+                      height: 80.h,
+
+                      // child: kIsWeb
+                      //     ? Image.network(
+                      //   selectedImages[index]!.path,
+                      //   fit: BoxFit.fill,
+                      // )
+                      //     : Image.file(
+                      //   selectedImages[index]!,
+                      //   fit: BoxFit.fill,
+                      // ),
+
+                      child: Image.file(
+                        selectedImages[index]!,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Positioned(
+                        right: 5.w,
+                        top: 0,
+                        child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedImages.removeAt(index);
+                              });
+                            },
+                            child: Icon(
+                              Icons.remove_circle,
+                              color: Colors.red,
+                              size: 16.w,
+                            )))
+                  ],
+                );
+              }
+            },
+            scrollDirection: Axis.horizontal,
           )
-        : SizedBox(
-            width: 360.w,
-            height: 80.h,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(children: [
-                SizedBox(
-                  width: 12.w,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    getImages();
-                  },
-                  child: Container(
-                    width: 80.w,
-                    height: 80.h,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.w),
-                      color: Colors.blue,
-                    ),
-                    child: Icon(
-                      Icons.add_a_photo,
-                      size: 20.w,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 12.w,
-                ),
-                ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: selectedImages.length,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    if (selectedImages[index] != null) {
-                      return Stack(
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(left: 3.w, right: 3.w),
-                            width: 80.w,
-                            height: 80.h,
-
-                            // child: kIsWeb
-                            //     ? Image.network(
-                            //   selectedImages[index]!.path,
-                            //   fit: BoxFit.fill,
-                            // )
-                            //     : Image.file(
-                            //   selectedImages[index]!,
-                            //   fit: BoxFit.fill,
-                            // ),
-
-                            child: Image.file(
-                              selectedImages[index]!,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Positioned(
-                              right: 5.w,
-                              top: 0,
-                              child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      selectedImages.removeAt(index);
-                                    });
-                                  },
-                                  child: Icon(
-                                    Icons.remove_circle,
-                                    color: Colors.red,
-                                    size: 16.w,
-                                  )))
-                        ],
-                      );
-                    }
-                  },
-                  scrollDirection: Axis.horizontal,
-                )
-              ]),
-            ),
-          );
+        ]),
+      ),
+    );
   }
 
   Widget _furnitureSelect(BuildContext context) {
@@ -1087,7 +1093,7 @@ class _PostPageState extends State<PostPage> {
                   child: Padding(
                     padding: EdgeInsets.only(left: 10.w),
                     child: ListView.separated(
-                        // shrinkWrap: true,
+                      // shrinkWrap: true,
                         itemBuilder: (context, index) {
                           return GestureDetector(
                               child: Text(_furStatus[index]),
@@ -1291,7 +1297,7 @@ class _PostPageState extends State<PostPage> {
 
             labelStyle: TextStyle(),
             hintText:
-                "vd: Phòng trọ 30m2 đường nguyễn A, Phường A, thành phố A, nội thất đầy đủ",
+            "vd: Phòng trọ 30m2 đường nguyễn A, Phường A, thành phố A, nội thất đầy đủ",
             hintMaxLines: 10,
             alignLabelWithHint: true,
             floatingLabelAlignment: FloatingLabelAlignment.start,
@@ -1397,21 +1403,30 @@ class _PostPageState extends State<PostPage> {
             print(userId);
             if (_provinceViewModel.address.isNotEmpty) {
               await getLatLngFromAddress(
-                  "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel.selectedDistrict!.name}, ${_provinceViewModel.selectedWard!.name}, ${roadInput.text.toString()}");
+                  "${_provinceViewModel.selectedCity!
+                      .name}, ${_provinceViewModel.selectedDistrict!
+                      .name}, ${_provinceViewModel.selectedWard!
+                      .name}, ${roadInput.text.toString()}");
               print(_latLng);
               if (_latLng == null) {
                 await getLatLngFromAddress(
-                    "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel.selectedDistrict!.name}, ${_provinceViewModel.selectedWard!.name}");
+                    "${_provinceViewModel.selectedCity!
+                        .name}, ${_provinceViewModel.selectedDistrict!
+                        .name}, ${_provinceViewModel.selectedWard!.name}");
                 print(
-                    "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel.selectedDistrict!.name}, ${_provinceViewModel.selectedWard!.name}");
+                    "${_provinceViewModel.selectedCity!
+                        .name}, ${_provinceViewModel.selectedDistrict!
+                        .name}, ${_provinceViewModel.selectedWard!.name}");
                 print(_latLng);
               }
 
               if (_latLng == null) {
                 await getLatLngFromAddress(
-                    "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel.selectedDistrict!.name}");
+                    "${_provinceViewModel.selectedCity!
+                        .name}, ${_provinceViewModel.selectedDistrict!.name}");
                 print(
-                    "${_provinceViewModel.selectedCity!.name}, ${_provinceViewModel.selectedDistrict!.name}");
+                    "${_provinceViewModel.selectedCity!
+                        .name}, ${_provinceViewModel.selectedDistrict!.name}");
                 print(_latLng);
               }
 
@@ -1426,7 +1441,7 @@ class _PostPageState extends State<PostPage> {
                   codeLength: 8);
 
               GeoPoint location =
-                  GeoPoint(_latLng!.latitude, _latLng!.longitude);
+              GeoPoint(_latLng!.latitude, _latLng!.longitude);
 
               // await _getImageUrls();
               // print (imageUrls);
@@ -1482,17 +1497,18 @@ class _PostPageState extends State<PostPage> {
                   ward: _provinceViewModel.wardName,
                 );
               }
-              await _roomViewModel.addRoom(room, geohash);
+              await _roomViewModel.addRoom(room, geohash).whenComplete(() =>
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ListRoomPage(),
+                      ),),);
 
               setState(() {
                 isLoading = false;
               });
               // Navigator.pop(context);
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ListRoomPage(),
-                  ));
+
             } else {
               setState(() {
                 isLoading = false;
