@@ -3,14 +3,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tro_tot_app/view_models.dart/chat_view_model.dart';
+import 'package:tro_tot_app/view_models.dart/room_view_model.dart';
+import 'package:tro_tot_app/view_models.dart/user_view_model.dart';
 
 import '../models/chat_model.dart';
+import '../models/room_model.dart';
 
 class ChatDetailPage extends StatefulWidget {
   final String id;
-   ChatDetailPage({Key? key, required this.id}) : super(key: key);
 
-
+  const ChatDetailPage({Key? key, required this.id}) : super(key: key);
 
   @override
   State<ChatDetailPage> createState() => _ChatDetailPageState();
@@ -19,14 +21,22 @@ class ChatDetailPage extends StatefulWidget {
 class _ChatDetailPageState extends State<ChatDetailPage> {
   TextEditingController _messageText = TextEditingController();
   late Future getAllMessage;
+  late Future getRoomChat;
+  late RoomViewModel getRoom;
+  late UserViewModel getUser;
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getAllMessage = context.read<ChatViewModel>().getListMessage(widget.id);
-
+    getRoomChat =
+        context.read<ChatViewModel>().getRoomChatFromRoomId(widget.id);
+    getRoom = context.read<RoomViewModel>();
+    getUser = context.read<UserViewModel>();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,96 +47,131 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
       body: SafeArea(
         child: Column(
           children: [
-            Container(
-              color: const Color.fromARGB(100, 222, 222, 222),
-              width: 360.w,
-              height: 60.h,
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 10.w,
-                  ),
-                  Image.asset(
-                    "assets/images/Tro1.jpg",
-                    fit: BoxFit.cover,
-                    width: 60.w,
-                    height: 60.w,
-                  ),
-                  SizedBox(
-                    width: 10.w,
-                  ),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Phong tro gia re",
-                          style: TextStyle(
-                              fontSize: 16.sp, fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "3.000.000đ/tháng",
-                          style: TextStyle(fontSize: 14.sp, color: Colors.blue),
-                        ),
-                        Text(
-                          "Thừa Thiên Huế, Thành phố Huế, phường Thuận Lộc, Đinh Tiên Hoàng",
-                          style: TextStyle(
-                              fontSize: 14.sp, overflow: TextOverflow.ellipsis),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
+            // FutureBuilder(
+            //   future: getRoomChat,
+            //   builder: (context, snapshot) {
+            //     RoomChat roomChat = snapshot.data;
+            //
+            //     return FutureBuilder(
+            //       future: getRoom.getRoom(roomChat.id!),
+            //       builder: (context, snapshot2) {
+            //         if (!snapshot2.hasData) {
+            //           return const SizedBox();
+            //         }
+            //         else {
+            //           return Container(
+            //             color: const Color.fromARGB(100, 222, 222, 222),
+            //             width: 360.w,
+            //             height: 60.h,
+            //             child: Row(
+            //               children: [
+            //                 SizedBox(
+            //                   width: 10.w,
+            //                 ),
+            //                 Image.network(
+            //                   snapshot2.data!.image,
+            //                   fit: BoxFit.cover,
+            //                   width: 60.w,
+            //                   height: 60.w,
+            //                 ),
+            //                 SizedBox(
+            //                   width: 10.w,
+            //                 ),
+            //                 Expanded(
+            //                   child: Column(
+            //                     mainAxisAlignment: MainAxisAlignment.center,
+            //                     crossAxisAlignment: CrossAxisAlignment.start,
+            //                     children: [
+            //                       Text(
+            //                         snapshot2.data!.name,
+            //                         style: TextStyle(
+            //                             fontSize: 16.sp,
+            //                             fontWeight: FontWeight.bold),
+            //                       ),
+            //                       Text(
+            //                         "${snapshot2.data!.price
+            //                             .toString()}đ/tháng",
+            //                         style: TextStyle(
+            //                             fontSize: 14.sp, color: Colors.blue),
+            //                       ),
+            //                       Text(
+            //                         snapshot2.data!.address,
+            //                         style: TextStyle(
+            //                             fontSize: 14.sp,
+            //                             overflow: TextOverflow.ellipsis),
+            //                       )
+            //                     ],
+            //                   ),
+            //                 )
+            //               ],
+            //             ),
+            //           );
+            //         }
+            //       },
+            //
+            //     );
+            //   },
+            //
+            // ),
             SizedBox(
               height: 5.h,
             ),
             Expanded(
                 child: SingleChildScrollView(
-              reverse: true,
-              child: Column(
-                children: [
-                  Consumer<ChatViewModel>(
-                    builder: (context, value, child) => StreamBuilder(
-                      stream: value.messageController.stream,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          List<Message> listMess = snapshot.data!;
-                          return ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: listMess.length,
-                            itemBuilder: (context, index) => Container(
-                              width: 360.w,
-                              height: 50.h,
-                              alignment: Alignment.centerRight,
-                              padding: EdgeInsets.only(left: 10.w, right: 10.w),
-                              child: Container(
-                                padding: EdgeInsets.all(16.w),
-                                // width: 300.w,
-                                // height: 40.h,
-                                decoration: BoxDecoration(
-                                  color:
-                                      const Color.fromARGB(255, 176, 209, 252),
-                                  borderRadius: BorderRadius.circular(12.w),
-                                ),
-                                child: Text(
-                                  listMess[index].content!,
-                                  style: TextStyle(fontSize: 14.sp),
-                                ),
-                              ),
+                  reverse: true,
+                  child: Column(
+                    children: [
+                      Consumer2<ChatViewModel, UserViewModel>(
+                        builder: (context, value, value2, child) =>
+                            StreamBuilder(
+                              stream: value.messageController.stream,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  List<Message> listMess = snapshot.data!;
+                                  return ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    itemCount: listMess.length,
+                                    itemBuilder: (context, index) =>
+                                        Container(
+                                          width: 360.w,
+                                          height: 50.h,
+                                          alignment:
+                                          listMess[index].senderId ==
+                                              value2.user!.id
+                                              ? Alignment.centerRight
+                                              : Alignment.centerLeft,
+                                          padding: EdgeInsets.only(
+                                              left: 10.w, right: 10.w),
+                                          child: Container(
+                                            padding: EdgeInsets.all(16.w),
+                                            // width: 300.w,
+                                            // height: 40.h,
+                                            decoration: BoxDecoration(
+                                              color: listMess[index].senderId ==
+                                                  value2.user!.id
+                                                  ? const Color.fromARGB(
+                                                  255, 176, 209, 252)
+                                                  : const Color.fromARGB(
+                                                  100, 222, 222, 222),
+                                              borderRadius: BorderRadius
+                                                  .circular(12.w),
+                                            ),
+                                            child: Text(
+                                              listMess[index].content!,
+                                              style: TextStyle(fontSize: 14.sp),
+                                            ),
+                                          ),
+                                        ),
+                                  );
+                                }
+                                return const SizedBox();
+                              },
                             ),
-                          );
-                        }
-                        return const SizedBox();
-                      },
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )),
+                )),
             Row(
               children: [
                 IconButton(
@@ -165,23 +210,25 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                     ),
                   ),
                 ),
-                Consumer<ChatViewModel>(
-                  builder: (context, value, child) => IconButton(
-                    onPressed: () async {
-                      if(_messageText.text.isNotEmpty){Message message = Message(
-                          senderId: "aw",
-                          time: DateTime.now(),
-                          content: _messageText.text);
-                      await value.addMessage(
-                          message, "a", "a", "a", widget.id);
-                      _messageText.clear();}
-
-                    },
-                    icon: const Icon(
-                      Icons.send,
-                      color: Colors.blue,
-                    ),
-                  ),
+                Consumer2<ChatViewModel, UserViewModel>(
+                  builder: (context, value, value2, child) =>
+                      IconButton(
+                        onPressed: () async {
+                          if (_messageText.text.isNotEmpty) {
+                            Message message = Message(
+                                senderId: value2.user!.id!,
+                                time: DateTime.now(),
+                                content: _messageText.text);
+                            await value.addMessage(
+                                message, "a", "a", "a", widget.id);
+                            _messageText.clear();
+                          }
+                        },
+                        icon: const Icon(
+                          Icons.send,
+                          color: Colors.blue,
+                        ),
+                      ),
                 ),
               ],
             ),

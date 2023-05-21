@@ -124,6 +124,7 @@ class _ListRoomPageState extends State<ListRoomPage> {
   Widget build(BuildContext context) {
     return Consumer2<RoomViewModel, UserViewModel>(
       builder: (context, value,value2, child) {
+
         return Scaffold(
           backgroundColor: const Color.fromARGB(255, 245, 245, 250),
           body: SafeArea(
@@ -456,7 +457,9 @@ class _ListRoomPageState extends State<ListRoomPage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => RoomDetailPage(id: room.id!),
-                        ));
+                        )).then((value) {setState(() {
+
+                        });});
                   },
                   child: _roomInfor(context, room));
             },

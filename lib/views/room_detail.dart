@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:tro_tot_app/models/chat_model.dart';
 import 'package:tro_tot_app/view_models.dart/chat_view_model.dart';
 import 'package:tro_tot_app/views/chat_detail.dart';
+import 'package:tro_tot_app/views/login_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -602,17 +603,69 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
 
   Widget _commonAsk(BuildContext context, String text) {
     return Consumer2<ChatViewModel, UserViewModel>(
-      builder: (context, value,value2, child) => GestureDetector(
+      builder: (context, value, value2, child) => GestureDetector(
         onTap: () async {
+          print(userId);
+          if (value2.user != null) {
+            if (await value.checkChatRoomExist(
+                widget.id, value2.roomOwner!.id!, value2.user!.id!)) {
+              if ((value.getRoomChat!.roomId == widget.id) ||
+                  (value.getRoomChat!.roomOwnerId ==
+                      value2.roomOwner!.id) ||
+                  (value.getRoomChat!.userId == value2.user!.id)) {
+                Message message = Message(
+                    senderId: value2.user!.id!,
+                    time: DateTime.now(),
+                    content: text);
+                await value
+                    .addMessage(message, userId, value2.roomOwner!.id!,
+                        widget.id, value.getRoomChat!.id!)
+                    .whenComplete(
+                      () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ChatDetailPage(id: value.getRoomChat!.id!),
+                        ),
+                      ).then((value) {
+                        setState(() {});
+                      }),
+                    );
+              }
+            } else {
+              RoomChat roomChat = RoomChat(
+                  roomOwnerId: value2.roomOwner!.id!,
+                  userId: value2.user!.id!,
+                  roomId: widget.id);
+              Message message = Message(
+                  senderId: value2.user!.id!,
+                  time: DateTime.now(),
+                  content: text);
 
-          RoomChat roomChat = RoomChat(roomOwnerId: value2.roomOwner!.userID!, userId: value2.user!.userID!, roomId: widget.id );
-          Message message = Message(senderId: value2.user!.userID!, time: DateTime.now(), content: text);
+              await value.addRoomChat(roomChat);
+              await value.getRoomChatFromId(widget.id);
+              await value
+                  .addMessage(message, userId, value2.roomOwner!.id!,
+                      widget.id, value.getRoomChat!.id!)
+                  .whenComplete(
+                    () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ChatDetailPage(id: value.getRoomChat!.id!),
+                      ),
+                    ).then((value) {setState(() {
 
-          await value.addRoomChat(roomChat);
-          await value.getRoomChatFromId(widget.id);
-          await value.addMessage(message, userId, value2.roomOwner!.userID!, widget.id , value.getRoomChat!.id!);
-
-          Navigator.push(context, MaterialPageRoute(builder: (context) => ChatDetailPage(id : value.getRoomChat!.id!),));
+                    });}),
+                  );
+            }
+          } else {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LoginScreen(),
+                ));
+          }
         },
         child: Container(
           margin: EdgeInsets.only(left: 12.w, right: 12.w),

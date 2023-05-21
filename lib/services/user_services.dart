@@ -23,8 +23,8 @@ class UserSevices implements IUserServices {
         .collection('User')
         .where('id', isEqualTo: id)
         .get();
-    print("Lenh lay User trong Service");
-    print(snapshot.docs.first.data());
+    // print("Lenh lay User trong Service");
+    // print(snapshot.docs.first.data());
     return UserInfor.fromJson(snapshot.docs.first.data());
   }
 
@@ -49,5 +49,16 @@ class UserSevices implements IUserServices {
       'lat' : user.lat,
       'lng' : user.lng,
     });
+  }
+
+  @override
+  Future<UserInfor?> getUserFromUserId(String userId) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('User')
+        .where('userID', isEqualTo: userId)
+        .get();
+
+
+    return UserInfor.fromJson(snapshot.docs.first.data());
   }
 }
