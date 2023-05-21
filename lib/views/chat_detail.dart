@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -123,46 +124,56 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                     children: [
                       Consumer2<ChatViewModel, UserViewModel>(
                         builder: (context, value, value2, child) =>
-                            StreamBuilder(
-                              stream: value.messageController.stream,
+                            StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection('ChatRoom')
+                                  .doc(widget.id)
+                                  .collection('Message')
+                                  .orderBy('time', descending: false)
+                                  .snapshots(),
                               builder: (context, snapshot) {
                                 if (snapshot.hasData) {
-                                  List<Message> listMess = snapshot.data!;
+                                  // List<Message> listMess = snapshot.data!;
+
                                   return ListView.builder(
                                     shrinkWrap: true,
                                     physics: const NeverScrollableScrollPhysics(),
-                                    itemCount: listMess.length,
-                                    itemBuilder: (context, index) =>
-                                        Container(
-                                          width: 360.w,
-                                          height: 50.h,
-                                          alignment:
-                                          listMess[index].senderId ==
-                                              value2.user!.id
-                                              ? Alignment.centerRight
-                                              : Alignment.centerLeft,
-                                          padding: EdgeInsets.only(
-                                              left: 10.w, right: 10.w),
-                                          child: Container(
-                                            padding: EdgeInsets.all(16.w),
-                                            // width: 300.w,
-                                            // height: 40.h,
-                                            decoration: BoxDecoration(
-                                              color: listMess[index].senderId ==
-                                                  value2.user!.id
-                                                  ? const Color.fromARGB(
-                                                  255, 176, 209, 252)
-                                                  : const Color.fromARGB(
-                                                  100, 222, 222, 222),
-                                              borderRadius: BorderRadius
-                                                  .circular(12.w),
+                                    itemCount: snapshot.data!.docs.length,
+                                    itemBuilder: (context, index) {
+                                      Map<String, dynamic> map = snapshot.data!.docs[index]
+                                          .data() as Map<String, dynamic>;
+                                          return Container(
+                                            width: 360.w,
+                                            height: 50.h,
+                                            alignment:
+                                            map['senderId'] ==
+                                                value2.user!.id
+                                                ? Alignment.centerRight
+                                                : Alignment.centerLeft,
+                                            padding: EdgeInsets.only(
+                                                left: 10.w, right: 10.w),
+                                            child: Container(
+                                              padding: EdgeInsets.all(16.w),
+                                              // width: 300.w,
+                                              // height: 40.h,
+                                              decoration: BoxDecoration(
+                                                color:  map['senderId'] ==
+                                                    value2.user!.id
+                                                    ? const Color.fromARGB(
+                                                    255, 176, 209, 252)
+                                                    : const Color.fromARGB(
+                                                    100, 222, 222, 222),
+                                                borderRadius: BorderRadius
+                                                    .circular(12.w),
+                                              ),
+                                              child: Text(
+                                                map['content'],
+                                                style: TextStyle(fontSize: 14.sp),
+                                              ),
                                             ),
-                                            child: Text(
-                                              listMess[index].content!,
-                                              style: TextStyle(fontSize: 14.sp),
-                                            ),
-                                          ),
-                                        ),
+                                          );
+                                    }
+
                                   );
                                 }
                                 return const SizedBox();
