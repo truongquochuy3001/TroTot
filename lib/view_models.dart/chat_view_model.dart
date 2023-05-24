@@ -43,7 +43,7 @@ class ChatViewModel extends ChangeNotifier {
 
   Future<void> addRoomChat(RoomChat roomChat) async {
     await _chatServices.addRoomChat(roomChat);
-
+    _roomChat = roomChat;
     notifyListeners();
   }
 
@@ -60,7 +60,7 @@ class ChatViewModel extends ChangeNotifier {
     listMessage = await _chatServices.getAllMessage(id);
 
     messageController.sink.add(listMessage);
-    lastMessageController.sink.add(listMessage.last);
+
     notifyListeners();
     // print(messageController.stream.length.toString());
   }

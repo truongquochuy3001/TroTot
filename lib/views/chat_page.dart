@@ -165,9 +165,15 @@ class _ChatScreenState extends State<ChatScreen> {
                         SizedBox(
                           width: 10.w,
                         ),
+                        (snapshot.data!.avatar == null || snapshot.data!.avatar! == "") ?
                         CircleAvatar(
                             backgroundImage:
-                                NetworkImage(snapshot.data!.avatar!),
+                            const AssetImage("assets/images/avatar.jpg"),
+                            minRadius: 30.w)
+                        :  CircleAvatar(
+                            backgroundImage:
+
+                            NetworkImage(snapshot.data!.avatar!),
                             minRadius: 30.w),
                         SizedBox(
                           width: 10.w,
