@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -134,7 +135,8 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                     SizedBox(
                       height: 10.h,
                     ),
-                    _chatWithSaler(context),
+                    value2.roomOwner!.id != FirebaseAuth.instance.currentUser!.uid ?
+                    _chatWithSaler(context) : SizedBox(),
                     SizedBox(
                       height: 10.h,
                     ),
